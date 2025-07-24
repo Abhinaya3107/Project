@@ -83,22 +83,6 @@ const UserHome = () => {
       <div className="container mt-5">
         <QuickActionDashboard />
       </div>
-
-      {/* ✅ About Us Section at the very bottom */}
-      <div className="container mt-5 mb-5">
-        <div className="card shadow p-4 bg-light">
-          <h4 className="mb-3">About Our Event Management Platform</h4>
-          <p>
-            Welcome to our event management platform! We specialize in connecting users with the best organizers for weddings,
-            corporate functions, concerts, and private parties. Whether you need help with planning, execution, or just finding the right vendors —
-            we’ve got you covered.
-          </p>
-          <p>
-            Our mission is to simplify event planning by offering a curated list of experienced professionals. We help ensure your event runs smoothly
-            and is remembered for all the right reasons. From elegant weddings to energetic concerts, find the right people, all in one place.
-          </p>
-        </div>
-      </div>
     </>
   );
 };
