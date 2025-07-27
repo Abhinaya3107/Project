@@ -38,6 +38,6 @@ public class Organizer extends BaseEntity {
     @Column(length = 30, nullable = false)
     private String address;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 50, nullable = false)
     private String organizationName;
 }

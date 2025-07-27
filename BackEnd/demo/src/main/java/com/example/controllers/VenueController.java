@@ -6,17 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.model.Organizer;
-import com.example.repository.OrganizerRepository;
+import com.example.model.Venue;
+import com.example.repository.VenueRepository;
 
 @RestController
-@RequestMapping("/api/organizers")
-public class OrganizerController {
+@RequestMapping("/api/venues")
+public class VenueController {
 	@Autowired
-	private OrganizerRepository orgRepo;
+	private VenueRepository venueRepo;
 	
-	public List<Organizer> getAllOrganizers()
-	{
-		return orgRepo.findAll();
+	public List<Venue> getAllVenues(){
+		return venueRepo.findAll();
 	}
 }

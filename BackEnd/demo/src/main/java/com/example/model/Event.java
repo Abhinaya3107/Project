@@ -15,9 +15,9 @@ public class Event {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	private String eventName;
-	private LocalDateTime dateTime;
+	private String dateTime;
 	private int capacity;
-	private double budget;
+	private int budget;
 	@Column(length=1000)
 	private String description;
 	@ManyToOne
