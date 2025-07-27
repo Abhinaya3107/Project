@@ -1,0 +1,47 @@
+import React from 'react';
+import { Link } from "react-router-dom";
+
+function NavBar() {
+    return (
+        <nav className="navbar navbar-expand-lg navbar-light" style={{backgroundColor: '#e3f2fd'}} data-bs-theme="light">
+            <div className="container-fluid">
+                <Link className="navbar-brand fw-bold d-flex flex-column align-items-start" to="/">
+                  Event Management System
+                  <span className="fw-normal small" style={{fontSize: '0.85rem', lineHeight: 1, color: 'black'}}>Where Moments Become Memories</span>
+                </Link>
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li className="nav-item">
+                            <Link className="nav-link active" to="/">Home</Link>
+                        </li>
+                        
+                        <li className="nav-item dropdown">
+                            <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Logins
+                            </a>
+                            <ul className="dropdown-menu">
+                                <li><Link className="dropdown-item" to="/signin">Organizers</Link></li>
+                                <li><Link className="dropdown-item" to="/vendor-signin">Vendors</Link></li>
+                                <li><hr className="dropdown-divider" /></li>
+                                <li><Link className="dropdown-item" to="/user-signin">Users</Link></li>
+                            </ul>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/user-signin">User Login</Link>
+                        </li>
+                    </ul>
+                    {/* <form className="d-flex" role="search">
+                        <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
+                        <button className="btn btn-outline-success" type="submit">Search</button>
+                    </form> */}
+                </div>
+            </div>
+        </nav>
+    );
+}
+
+export default NavBar;
