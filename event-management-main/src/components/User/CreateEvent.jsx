@@ -29,10 +29,27 @@ const CreateEvent = () => {
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Event Created:", formData);
-    alert("Event Created Successfully!");
+    try
+    {
+      const response =await fetch("http://localhost:8080/api/events",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+        },
+        body:JSON.stringify(formData),
+      });
+      if(response.ok)
+      {
+        alert("Event created successfully");
+      }else{
+        alert("Failed to create event");
+      }
+    }catch(error)
+    {
+      console.error("Error:",error);
+    }
   };
 
   return (
