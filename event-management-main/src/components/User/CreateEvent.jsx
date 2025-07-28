@@ -16,26 +16,33 @@ const CreateEvent = () => {
   const [organizers, setOrganizers] = useState([]);
   const [venues, setVenues] = useState([]);
 
-  // Fetch organizers and venues on mount
-  useEffect(() => {
-    // Fetch organizers
-    fetch("http://localhost:8080/api/organizers")
-      .then((res) => res.json())
-      .then((data) => {
-        setOrganizers(data);
-      })
-      .catch((err) => console.error("Error fetching organizers:", err));
+  const userId = localStorage.getItem("userId"); // ✅ Get logged-in user ID
 
-    // Fetch venues
-    fetch("http://localhost:8080/api/venues")
-      .then((res) => res.json())
-      .then((data) => {
-        setVenues(data);
-      })
-      .catch((err) => console.error("Error fetching venues:", err));
+  useEffect(() => {
+    fetchOrganizers();
+    fetchVenues();
   }, []);
 
-  // Handle field updates
+  const fetchOrganizers = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/api/organizers");
+      const data = await res.json();
+      setOrganizers(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch organizers", error);
+    }
+  };
+
+  const fetchVenues = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/api/venues");
+      const data = await res.json();
+      setVenues(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch venues", error);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -44,7 +51,6 @@ const CreateEvent = () => {
     }));
   };
 
-  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -56,24 +62,38 @@ const CreateEvent = () => {
         id: parseInt(formData.organizerId),
       },
     };
+
     delete payload.organizerId;
 
     try {
-      const response = await fetch("http://localhost:8080/api/events", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/events?userId=${userId}`, // ✅ Add userId as query param
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (response.ok) {
         alert("Event created successfully");
+        setFormData({
+          eventName: "",
+          dateTime: "",
+          capacity: "",
+          budget: "",
+          description: "",
+          organizerId: "",
+          venue: "",
+        });
       } else {
         alert("Failed to create event");
       }
     } catch (error) {
       console.error("Error submitting event:", error);
+      alert("Error occurred. Please try again.");
     }
   };
 
@@ -86,7 +106,6 @@ const CreateEvent = () => {
         <div className="p-2">
           <form onSubmit={handleSubmit}>
             <div className="row">
-              {/* Event Name */}
               <div className="col-md-6 mb-3">
                 <label className="form-label">Event Name</label>
                 <input
@@ -99,7 +118,6 @@ const CreateEvent = () => {
                 />
               </div>
 
-              {/* Date & Time */}
               <div className="col-md-6 mb-3">
                 <label className="form-label">Date & Time</label>
                 <input
@@ -112,8 +130,6 @@ const CreateEvent = () => {
                 />
               </div>
 
-              {/* Organizer Dropdown */}
-              {/* Organizer Dropdown */}
               <div className="col-md-6 mb-3">
                 <label className="form-label">Organizer</label>
                 <select
@@ -124,15 +140,18 @@ const CreateEvent = () => {
                   required
                 >
                   <option value="">Select Organizer</option>
-                  {organizers.map((org) => (
-                    <option key={org.id} value={org.id}>
-                      {org.organizationName} {/* match field from backend */}
-                    </option>
-                  ))}
+                  {organizers.length > 0 ? (
+                    organizers.map((org) => (
+                      <option key={org.id} value={org.id}>
+                        {org.organizationName}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>Loading organizers...</option>
+                  )}
                 </select>
               </div>
 
-              {/* Venue Dropdown */}
               <div className="col-md-6 mb-3">
                 <label className="form-label">Venue</label>
                 <select
@@ -143,15 +162,18 @@ const CreateEvent = () => {
                   required
                 >
                   <option value="">Select Venue</option>
-                  {venues.map((v, idx) => (
-                    <option key={idx} value={v.name}>
-                      {v.name}
-                    </option>
-                  ))}
+                  {venues.length > 0 ? (
+                    venues.map((v) => (
+                      <option key={v.id} value={v.name}>
+                        {v.name}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>Loading venues...</option>
+                  )}
                 </select>
               </div>
 
-              {/* Capacity */}
               <div className="col-md-6 mb-3">
                 <label className="form-label">Capacity</label>
                 <input
@@ -164,7 +186,6 @@ const CreateEvent = () => {
                 />
               </div>
 
-              {/* Budget */}
               <div className="col-md-6 mb-3">
                 <label className="form-label">Budget</label>
                 <input
@@ -177,7 +198,6 @@ const CreateEvent = () => {
                 />
               </div>
 
-              {/* Description */}
               <div className="col-md-12 mb-3">
                 <label className="form-label">Describe Your Event</label>
                 <textarea
@@ -191,7 +211,6 @@ const CreateEvent = () => {
               </div>
             </div>
 
-            {/* Submit */}
             <button type="submit" className="btn btn-primary w-100">
               Create Event
             </button>

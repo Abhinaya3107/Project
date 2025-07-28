@@ -1,20 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import UserNav from "./UserNav";
 import UpdateEventModal from "./UpdateEventModal";
 import PaymentModal from "./PaymentModal";
 
-const initialBookings = [
-  { id: 1, eventName: "Wedding Ceremony", organizer: "John Events", dateTime: "2025-07-10T17:00", venue: "Mumbai Grand Hall", budget: 2400, paymentStatus: "Paid" },
-  { id: 2, eventName: "Corporate Meetup", organizer: "Jane Smith", dateTime: "2025-08-15T10:00", venue: "Delhi Convention Center", budget: 2400,  paymentStatus: "Pending" },
-];
-
 const UserBookings = () => {
-  const [bookings, setBookings] = useState(initialBookings);
+  const [bookings, setBookings] = useState([]);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [editData, setEditData] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  const userId = localStorage.getItem("userId"); // ✅ Dynamic user ID
+
+  useEffect(() => {
+    if (!userId) {
+      console.error("No user ID found in localStorage");
+      return;
+    }
+
+    fetch(`http://localhost:8080/api/events/user/${userId}`)
+      .then((res) => res.json())
+      .then((data) => setBookings(data))
+      .catch((err) => console.error("Error fetching bookings:", err));
+  }, [userId]);
 
   const handleViewBooking = (booking) => {
     setSelectedBooking(booking);
@@ -23,6 +32,7 @@ const UserBookings = () => {
   };
 
   const handleDeleteBooking = (id) => {
+    // Optional: Call DELETE API
     setBookings(bookings.filter((booking) => booking.id !== id));
   };
 
@@ -32,7 +42,7 @@ const UserBookings = () => {
   };
 
   const handleUpdateBooking = () => {
-    setBookings(bookings.map((booking) => (booking.id === editData.id ? editData : booking)));
+    setBookings(bookings.map((b) => (b.id === editData.id ? editData : b)));
     setShowUpdateModal(false);
   };
 
@@ -61,30 +71,54 @@ const UserBookings = () => {
               </tr>
             </thead>
             <tbody>
-              {bookings.map((booking, index) => (
-                <tr key={booking.id}>
-                  <td>{index + 1}</td>
-                  <td>{booking.eventName}</td>
-                  <td>{booking.organizer}</td>
-                  <td>{new Date(booking.dateTime).toLocaleString()}</td>
-                  <td>{booking.venue}</td>
-                  <td>RS {booking.budget}</td>
-                  <td>
-                    <button className="btn btn-info btn-sm me-2" onClick={() => handleViewBooking(booking)}>View</button>
-                    {booking.paymentStatus !== "Paid" && (
-                      <button className="btn bg-warning btn-sm me-2" onClick={() => handleOpenPaymentModal(booking)}>Pay</button>
-                    )}
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDeleteBooking(booking.id)}>Delete</button>
+              {bookings.length > 0 ? (
+                bookings.map((booking, index) => (
+                  <tr key={booking.id}>
+                    <td>{index + 1}</td>
+                    <td>{booking.eventName}</td>
+                    <td>{booking.organizer?.organizationName || "N/A"}</td>
+                    <td>{new Date(booking.dateTime).toLocaleString()}</td>
+                    <td>{booking.venue}</td>
+                    <td>Rs {booking.budget}</td>
+                    <td>
+                      <button className="btn btn-info btn-sm me-2" onClick={() => handleViewBooking(booking)}>
+                        View
+                      </button>
+                      {booking.paymentStatus !== "Paid" && (
+                        <button className="btn bg-warning btn-sm me-2" onClick={() => handleOpenPaymentModal(booking)}>
+                          Pay
+                        </button>
+                      )}
+                      <button className="btn btn-danger btn-sm" onClick={() => handleDeleteBooking(booking.id)}>
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="text-center text-muted">
+                    No bookings found
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Modals */}
-        <UpdateEventModal show={showUpdateModal} handleClose={() => setShowUpdateModal(false)} editData={editData} handleEditChange={handleEditChange} handleUpdateBooking={handleUpdateBooking} />
-        <PaymentModal show={showPaymentModal} handleClose={() => setShowPaymentModal(false)} selectedBooking={selectedBooking} />
+        <UpdateEventModal
+          show={showUpdateModal}
+          handleClose={() => setShowUpdateModal(false)}
+          editData={editData}
+          handleEditChange={handleEditChange}
+          handleUpdateBooking={handleUpdateBooking}
+        />
+        <PaymentModal
+          show={showPaymentModal}
+          handleClose={() => setShowPaymentModal(false)}
+          selectedBooking={selectedBooking}
+        />
       </div>
     </>
   );
