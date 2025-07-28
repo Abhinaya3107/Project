@@ -1,43 +1,45 @@
 import React from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 
 const UpdateEventModal = ({ show, handleClose, editData, handleEditChange, handleUpdateBooking }) => {
+  if (!editData) return null;
+
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Update Booking</Modal.Title>
+        <Modal.Title>Update Event</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {editData && (
-          <div className="container">
-            <div className="row">
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Event Name</label>
-                <input type="text" className="form-control" name="eventName" value={editData.eventName} onChange={handleEditChange} />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Organizer</label>
-                <input type="text" className="form-control" readOnly name="organizer" value={editData.organizer} onChange={handleEditChange} />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Date & Time</label>
-                <input type="datetime-local" className="form-control" name="dateTime" value={editData.dateTime} onChange={handleEditChange} />
-              </div>
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Venue</label>
-                <input type="text" className="form-control" name="venue" value={editData.venue} onChange={handleEditChange} />
-              </div>
-              <div className="col-md-12 mb-3">
-                <label className="form-label">Budget</label>
-                <input type="number" className="form-control" name="budget" value={editData.budget || ""} onChange={handleEditChange} />
-              </div>
-            </div>
-          </div>
-        )}
+        <Form>
+          <Form.Group className="mb-2">
+            <Form.Label>Event Name</Form.Label>
+            <Form.Control name="eventName" value={editData.eventName} onChange={handleEditChange} />
+          </Form.Group>
+          <Form.Group className="mb-2">
+            <Form.Label>Date & Time</Form.Label>
+            <Form.Control type="datetime-local" name="dateTime" value={editData.dateTime} onChange={handleEditChange} />
+          </Form.Group>
+          <Form.Group className="mb-2">
+            <Form.Label>Venue</Form.Label>
+            <Form.Control name="venue" value={editData.venue} onChange={handleEditChange} />
+          </Form.Group>
+          <Form.Group className="mb-2">
+            <Form.Label>Budget</Form.Label>
+            <Form.Control type="number" name="budget" value={editData.budget} onChange={handleEditChange} />
+          </Form.Group>
+          <Form.Group className="mb-2">
+            <Form.Label>Capacity</Form.Label>
+            <Form.Control type="number" name="capacity" value={editData.capacity} onChange={handleEditChange} />
+          </Form.Group>
+          <Form.Group className="mb-2">
+            <Form.Label>Description</Form.Label>
+            <Form.Control as="textarea" rows={2} name="description" value={editData.description} onChange={handleEditChange} />
+          </Form.Group>
+        </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>Close</Button>
-        <Button variant="primary" onClick={handleUpdateBooking}>Update Booking</Button>
+        <Button variant="primary" onClick={handleUpdateBooking}>Save Changes</Button>
       </Modal.Footer>
     </Modal>
   );

@@ -11,7 +11,7 @@ const UserBookings = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  const userId = localStorage.getItem("userId"); // ✅ Dynamic user ID
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     if (!userId) {
@@ -27,23 +27,61 @@ const UserBookings = () => {
 
   const handleViewBooking = (booking) => {
     setSelectedBooking(booking);
-    setEditData(booking);
+    setEditData({ ...booking }); // Clone to avoid direct state mutation
     setShowUpdateModal(true);
   };
 
-  const handleDeleteBooking = (id) => {
-    // Optional: Call DELETE API
-    setBookings(bookings.filter((booking) => booking.id !== id));
-  };
+  const handleDeleteBooking = async (id) => {
+  try {
+    const confirmDelete = window.confirm("Are you sure you want to delete this event?");
+    if (!confirmDelete) return;
+
+    const response = await fetch(`http://localhost:8080/api/events/${id}`, {
+      method: "DELETE",
+    });
+
+    if (response.ok) {
+      setBookings(bookings.filter((booking) => booking.id !== id));
+      alert("Event deleted successfully.");
+    } else {
+      alert("Failed to delete event.");
+    }
+  } catch (error) {
+    console.error("Error deleting booking:", error);
+    alert("An error occurred while deleting the event.");
+  }
+};
+
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditData({ ...editData, [name]: value });
   };
 
-  const handleUpdateBooking = () => {
-    setBookings(bookings.map((b) => (b.id === editData.id ? editData : b)));
-    setShowUpdateModal(false);
+  const handleUpdateBooking = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/events/${editData.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editData),
+      });
+
+      if (response.ok) {
+        const updatedBooking = await response.json();
+        setBookings((prevBookings) =>
+          prevBookings.map((b) => (b.id === updatedBooking.id ? updatedBooking : b))
+        );
+        setShowUpdateModal(false);
+        alert("Booking updated successfully");
+      } else {
+        alert("Failed to update booking");
+      }
+    } catch (error) {
+      console.error("Update failed:", error);
+      alert("An error occurred while updating the booking");
+    }
   };
 
   const handleOpenPaymentModal = (booking) => {
@@ -82,7 +120,7 @@ const UserBookings = () => {
                     <td>Rs {booking.budget}</td>
                     <td>
                       <button className="btn btn-info btn-sm me-2" onClick={() => handleViewBooking(booking)}>
-                        View
+                        Update
                       </button>
                       {booking.paymentStatus !== "Paid" && (
                         <button className="btn bg-warning btn-sm me-2" onClick={() => handleOpenPaymentModal(booking)}>

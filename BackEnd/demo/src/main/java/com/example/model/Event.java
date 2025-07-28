@@ -24,4 +24,7 @@ public class Event {
 	@JoinColumn(name = "organizer_id")
 	private Organizer organizer;
 	private String venue;
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
 }
