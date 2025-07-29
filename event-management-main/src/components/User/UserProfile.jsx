@@ -1,30 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import UserNav from "./UserNav";
-import profileImg from "../../assets/profile.png";
+import profileImg from "../../assets/profile.png"; // default profile image
 
 const UserProfile = () => {
   const [formData, setFormData] = useState(null);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser?.email) {
-      fetch(`http://localhost:8080/api/users/email/${storedUser.email}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setFormData({
-            profile_image: profileImg,
-            firstname: data.firstName,
-            lastname: data.lastName,
-            mobile: data.mobile,
-            email: data.email,
-            address: data.address,
-            created_at: data.creationDate?.substring(0, 10), // format yyyy-mm-dd
-          });
-        })
-        .catch((err) => console.error("Failed to load user data:", err));
-    }
-  }, []);
+  const storedUser = localStorage.getItem("user");
+  if (storedUser) {
+    const user = JSON.parse(storedUser);
+    setFormData({
+      profile_image: profileImg,
+      firstname: user.firstName,
+      lastname: user.lastName,
+      mobile: user.mobile,
+      email: user.email,
+      address: user.address,
+      created_at: user.createdAt || "", // fallback for missing keys
+    });
+  } else {
+    console.warn("No user found in localStorage.");
+  }
+}, []);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,12 +40,20 @@ const UserProfile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Updated Profile:", formData);
-    alert("Profile Updated Successfully!");
-    // Optionally: Call PUT API to update user profile
+    alert("Profile updated successfully!");
+    console.log("Updated Profile Data:", formData);
   };
 
-  if (!formData) return <div className="text-center mt-5">Loading profile...</div>;
+  if (!formData) {
+    return (
+      <>
+        <UserNav />
+        <div className="text-center mt-5">
+          <h4>Loading profile...</h4>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -55,12 +62,7 @@ const UserProfile = () => {
         <div className="card shadow-lg p-4">
           <div className="row mt-3">
             <div className="col-md-4 d-flex flex-column align-items-center">
-              <img
-                src={formData.profile_image}
-                className="rounded-circle mb-3"
-                width="150"
-                alt="Profile"
-              />
+              <img src={formData.profile_image} className="rounded-circle mb-3" width="150" alt="Profile" />
               <input type="file" accept="image/*" className="form-control" onChange={handleImageChange} />
             </div>
 
@@ -79,7 +81,7 @@ const UserProfile = () => {
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Email</label>
-                    <input type="email" className="form-control" value={formData.email} disabled />
+                    <input type="email" name="email" className="form-control" value={formData.email} disabled />
                   </div>
 
                   <div className="col-md-6 mb-3">
@@ -89,12 +91,12 @@ const UserProfile = () => {
 
                   <div className="col-md-12 mb-3">
                     <label className="form-label">Address</label>
-                    <textarea name="address" className="form-control" value={formData.address} onChange={handleChange} required />
+                    <textarea name="address" className="form-control" value={formData.address} onChange={handleChange} required></textarea>
                   </div>
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Date of Registration</label>
-                    <input type="date" className="form-control" value={formData.created_at} disabled />
+                    <input type="date" name="created_at" className="form-control" value={formData.created_at} disabled />
                   </div>
                 </div>
 
