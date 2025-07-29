@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,8 +25,11 @@ public class BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	// for auditing purpose - can maintain creation n updation date|time|timestamp
-	@CreationTimestamp	
+	@CreationTimestamp
+	@Column(name = "creation_date", updatable = false)
 	private LocalDate creationDate;
+	
 	@UpdateTimestamp
+	@Column(name = "updated_on")
 	private LocalDateTime updatedOn;
 }

@@ -104,9 +104,6 @@ const UserHome = () => {
       <div className="container mt-5">
         <QuickActionDashboard />
       </div>
-
-      
-   
     </>
   );
 };

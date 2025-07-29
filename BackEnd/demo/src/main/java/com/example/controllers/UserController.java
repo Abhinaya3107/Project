@@ -36,18 +36,24 @@ public class UserController {
         }
     }
 
-    // ✅ SIGNIN: Authenticate user
     @PostMapping("/signin")
     public ResponseEntity<?> loginUser(@RequestBody User loginRequest) {
         Optional<User> user = userRepo.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
 
         if (user.isPresent()) {
-            // ✅ Return JSON with message and userId
+            User loggedInUser = user.get();
+
             return ResponseEntity.ok().body(
                 Map.of(
                     "message", "Login successful!",
-                    "userId", user.get().getId()
-                )
+                    "user", Map.of(
+                        "id", loggedInUser.getId(),
+                        "firstName", loggedInUser.getFirstName(),
+                        "lastName", loggedInUser.getLastName(),
+                        "email", loggedInUser.getEmail(),
+                        "mobile", loggedInUser.getMobile()
+                        
+                ))
             );
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
