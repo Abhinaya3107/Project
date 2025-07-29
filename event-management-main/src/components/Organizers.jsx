@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import profileImage from "../assets/profile.png";
 
@@ -25,6 +26,8 @@ const Organizers = () => {
 
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [organizers, setOrganizers] = useState([]);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchOrganizers = async () => {
@@ -65,40 +68,32 @@ const Organizers = () => {
 
         {/* Organizer Cards */}
         <div className="row">
-          {organizers.length > 0 ? (
-            organizers.map((organizer) => (
-              <div key={organizer.id} className="col-md-4 col-sm-6 mb-4">
-                <div className="card shadow-lg text-center">
-                  <div className="d-flex flex-column align-items-center p-3">
-                    <img
-                      src={profileImage}
-                      className="rounded-circle mb-3"
-                      alt={organizer.first_name}
-                      style={{ width: "120px", height: "120px", objectFit: "cover" }}
-                    />
-                    <h5 className="card-title">
-                      {organizer.first_name} {organizer.last_name}
-                    </h5>
-                    <p className="card-text">
-                      <strong>Email:</strong> {organizer.email}
-                    </p>
-                    <p className="card-text">
-                      <strong>Contact:</strong> {organizer.mobile}
-                    </p>
-                    <p className="card-text">
-                      <strong>Address:</strong> {organizer.address}
-                    </p>
-                    <p className="card-text">
-                      <strong>Category:</strong> {organizer.category}
-                    </p>
-                    <button className="btn btn-primary mt-2">Book Now</button>
-                  </div>
+          {organizers.map((organizer) => (
+            <div key={organizer.id} className="col-md-4 col-sm-6 mb-4">
+              <div className="card shadow-lg text-center">
+                <div className="d-flex flex-column align-items-center p-3">
+                  <img
+                    src={profileImage}
+                    className="rounded-circle mb-3"
+                    alt={organizer.first_name}
+                    style={{ width: "120px", height: "120px", objectFit: "cover" }}
+                  />
+                  <p><strong>Email:</strong> {organizer.email}</p>
+                  <p><strong>Contact:</strong> {organizer.mobile}</p>
+                  <p><strong>Address:</strong> {organizer.address}</p>
+                  <p><strong>Category:</strong> {organizer.category}</p>
+
+                  <button
+                    className="btn btn-primary mt-2"
+                    onClick={() => navigate("/signin")}
+                  >
+                    Book Now
+                  </button>
                 </div>
               </div>
-            ))
-          ) : (
-            <p className="text-center">No organizers found.</p>
-          )}
+            </div>
+          ))}
+
         </div>
       </section>
 
