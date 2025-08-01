@@ -1,9 +1,11 @@
 package com.example.service;
 
+import com.example.model.Vendor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.model.Vendor;
+import java.util.Optional;
 
-public interface VendorService extends JpaRepository<Vendor, Long>{
-
+public interface VendorService extends JpaRepository<Vendor, Long> {
+    Optional<Vendor> findByEmail(String email);
+    Optional<Vendor> findByEmailAndPassword(String email, String password);
 }

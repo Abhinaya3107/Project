@@ -9,7 +9,7 @@ import NavBar from "./components/NavBar";
 import Signin from "./components/Organizer/Signin";
 import Home from "./components/Home";
 import VendorSignin from "./components/Vendor/VendorSignin";
-import VendorSignUp from "./components/Vendor/VendorSignUp";
+import VendorSignUp from "./components/AddVendorModal";
 import UserSignin from "./components/User/UserSignin";
 import OrgDash from "./components/Organizer/OrgDash";
 import ProtectedRoute from "./components/ProtectedRoute";

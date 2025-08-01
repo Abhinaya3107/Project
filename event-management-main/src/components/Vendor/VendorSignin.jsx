@@ -61,7 +61,7 @@ const VendorSignin = () => {
           Forgot Password?
         </Link>
         <button className="btn btn-primary w-100 mt-2 mb-4">Sign In</button>
-        <Link to="/vendor-signup" className="d-flex justify-content-center">
+        <Link to="./AddVendorModal" className="d-flex justify-content-center">
           Don't have an account? Sign Up
         </Link>
       </form>
