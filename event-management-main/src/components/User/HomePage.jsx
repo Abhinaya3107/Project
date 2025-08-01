@@ -1,23 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import profileImage from "../../assets/profile.png";
+
+import weddingImage from "../../assets/wedding.jpg";
+import corporateImage from "../../assets/corporate.jpg";
+import socialEventImage from "../../assets/socialevent.jpg";
+import birthdayPartyImage from "../../assets/birthday.jpg";
+
 import UserNav from "./UserNav";
-import profleImg from "../../assets/profile.png";
 import QuickActionDashboard from "./QuickActionDashboard";
 
-const organizers = [
-  { id: 1, name: "John Doe", category: "Wedding", img: profleImg },
-  { id: 2, name: "Jane Smith", category: "Corporate", img: profleImg },
-  { id: 3, name: "Mike Johnson", category: "Party", img: profleImg },
+const categories = ["All", "Wedding", "Corporate", "Party"];
+
+const eventThemes = [
+  { name: "Royal Wedding", image: weddingImage },
+  { name: "Corporate Gala", image: corporateImage },
+  { name: "Social Event", image: socialEventImage },
+  { name: "Birthday Party", image: birthdayPartyImage },
 ];
 
 const UserHome = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [category, setCategory] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [organizers, setOrganizers] = useState([]);
+  const navigate = useNavigate();
 
-  const filteredOrganizers = organizers.filter((org) =>
-    (org.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm === "") &&
-    (category === "All" || org.category === category)
-  );
+  useEffect(() => {
+    const fetchOrganizers = async () => {
+      try {
+        const endpoint =
+          selectedCategory === "All"
+            ? "http://localhost:8080/api/organizers"
+            : `http://localhost:8080/api/organizers/category/${selectedCategory}`;
+        const response = await fetch(endpoint);
+        const data = await response.json();
+        setOrganizers(data);
+      } catch (error) {
+        console.error("Error fetching organizers:", error);
+      }
+    };
+
+    fetchOrganizers();
+  }, [selectedCategory]);
 
   return (
     <>
@@ -29,27 +53,17 @@ const UserHome = () => {
         <p className="lead">
           Search for the best event planners to make your event memorable!
         </p>
-        <div className="d-flex justify-content-center mt-4">
-          <input
-            type="text"
-            className="form-control w-50 me-2"
-            placeholder="Search event organizers..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <button className="btn btn-warning">Search</button>
-        </div>
       </div>
 
       {/* Category Filter */}
       <div className="container text-center mt-5">
         <h2 className="mb-4">Event Organizers</h2>
         <div className="d-flex justify-content-center gap-3 mb-4">
-          {["All", "Wedding", "Corporate", "Party"].map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat}
-              className={`btn ${category === cat ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => setCategory(cat)}
+              className={`btn ${selectedCategory === cat ? "btn-primary" : "btn-outline-primary"}`}
+              onClick={() => setSelectedCategory(cat)}
             >
               {cat}
             </button>
@@ -58,20 +72,27 @@ const UserHome = () => {
 
         {/* Organizer Cards */}
         <div className="row">
-          {filteredOrganizers.map((org) => (
-            <div key={org.id} className="col-md-4 mb-4">
-              <div className="card text-center p-3 shadow">
-                <img
-                  src={org.img}
-                  alt="Profile"
-                  className="mx-auto d-block rounded-circle mb-3"
-                  width="80"
-                />
-                <h5>{org.name}</h5>
-                <p className="text-muted">{org.category}</p>
-                <div className="d-flex justify-content-center gap-3">
-                  <button className="btn btn-outline-primary">View</button>
-                  <button className="btn btn-success">Book</button>
+          {organizers.map((organizer) => (
+            <div key={organizer.id} className="col-md-4 col-sm-6 mb-4">
+              <div className="card shadow-lg text-center">
+                <div className="d-flex flex-column align-items-center p-3">
+                  <img
+                    src={profileImage}
+                    className="rounded-circle mb-3"
+                    alt={organizer.first_name}
+                    style={{ width: "120px", height: "120px", objectFit: "cover" }}
+                  />
+                  <p><strong>Email:</strong> {organizer.email}</p>
+                  <p><strong>Contact:</strong> {organizer.mobile}</p>
+                  <p><strong>Address:</strong> {organizer.address}</p>
+                  <p><strong>Category:</strong> {organizer.category}</p>
+
+                  <button
+                    className="btn btn-primary mt-2"
+                    onClick={() => navigate("/signin")}
+                  >
+                    Book Now
+                  </button>
                 </div>
               </div>
             </div>

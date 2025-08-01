@@ -31,7 +31,7 @@ public class Organizer extends BaseEntity {
     @Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid mobile number")
     @Size(min = 10, max = 10, message = "Mobile number must be 10 digits")
     private String mobile; // ❗ Changed from `int` to `String` for validation
-
+    private String category;
     @Column(length = 10, nullable = false)
     private String password;
 

@@ -13,7 +13,7 @@ const VendorSignin = () => {
   const handleSignin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/api/vendors/signin", {
+      const response = await fetch("http://localhost:8080/api/vendor/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

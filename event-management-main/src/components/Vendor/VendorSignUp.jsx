@@ -100,7 +100,7 @@ const VendorSignUp = () => {
         value={formData.category}
         onChange={handleChange}
         required
-        >
+    >
   <option value="">Select Category</option>
   <option value="food">Food</option>
   <option value="decoration">Decoration</option>

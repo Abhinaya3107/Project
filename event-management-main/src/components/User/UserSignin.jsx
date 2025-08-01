@@ -22,11 +22,14 @@ const UserSignin = () => {
       const result = await response.json();
 
       if (response.ok && result.message === "Login successful!") {
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("userEmail", formData.email);
-        localStorage.setItem("userId", result.userId); // store user ID for later use
-        navigate("/index");
-      } else {
+  localStorage.setItem("isAuthenticated", "true");
+
+  // Save full user data in localStorage
+  localStorage.setItem("user", JSON.stringify(result.user));
+
+  navigate("/index");
+}
+ else {
         alert(result.message || "Invalid credentials.");
       }
     } catch (error) {
