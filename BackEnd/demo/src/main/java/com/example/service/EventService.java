@@ -39,4 +39,6 @@ public class EventService {
     public Optional<Event> findByUserId(Long userId) {
         return eventRepository.findById(userId);
     }
+    
+
 }

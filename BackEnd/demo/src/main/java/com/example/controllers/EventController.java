@@ -2,6 +2,7 @@ package com.example.controllers;
 
 import com.example.model.Event;
 import com.example.model.User;
+import com.example.model.Vendor;
 import com.example.repository.EventRepository;
 import com.example.repository.UserRepository;
 import com.example.service.EventService;
@@ -33,12 +34,18 @@ public class EventController {
         }
 
         User user = userOptional.get();
-        event.setUser(user); // Associate event with user
+        event.setUser(user);
 
-        System.out.println("Received Event: " + event);
+        if (event.getVendors() != null) {
+            for (Vendor vendor : event.getVendors()) {
+                vendor.setEvent(event);
+            }
+        }
+
         Event savedEvent = eventService.save(event);
         return new ResponseEntity<>(savedEvent, HttpStatus.CREATED);
     }
+
     
     @PutMapping("/{eventId}")
     public ResponseEntity<Event> updateEvent(@PathVariable Long eventId, @RequestBody Event updatedEvent) {
@@ -70,9 +77,6 @@ public class EventController {
         return eventService.findAll();
     }
 
-    // Get events for a specific user
-    @GetMapping("/user/{userId}")
-    public Optional<Event> getEventsByUserId(@PathVariable Long userId) {
-        return eventService.findById(userId);
-    }
+    
+
 }

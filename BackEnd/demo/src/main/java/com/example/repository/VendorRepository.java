@@ -1,9 +1,19 @@
 package com.example.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.model.Vendor;
 
-public interface VendorRepository extends JpaRepository<Vendor, Long>{
+public interface VendorRepository extends JpaRepository<Vendor, Long> {
 
+    Optional<Vendor> findByEmailAndPassword(String email, String password);
+
+    boolean existsByEmail(String email);
+
+    List<Vendor> findByCategory(String category);
+
+    List<Vendor> findByEventId(Long eventId);
 }

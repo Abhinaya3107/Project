@@ -8,6 +8,7 @@ import "./App.css";
 import NavBar from "./components/NavBar";
 import Signin from "./components/Organizer/Signin";
 import Home from "./components/Home";
+
 import VendorSignin from "./components/Vendor/VendorSignin";
 import VendorSignUp from "./components/Vendor/VendorSignUp";
 import UserSignin from "./components/User/UserSignin";
@@ -58,6 +59,7 @@ function App() {
           <Route path="/vendor-signup" element={<VendorSignUp />} />
         <Route path="/user-signin" element={<UserSignin />} />
         <Route path="/user-signup" element={<UserSignUp />} />
+        <Route path="/vendor-dashboard" element={<VendorDash />} />
         
 
         <Route path="/register" element={<RegisterEM />} />
