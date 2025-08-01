@@ -9,6 +9,7 @@ import NavBar from "./components/NavBar";
 import Signin from "./components/Organizer/Signin";
 import Home from "./components/Home";
 import VendorSignin from "./components/Vendor/VendorSignin";
+import VendorSignUp from "./components/Vendor/VendorSignUp";
 import UserSignin from "./components/User/UserSignin";
 import OrgDash from "./components/Organizer/OrgDash";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -54,6 +55,7 @@ function App() {
 <Route path="/" element={<Home />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/vendor-signin" element={<VendorSignin />} />
+          <Route path="/vendor-signup" element={<VendorSignUp />} />
         <Route path="/user-signin" element={<UserSignin />} />
         <Route path="/user-signup" element={<UserSignUp />} />
 
