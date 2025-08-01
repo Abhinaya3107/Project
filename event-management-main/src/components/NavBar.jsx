@@ -6,7 +6,7 @@ function NavBar() {
         <nav className="navbar navbar-expand-lg navbar-light" style={{backgroundColor: '#e3f2fd'}} data-bs-theme="light">
             <div className="container-fluid">
                 <Link className="navbar-brand fw-bold d-flex flex-column align-items-start" to="/">
-                  Event Management System
+                  Eventify
                   <span className="fw-normal small" style={{fontSize: '0.85rem', lineHeight: 1, color: 'black'}}>Where Moments Become Memories</span>
                 </Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
