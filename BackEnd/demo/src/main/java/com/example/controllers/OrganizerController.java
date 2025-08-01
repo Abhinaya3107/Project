@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.model.Organizer;
-import com.example.repository.OrganizerRepository;
+import com.example.service.OrganizerService;
 
 @RestController
 @RequestMapping("/api/organizers")
 public class OrganizerController {
 	@Autowired
-	private OrganizerRepository orgRepo;
+	private OrganizerService orgRepo;
 	
 	@GetMapping
 	public List<Organizer> getAllOrganizers()

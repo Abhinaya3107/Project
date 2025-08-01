@@ -1,5 +1,9 @@
 package com.example.service;
 
-public interface VendorService {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.model.Vendor;
+
+public interface VendorService extends JpaRepository<Vendor, Long>{
 
 }

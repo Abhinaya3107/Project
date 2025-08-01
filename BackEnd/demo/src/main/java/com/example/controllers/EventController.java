@@ -2,8 +2,9 @@ package com.example.controllers;
 
 import com.example.model.Event;
 import com.example.model.User;
-import com.example.repository.EventRepository;
-import com.example.repository.UserRepository;
+import com.example.service.EventService;
+
+import com.example.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,10 +19,10 @@ import org.springframework.web.bind.annotation.*;
 public class EventController {
 
     @Autowired
-    private EventRepository eventRepo;
+    private EventService eventRepo;
 
     @Autowired
-    private UserRepository userRepo;
+    private UserService userRepo;
 
     // Create Event and associate with user
     @PostMapping
