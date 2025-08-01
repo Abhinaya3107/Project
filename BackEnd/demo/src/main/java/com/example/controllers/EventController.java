@@ -70,9 +70,11 @@ public class EventController {
         return eventService.findAll();
     }
 
-    // Get events for a specific user
     @GetMapping("/user/{userId}")
-    public Optional<Event> getEventsByUserId(@PathVariable Long userId) {
-        return eventService.findById(userId);
+    public List<Event> getEventsByUserId(@PathVariable Long userId) {
+        return eventService.findByUserId(userId);
     }
+
+
+
 }

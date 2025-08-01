@@ -60,4 +60,49 @@ public class UserController {
                     .body(Map.of("message", "Invalid email or password"));
         }
     }
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<String> changePassword(
+        @PathVariable Long id,
+        @RequestBody Map<String, String> request
+    ) {
+        Optional<User> optionalUser = userRepo.findById(id);
+
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        User user = optionalUser.get();
+        String currentPassword = request.get("currentPassword");
+        String newPassword = request.get("newPassword");
+
+        if (!user.getPassword().equals(currentPassword)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect");
+        }
+
+        user.setPassword(newPassword);
+        userRepo.save(user);
+
+        return ResponseEntity.ok("Password updated successfully");
+    }
+    
+    
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUserProfile(@PathVariable Long id, @RequestBody User updatedUser) {
+        return userRepo.findById(id).map(existingUser -> {
+            existingUser.setFirstName(updatedUser.getFirstName());
+            existingUser.setLastName(updatedUser.getLastName());
+            existingUser.setMobile(updatedUser.getMobile());
+            
+
+            userRepo.save(existingUser);
+            return ResponseEntity.ok(Map.of("message", "Profile updated successfully", "user", existingUser));
+        }).orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+        	    Map.of("message", "User not found")
+        		));
+
+    }
+
+
+
 }
