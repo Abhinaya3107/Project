@@ -13,9 +13,6 @@ const UserNav = () => {
             <Link className="nav-link" to="/index">Home</Link>
           </li>
           <li className="nav-item mx-2">
-            <Link className="nav-link" to="/index/Organizers">Organizers</Link>
-          </li>
-          <li className="nav-item mx-2">
             <Link className="nav-link" to="/index/Messages">Messages</Link>
           </li>
           <li className="nav-item mx-2">
