@@ -1,7 +1,7 @@
 package com.example.controllers;
 
 import com.example.model.User;
-import com.example.service.UserService;
+import com.example.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -16,9 +16,9 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    private UserService userRepo;
+    private UserRepository userRepo;
 
-    // ✅ SIGNUP: Save user
+    
     @PostMapping("/signup")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
         try {

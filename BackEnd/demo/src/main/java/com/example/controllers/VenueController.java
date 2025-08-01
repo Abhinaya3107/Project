@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.model.Venue;
-import com.example.service.VenueService;
+import com.example.repository.VenueRepository;
 
 @RestController
 @RequestMapping("/api/venues")
 public class VenueController {
 	@Autowired
-	private VenueService venueRepo;
+	private VenueRepository venueRepo;
 	
 	@GetMapping
 	public List<Venue> getAllVenues(){

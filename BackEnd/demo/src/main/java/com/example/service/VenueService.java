@@ -1,9 +1,5 @@
 package com.example.service;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+public class VenueService {
 
-import com.example.model.Venue;
-
-public interface VenueService extends JpaRepository<Venue, Long>{
-	
 }

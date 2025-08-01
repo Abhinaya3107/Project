@@ -1,10 +1,5 @@
 package com.example.service;
-import com.example.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Optional;
+public class UserService {
 
-public interface UserService extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
-    Optional<User> findByEmailAndPassword(String email, String password);
 }

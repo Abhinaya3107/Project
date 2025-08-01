@@ -2,9 +2,9 @@ package com.example.controllers;
 
 import com.example.model.Event;
 import com.example.model.User;
+import com.example.repository.EventRepository;
+import com.example.repository.UserRepository;
 import com.example.service.EventService;
-
-import com.example.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.*;
 public class EventController {
 
     @Autowired
-    private EventService eventRepo;
+    private EventService eventService;
 
     @Autowired
-    private UserService userRepo;
+    private UserRepository userRepo;
 
     // Create Event and associate with user
     @PostMapping
@@ -36,30 +36,30 @@ public class EventController {
         event.setUser(user); // Associate event with user
 
         System.out.println("Received Event: " + event);
-        Event savedEvent = eventRepo.save(event);
+        Event savedEvent = eventService.save(event);
         return new ResponseEntity<>(savedEvent, HttpStatus.CREATED);
     }
     
     @PutMapping("/{eventId}")
     public ResponseEntity<Event> updateEvent(@PathVariable Long eventId, @RequestBody Event updatedEvent) {
-        return eventRepo.findById(eventId).map(existingEvent -> {
+        return eventService.findById(eventId).map(existingEvent -> {
             existingEvent.setEventName(updatedEvent.getEventName());
             existingEvent.setDateTime(updatedEvent.getDateTime());
             existingEvent.setCapacity(updatedEvent.getCapacity());
             existingEvent.setBudget(updatedEvent.getBudget());
             existingEvent.setDescription(updatedEvent.getDescription());
             existingEvent.setVenue(updatedEvent.getVenue());
-            Event saved = eventRepo.save(existingEvent);
+            Event saved = eventService.save(existingEvent);
             return ResponseEntity.ok(saved);
         }).orElse(ResponseEntity.notFound().build());
     }
  // Delete an event by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
-        if (!eventRepo.existsById(id)) {
+        if (!eventService.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event not found with ID: " + id);
         }
-        eventRepo.deleteById(id);
+        eventService.deleteById(id);
         return ResponseEntity.ok("Event deleted successfully");
     }
 
@@ -67,12 +67,12 @@ public class EventController {
     // Get all events (for admin or public use)
     @GetMapping
     public List<Event> getAllEvents() {
-        return eventRepo.findAll();
+        return eventService.findAll();
     }
 
     // Get events for a specific user
     @GetMapping("/user/{userId}")
-    public List<Event> getEventsByUserId(@PathVariable Long userId) {
-        return eventRepo.findByUserId(userId);
+    public Optional<Event> getEventsByUserId(@PathVariable Long userId) {
+        return eventService.findById(userId);
     }
 }
