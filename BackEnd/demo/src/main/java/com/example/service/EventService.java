@@ -38,9 +38,5 @@ public class EventService {
     public List<Event> findByUserId(Long userId) {
         return eventRepository.findByUser_Id(userId);
     }
-<<<<<<< HEAD
-=======
-    
->>>>>>> vendor
 
 }

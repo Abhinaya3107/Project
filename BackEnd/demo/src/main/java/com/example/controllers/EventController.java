@@ -77,15 +77,10 @@ public class EventController {
         return eventService.findAll();
     }
 
-<<<<<<< HEAD
     @GetMapping("/user/{userId}")
     public List<Event> getEventsByUserId(@PathVariable Long userId) {
         return eventService.findByUserId(userId);
     }
 
-
-=======
-    
->>>>>>> vendor
 
 }
