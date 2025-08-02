@@ -1,5 +1,5 @@
-package com.example.repository;
 
+<<<<<<< HEAD
 import java.util.List;
 import java.util.Optional;
 
@@ -19,3 +19,5 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
 	List<Vendor> findByCategory(String category);
 	List<Vendor> findByEventId(Long eventId);
 }
+=======
+>>>>>>> org3

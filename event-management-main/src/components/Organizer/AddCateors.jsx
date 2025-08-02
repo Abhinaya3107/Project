@@ -1,44 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 
-const UpdateVenueOwnerModal = ({ show, onHide, owner }) => {
+const AddCateors = ({ show, onHide }) => {
   const [formData, setFormData] = useState({
     name: "",
     contact: "",
-    venuesOwned: "",
+    email: "",
+    password: ""
   });
 
-  useEffect(() => {
-    if (owner) {
-      setFormData({
-        name: owner.name || "",
-        contact: owner.contact || "",
-        venuesOwned: owner.venuesOwned || "",
-      });
-    }
-  }, [owner]);
-
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Venue owner details updated successfully!");
+    alert("Cateors added successfully!");
+    console.log("Form Data:", formData);
     onHide();
   };
 
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Update Venue Owner</Modal.Title>
+        <Modal.Title>Add Cateors</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Owner Name</Form.Label>
+                <Form.Label>Name</Form.Label>
                 <Form.Control
                   type="text"
                   name="name"
@@ -61,14 +54,29 @@ const UpdateVenueOwnerModal = ({ show, onHide, owner }) => {
                 />
               </Form.Group>
             </Col>
+          </Row>
+
+          <Row>
+            <Col md={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Number of Venues Owned</Form.Label>
+                <Form.Label>Password</Form.Label>
                 <Form.Control
-                  type="number"
-                  name="venuesOwned"
-                  value={formData.venuesOwned}
+                  type="password"
+                  name="password"
+                  value={formData.password}
                   onChange={handleChange}
                   required
                 />
@@ -77,7 +85,7 @@ const UpdateVenueOwnerModal = ({ show, onHide, owner }) => {
           </Row>
 
           <Button variant="primary" type="submit" className="w-100">
-            Update Venue Owner
+            Add Cateors
           </Button>
         </Form>
       </Modal.Body>
@@ -85,4 +93,5 @@ const UpdateVenueOwnerModal = ({ show, onHide, owner }) => {
   );
 };
 
-export default UpdateVenueOwnerModal;
+export default AddCateors;
+

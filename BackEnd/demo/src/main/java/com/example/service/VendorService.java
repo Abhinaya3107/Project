@@ -1,5 +1,5 @@
-package com.example.service;
 
+<<<<<<< HEAD
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -63,3 +63,5 @@ public class VendorService {
 }
 
 }
+=======
+>>>>>>> org3

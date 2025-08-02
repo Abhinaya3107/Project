@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import UpdatePhotographerModal from "./UpdatePhotographerModal";
-import AskToCollaborateModal from "./AskToCollaborateModal"; // ✅ Import the modal
+
 import AddVendorModal from "../AddVendorModal";
 
 const Photographers = () => {
@@ -18,9 +18,9 @@ const Photographers = () => {
 
   // Sample photographers data
   const photographers = [
-    { id: 1, name: "John Doe", specialty: "Wedding Photography", experience: "10 Years", contact: "9876543210", sts: "available" },
-    { id: 2, name: "Jane Smith", specialty: "Corporate Events", experience: "5 Years", contact: "8765432109", sts: "booked" },
-    { id: 3, name: "Alice Brown", specialty: "Portrait Photography", experience: "8 Years", contact: "7654321098", sts: "available" },
+    { id: 1, name: "John Doe", contact: "9876543210", sts: "available" },
+    { id: 2, name: "Jane Smith",  contact: "8765432109", sts: "booked" },
+    { id: 3, name: "Alice Brown",  contact: "7654321098", sts: "available" },
   ];
 
   const filteredPhotographers = photographers.filter((photographer) =>
@@ -68,8 +68,6 @@ const Photographers = () => {
               <tr>
                 <th>Sr. No</th>
                 <th>Name</th>
-                <th>Specialty</th>
-                <th>Experience</th>
                 <th>Contact</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -80,8 +78,6 @@ const Photographers = () => {
                 <tr key={photographer.id}>
                   <td>{index + 1}</td>
                   <td>{photographer.name}</td>
-                  <td>{photographer.specialty}</td>
-                  <td>{photographer.experience}</td>
                   <td>{photographer.contact}</td>
                   <td>
                     <span className={`badge bg-${photographer.sts === "available" ? "success" : "danger"}`}>
@@ -90,7 +86,7 @@ const Photographers = () => {
                   </td>
                   <td>
                     {/* Collaboration Button */}
-                    {photographer.sts === "available" && (
+                    {/* {photographer.sts === "available" && (
                       <button
                         className="btn btn-warning btn-sm me-2"
                         onClick={() => {
@@ -100,7 +96,7 @@ const Photographers = () => {
                       >
                         Ask to Collaborate
                       </button>
-                    )}
+                    )} */}
                     <button
                       className="btn btn-primary btn-sm me-2"
                       onClick={() => {
@@ -124,7 +120,7 @@ const Photographers = () => {
                 <AddVendorModal show={showModal} onHide={() => setShowModal(false)} />
 
         <UpdatePhotographerModal show={showUpdateModal} onHide={() => setShowUpdateModal(false)} photographer={selectedPhotographer} />
-        <AskToCollaborateModal show={showCollaborateModal} onHide={() => setShowCollaborateModal(false)} collaborator={selectedCollaborator} />
+        {/* <AskToCollaborateModal show={showCollaborateModal} onHide={() => setShowCollaborateModal(false)} collaborator={selectedCollaborator} /> */}
       </div>
     </>
   );

@@ -4,18 +4,14 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 const UpdateCatererModal = ({ show, onHide, caterer }) => {
   const [formData, setFormData] = useState({
     name: "",
-    cuisine: "",
-    experience: "",
-    contact: "",
+    contact: ""
   });
 
   useEffect(() => {
     if (caterer) {
       setFormData({
         name: caterer.name || "",
-        cuisine: caterer.cuisine || "",
-        experience: caterer.experience || "",
-        contact: caterer.contact || "",
+        contact: caterer.contact || ""
       });
     }
   }, [caterer]);
@@ -42,20 +38,6 @@ const UpdateCatererModal = ({ show, onHide, caterer }) => {
               <Form.Group className="mb-3">
                 <Form.Label>Name</Form.Label>
                 <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} required />
-              </Form.Group>
-            </Col>
-
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Cuisine</Form.Label>
-                <Form.Control type="text" name="cuisine" value={formData.cuisine} onChange={handleChange} required />
-              </Form.Group>
-            </Col>
-
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Experience</Form.Label>
-                <Form.Control type="text" name="experience" value={formData.experience} onChange={handleChange} required />
               </Form.Group>
             </Col>
 

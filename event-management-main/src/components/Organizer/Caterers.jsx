@@ -1,26 +1,53 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+// import updateCatererModal from "./UpdateCatererModal";
+import AddCateors from "./AddCateors";
 import OrgNavbar from "./OrgNavBar";
 import Sidebar from "./Sidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import UpdateCatererModal from "./UpdateCatererModal";
-import AskToCollaborateModal from "./AskToCollaborateModal"; // ✅ Import collaboration modal
+
 import AddVendorModal from "../AddVendorModal";
+// import { useNavigate } from "react-router-dom";
 
 const Caterers = () => {
+  const navigate = useNavigate();
+
+  function handleButtonClick() {
+    navigate("/addCateors"); // replace with your desired path
+  }
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedCaterer, setSelectedCaterer] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
-  const [showCollaborateModal, setShowCollaborateModal] = useState(false);
-  const [selectedCollaborator, setSelectedCollaborator] = useState(null);
+  // const [showCollaborateModal, setShowCollaborateModal] = useState(false);
+  // const [selectedCollaborator, setSelectedCollaborator] = useState(null);
 
   // Sample caterers data
   const caterers = [
-    { id: 1, name: "Tasty Treats", cuisine: "Indian", experience: "15 Years", contact: "9876543210", sts: "available" },
-    { id: 2, name: "Gourmet Delights", cuisine: "Continental", experience: "8 Years", contact: "8765432109", sts: "booked" },
-    { id: 3, name: "Royal Feasts", cuisine: "Traditional", experience: "12 Years", contact: "7654321098", sts: "available" },
+    {
+      id: 1,
+      name: "Tasty Treats",
+      cuisine: "Indian",
+      contact: "9876543210",
+      sts: "available",
+    },
+    {
+      id: 2,
+      name: "Gourmet Delights",
+      cuisine: "Continental",
+      contact: "8765432109",
+      sts: "booked",
+    },
+    {
+      id: 3,
+      name: "Royal Feasts",
+      cuisine: "Traditional",
+      contact: "7654321098",
+      sts: "available",
+    },
   ];
 
   const filteredCaterers = caterers.filter(
@@ -52,18 +79,24 @@ const Caterers = () => {
               />
               {/* Toggle Available Only */}
               <button
-                className={`btn btn-${showAvailableOnly ? "secondary" : "info"} btn-sm`}
+                className={`btn btn-${
+                  showAvailableOnly ? "secondary" : "info"
+                } btn-sm`}
                 onClick={() => setShowAvailableOnly(!showAvailableOnly)}
+                // onClick={handleButtonClick}
               >
                 {showAvailableOnly ? "All" : "Available"}
               </button>
               {/* Add Caterer Button */}
               <button
+                // onClick={() => setShowModal(true)}
+                // onClick={handleButtonClick}
                 onClick={() => setShowModal(true)}
                 className="btn btn-success btn-sm d-inline-flex align-items-center"
               >
                 <i className="bi bi-plus me-2"></i> Add
               </button>
+              <AddCateors show={showModal} onHide={() => setShowModal(false)} />
             </div>
           </div>
 
@@ -73,8 +106,6 @@ const Caterers = () => {
               <tr>
                 <th>Sr. No</th>
                 <th>Name</th>
-                <th>Cuisine</th>
-                <th>Experience</th>
                 <th>Contact</th>
                 <th>Status</th>
                 <th>Actions</th>
@@ -85,16 +116,18 @@ const Caterers = () => {
                 <tr key={caterer.id}>
                   <td>{index + 1}</td>
                   <td>{caterer.name}</td>
-                  <td>{caterer.cuisine}</td>
-                  <td>{caterer.experience}</td>
                   <td>{caterer.contact}</td>
                   <td>
-                    <span className={`badge bg-${caterer.sts === "available" ? "success" : "danger"}`}>
+                    <span
+                      className={`badge bg-${
+                        caterer.sts === "available" ? "success" : "danger"
+                      }`}
+                    >
                       {caterer.sts}
                     </span>
                   </td>
                   <td>
-                    {/* Collaboration Button */}
+                    {/* Collaboration Button
                     {caterer.sts === "available" && (
                       <button
                         className="btn btn-warning btn-sm me-2"
@@ -104,8 +137,8 @@ const Caterers = () => {
                         }}
                       >
                         Ask to Collaborate
-                      </button>
-                    )}
+                      </button> */}
+                    {/* )} */}
                     {/* Update Button */}
                     <button
                       className="btn btn-primary btn-sm me-2"
@@ -128,9 +161,13 @@ const Caterers = () => {
         </div>
 
         {/* Modal Components */}
-        <AddVendorModal show={showModal} onHide={() => setShowModal(false)} />
-        <UpdateCatererModal show={showUpdateModal} onHide={() => setShowUpdateModal(false)} caterer={selectedCaterer} />
-        <AskToCollaborateModal show={showCollaborateModal} onHide={() => setShowCollaborateModal(false)} collaborator={selectedCollaborator} />
+        <AddCateors show={showModal} onHide={() => setShowModal(false)} />
+        <AddCateors
+          show={showUpdateModal}
+          onHide={() => setShowUpdateModal(false)}
+          caterer={selectedCaterer}
+        />
+        {/* <AskToCollaborateModal show={showCollaborateModal} onHide={() => setShowCollaborateModal(false)} collaborator={selectedCollaborator} /> */}
       </div>
     </>
   );

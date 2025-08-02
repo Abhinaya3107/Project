@@ -1,5 +1,5 @@
-package com.example.controllers;
 
+<<<<<<< HEAD
 import com.example.dto.VendorSigninRequest;
 import com.example.model.Vendor;
 import com.example.service.VendorService;
@@ -94,3 +94,5 @@ public class VendorController {
     }
 
 }
+=======
+>>>>>>> org3
