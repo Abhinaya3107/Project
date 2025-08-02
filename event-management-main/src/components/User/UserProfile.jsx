@@ -38,11 +38,44 @@ const UserProfile = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert("Profile updated successfully!");
-    console.log("Updated Profile Data:", formData);
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const userId = storedUser.id;
+
+    const payload = {
+      firstName: formData.firstname,
+      lastName: formData.lastname,
+      mobile: formData.mobile,
+      address: formData.address,
+    };
+
+    const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+
+      // ✅ Update localStorage with new user data
+      localStorage.setItem("user", JSON.stringify(result.user));
+
+      alert("Profile updated successfully!");
+    } else {
+      alert("Failed to update profile");
+    }
+  } catch (error) {
+    console.error("Update failed:", error);
+    alert("Server error while updating profile.");
+  }
+};
+
 
   if (!formData) {
     return (
@@ -89,10 +122,6 @@ const UserProfile = () => {
                     <input type="tel" name="mobile" className="form-control" value={formData.mobile} onChange={handleChange} maxLength="10" required />
                   </div>
 
-                  <div className="col-md-12 mb-3">
-                    <label className="form-label">Address</label>
-                    <textarea name="address" className="form-control" value={formData.address} onChange={handleChange} required></textarea>
-                  </div>
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Date of Registration</label>

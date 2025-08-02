@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.model.Event;
-import com.example.model.User;
 import com.example.repository.EventRepository;
 
 @Service
@@ -36,7 +35,8 @@ public class EventService {
         return eventRepository.findAll();
     }
 
-    public Optional<Event> findByUserId(Long userId) {
-        return eventRepository.findById(userId);
+    public List<Event> findByUserId(Long userId) {
+        return eventRepository.findByUser_Id(userId);
     }
+
 }

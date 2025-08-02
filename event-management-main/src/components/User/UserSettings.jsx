@@ -14,27 +14,56 @@ const UserSettings = () => {
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Basic validation
-    if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
-      setMessage("All fields are required!");
-      return;
-    }
-    if (formData.newPassword !== formData.confirmPassword) {
-      setMessage("New password and confirm password do not match!");
-      return;
-    }
-    if (formData.newPassword.length < 6) {
-      setMessage("Password must be at least 6 characters long!");
-      return;
-    }
+  // Basic validation
+  if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
+    setMessage("All fields are required!");
+    return;
+  }
+  if (formData.newPassword !== formData.confirmPassword) {
+    setMessage("New password and confirm password do not match!");
+    return;
+  }
+  if (formData.newPassword.length < 6) {
+    setMessage("Password must be at least 6 characters long!");
+    return;
+  }
 
-    // Process password change logic here (API call)
-    console.log("Password updated successfully:", formData.newPassword);
-    setMessage("Password updated successfully!");
-  };
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
+
+  if (!userId) {
+    setMessage("User not found in localStorage");
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/users/${userId}/change-password`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        currentPassword: formData.currentPassword,
+        newPassword: formData.newPassword,
+      }),
+    });
+
+    const result = await response.text();
+
+    if (response.ok) {
+      setMessage(result);
+    } else {
+      setMessage(result || "Failed to update password");
+    }
+  } catch (error) {
+    console.error("Password update failed", error);
+    setMessage("Server error");
+  }
+};
+
 
   return (
     <>

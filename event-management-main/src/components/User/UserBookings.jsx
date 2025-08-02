@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import UserNav from "./UserNav";
 import UpdateEventModal from "./UpdateEventModal";
 import PaymentModal from "./PaymentModal";
+import { useNavigate } from "react-router-dom";
 
 const UserBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -11,19 +12,21 @@ const UserBookings = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
+  const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     if (!userId) {
-      console.error("No user ID found in localStorage");
+      alert("Please log in to view your bookings.");
+      navigate("/user-signin");
       return;
     }
 
     fetch(`http://localhost:8080/api/events/user/${userId}`)
       .then((res) => res.json())
-      .then((data) => setBookings(data))
+      .then((data) => setBookings(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Error fetching bookings:", err));
-  }, [userId]);
+  }, [userId, navigate]);
 
   const handleViewBooking = (booking) => {
     setSelectedBooking(booking);
@@ -32,26 +35,25 @@ const UserBookings = () => {
   };
 
   const handleDeleteBooking = async (id) => {
-  try {
-    const confirmDelete = window.confirm("Are you sure you want to delete this event?");
-    if (!confirmDelete) return;
+    try {
+      const confirmDelete = window.confirm("Are you sure you want to delete this event?");
+      if (!confirmDelete) return;
 
-    const response = await fetch(`http://localhost:8080/api/events/${id}`, {
-      method: "DELETE",
-    });
+      const response = await fetch(`http://localhost:8080/api/events/${id}`, {
+        method: "DELETE",
+      });
 
-    if (response.ok) {
-      setBookings(bookings.filter((booking) => booking.id !== id));
-      alert("Event deleted successfully.");
-    } else {
-      alert("Failed to delete event.");
+      if (response.ok) {
+        setBookings(bookings.filter((booking) => booking.id !== id));
+        alert("Event deleted successfully.");
+      } else {
+        alert("Failed to delete event.");
+      }
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      alert("An error occurred while deleting the event.");
     }
-  } catch (error) {
-    console.error("Error deleting booking:", error);
-    alert("An error occurred while deleting the event.");
-  }
-};
-
+  };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -109,7 +111,7 @@ const UserBookings = () => {
               </tr>
             </thead>
             <tbody>
-              {bookings.length > 0 ? (
+              {Array.isArray(bookings) && bookings.length > 0 ? (
                 bookings.map((booking, index) => (
                   <tr key={booking.id}>
                     <td>{index + 1}</td>
@@ -119,15 +121,24 @@ const UserBookings = () => {
                     <td>{booking.venue}</td>
                     <td>Rs {booking.budget}</td>
                     <td>
-                      <button className="btn btn-info btn-sm me-2" onClick={() => handleViewBooking(booking)}>
+                      <button
+                        className="btn btn-info btn-sm me-2"
+                        onClick={() => handleViewBooking(booking)}
+                      >
                         Update
                       </button>
                       {booking.paymentStatus !== "Paid" && (
-                        <button className="btn bg-warning btn-sm me-2" onClick={() => handleOpenPaymentModal(booking)}>
+                        <button
+                          className="btn bg-warning btn-sm me-2"
+                          onClick={() => handleOpenPaymentModal(booking)}
+                        >
                           Pay
                         </button>
                       )}
-                      <button className="btn btn-danger btn-sm" onClick={() => handleDeleteBooking(booking.id)}>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDeleteBooking(booking.id)}
+                      >
                         Delete
                       </button>
                     </td>

@@ -12,7 +12,7 @@ const HeroSection = () => {
   return (
     <section className="hero-section text-center py-5 bg-primary text-white">
   <div className="container">
-    <h1 className="mb-4">Find Event Organizers Near You</h1>
+    <h1 className="mb-4">Discover Top Event Organizers Near You</h1>
     <p className="mb-4">Search for the best event planners to make your event memorable!</p>
     <div className="row justify-content-center">
       <div className="col-md-6 col-12">
