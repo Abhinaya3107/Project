@@ -1,13 +1,16 @@
 package com.example.service;
+import com.example.dto.VendorDTO;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.dto.VendorDTO;
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -16,7 +19,7 @@ public class VendorService {
 
     @Autowired
     private VendorRepository vendorRepository;
-
+    
     public Optional<Vendor> authenticate(String email, String password) {
         return vendorRepository.findByEmailAndPassword(email, password);
     }
@@ -61,5 +64,13 @@ public class VendorService {
 		
 		vendorRepository.save(vendor);
 }
+    
+    public List<VendorDTO> getVendorSummary() {
+        List<Vendor> vendors = vendorRepository.findAll();
+        return vendors.stream()
+                .map(v -> new VendorDTO(v.getVid(), v.getBusinessName(), v.getMobile(), v.getStatus()))
+                .collect(Collectors.toList());
+    }
+
 
 }

@@ -1,9 +1,11 @@
 package com.example.controllers;
 
+import com.example.dto.VendorDTO;
 import com.example.dto.VendorSigninRequest;
 import com.example.model.Vendor;
 import com.example.service.VendorService;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/vendors")
@@ -20,6 +23,8 @@ public class VendorController {
     @Autowired
     private VendorService vendorService;
 
+    
+    
     // Vendor Signup
     @PostMapping("/signup")
     public ResponseEntity<String> registerVendor(@RequestBody Vendor vendor) {
@@ -92,5 +97,11 @@ public class VendorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process image");
         }
     }
+    
+    @GetMapping("/summary")
+    public List<VendorDTO> getVendorSummary() {
+        return vendorService.getVendorSummary();
+    }
 
+   
 }
