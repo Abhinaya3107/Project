@@ -1,6 +1,8 @@
 package com.example.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import com.example.model.Organizer;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,4 +29,6 @@ public class Event {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
+	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+	private List<Vendor> vendors;	
 }

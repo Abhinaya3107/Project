@@ -13,7 +13,7 @@ const VendorSignin = () => {
   const handleSignin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/api/vendor/signin", {
+      const response = await fetch("http://localhost:8080/api/vendors/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -25,7 +25,8 @@ const VendorSignin = () => {
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("vendorEmail", formData.email);
         localStorage.setItem("vendorId", result.vendorId); // store user ID for later use
-        navigate("/index");
+        navigate("/vendor-dashboard");
+
       } else {
         alert(result.message || "Invalid credentials.");
       }
