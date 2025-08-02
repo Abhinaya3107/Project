@@ -64,15 +64,12 @@ function App() {
         <Route path="/vendor-signup" element={<VendorSignUp />} />
         <Route path="/user-signin" element={<UserSignin />} />
         <Route path="/user-signup" element={<UserSignUp />} />
-<<<<<<< HEAD
         <Route path="/vendor-dashboard" element={<VendorDash />} />
         
-=======
         <Route path="/organizer-signin" element={<Signin />} />
         <Route path="/updateCatererModal" element={<UpdateCatererModal />} />
         <Route path="/addCateors" element={<AddCateors />} />
         {/* <Route path="/organizer-signup" element={<SignUp />} /> */}
->>>>>>> org3
 
         <Route path="/register" element={<RegisterEM />} />
         <Route path="forgot-password" element={<ForgotPass />} />
