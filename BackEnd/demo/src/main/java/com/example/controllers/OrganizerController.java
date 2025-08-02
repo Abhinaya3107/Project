@@ -1,34 +1,26 @@
 package com.example.controllers;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.example.model.Organizer;
-import com.example.repository.OrganizerRepository;
 import com.example.service.OrganizerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/organizers")
+@CrossOrigin(origins = "*") // Allow React frontend to access this
 public class OrganizerController {
-	@Autowired
-	private OrganizerService orgService;
-	
-	@GetMapping
-	public List<Organizer> getAllOrganizers()
-	{
-		return orgService.findAll();
-	}
-	
-	@GetMapping("/category/{category}")
-    public List<Organizer> getByCategory(@PathVariable String category) {
-        if (category.equalsIgnoreCase("All")) {
-            return orgService.findAll();
+
+    @Autowired
+    private OrganizerService organizerService;
+
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody Organizer organizer) {
+        try {
+            Organizer saved = organizerService.registerOrganizer(organizer);
+            return ResponseEntity.ok(saved);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return orgService.findByCategory(category);
     }
 }
