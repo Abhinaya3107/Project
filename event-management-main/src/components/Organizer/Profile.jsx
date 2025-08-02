@@ -18,14 +18,11 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const organizerId = localStorage.getItem("organizerId"); // ✅ Organizer ID from login
 
-  //   // ✅ Fetch profile data from backend
-
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await axios.get(
           `http://localhost:8080/api/organizers/${organizerId}`
-          // `http://localhost:8080/api/organizers/${organizerId}/profile`
         );
         const data = response.data;
 
@@ -51,37 +48,6 @@ const Profile = () => {
     fetchProfile();
   }, [organizerId]);
 
-  //   useEffect(() => {
-  //     const fetchProfile = async () => {
-  //       try {
-  //         const response = await axios.get(
-  //           `http://localhost:8080/api/organizers/${organizerId}`
-  //         );
-  //         const data = response.data;
-
-  //         setFormData({
-  //           em_firstname: data.firstName,
-  //           em_lastname: data.lastName,
-  //           em_email: data.email,
-  //           em_mobile: data.mobileNumber,
-  //           em_profileimg: data.profileImage
-  //             ? `data:image/jpeg;base64,${data.profileImage}`
-  //             : profileImg,
-  //           em_address: data.address,
-  //           org_name: data.organizationName
-  //         });
-  //       } catch (error) {
-  //         console.error("Error fetching profile:", error);
-  //         alert("Failed to load profile data!");
-  //       } finally {
-  //         setLoading(false);
-  //       }
-  //     };
-
-  //     fetchProfile();
-  //   }, [organizerId]);
-
-  //   // ✅ Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });

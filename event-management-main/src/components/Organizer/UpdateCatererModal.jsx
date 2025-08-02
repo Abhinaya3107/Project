@@ -4,14 +4,14 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 const UpdateCatererModal = ({ show, onHide, caterer }) => {
   const [formData, setFormData] = useState({
     name: "",
-    contact: ""
+    contact: "",
   });
 
   useEffect(() => {
     if (caterer) {
       setFormData({
         name: caterer.name || "",
-        contact: caterer.contact || ""
+        contact: caterer.contact || "",
       });
     }
   }, [caterer]);
@@ -37,14 +37,26 @@ const UpdateCatererModal = ({ show, onHide, caterer }) => {
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Name</Form.Label>
-                <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} required />
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
               </Form.Group>
             </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Contact</Form.Label>
-                <Form.Control type="tel" name="contact" value={formData.contact} onChange={handleChange} required />
+                <Form.Control
+                  type="tel"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  required
+                />
               </Form.Group>
             </Col>
           </Row>

@@ -92,5 +92,7 @@ public class VendorController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process image");
         }
     }
+    
+    
 
 }

@@ -35,10 +35,6 @@ const Sidebar = () => {
         {isHovered && <span className="ms-3">Requests</span>}
       </Link>
 
-      {/* <Link to="/Dashboard/messages" className="nav-link text-dark d-flex align-items-center p-2 hover-effect">
-        <FaEnvelope size={14} />
-        {isHovered && <span className="ms-3">Messages</span>}
-      </Link> */}
 
       <Link to="/Dashboard/caterers" className="nav-link text-dark d-flex align-items-center p-2 hover-effect">
         <FaUtensils size={14} />
