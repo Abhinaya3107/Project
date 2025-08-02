@@ -1,13 +1,15 @@
+package com.example.service;
 
-<<<<<<< HEAD
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.dto.VendorProfileDTO;
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -61,7 +63,20 @@ public class VendorService {
 		
 		vendorRepository.save(vendor);
 }
+    public List<VendorProfileDTO> getVendorsByCategory(String category) {
+        List<Vendor> vendors = vendorRepository.findByCategoryIgnoreCase(category);
+        return vendors.stream()
+                .map(v -> new VendorProfileDTO(
+                    v.getVid(),
+                    v.getFirstName(),
+                    v.getLastName(),
+                    v.getMobile(),
+                    v.getBusinessName(),
+                    v.getStatus()
+                ))
+                .collect(Collectors.toList());
+    }
+
+
 
 }
-=======
->>>>>>> org3

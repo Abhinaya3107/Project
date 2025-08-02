@@ -68,15 +68,9 @@ public class Vendor {
     @Lob
     @Column(name="Image_data")
     private byte[] profileImage; 
-<<<<<<< HEAD
-
-}
-=======
     
     @NotBlank(message = "Status is required")
     @Pattern(regexp = "^(available|booked)$", message = "Status must be either 'available' or 'booked'")
     @Column(nullable = false, length = 10)
     private String status;
-
 }
->>>>>>> org3
