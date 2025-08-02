@@ -9,11 +9,13 @@ import com.example.model.Vendor;
 
 public interface VendorRepository extends JpaRepository<Vendor, Long> {
 
-    Optional<Vendor> findByEmailAndPassword(String email, String password);
+	Optional<Vendor> findById(Long id);
 
-    boolean existsByEmail(String email);
+	boolean existsByEmail(String email);
 
-    List<Vendor> findByCategory(String category);
+	Optional<Vendor> findByEmailAndPassword(String email, String password);
 
-    List<Vendor> findByEventId(Long eventId);
+	// These are already in your code:
+	List<Vendor> findByCategory(String category);
+	List<Vendor> findByEventId(Long eventId);
 }
