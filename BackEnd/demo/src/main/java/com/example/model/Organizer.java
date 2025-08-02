@@ -1,43 +1,54 @@
 package com.example.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
 import lombok.*;
 
 @Entity
-@Table(name = "organizer") // Optional: ensure consistent table naming
-@Getter
-@Setter
+@Table(name = "organizer")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(callSuper = true)
-public class Organizer extends BaseEntity {
+@Builder
+public class Organizer {
 
-    @Column(name = "first_name", length = 20)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "First name is required")
+    @Size(min = 2, max = 50, message = "First name must be between 2 to 50 characters")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name", length = 30)
+    @NotBlank(message = "Last name is required")
+    @Size(min = 2, max = 50, message = "Last name must be between 2 to 50 characters")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(length = 30, unique = true)
+    @NotBlank(message = "Email is required")
+    @Email(message = "Enter a valid email address")
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true, length = 10)
     @NotBlank(message = "Mobile number is required")
-    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid mobile number")
-    @Size(min = 10, max = 10, message = "Mobile number must be 10 digits")
-    private String mobile; // ❗ Changed from `int` to `String` for validation
-    private String category;
-    @Column(length = 10, nullable = false)
-    private String password;
+    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Mobile number must be a valid 10-digit Indian number")
+    @Column(name = "mobile", nullable = false, unique = true)
+    private String mobileNumber;
 
-    @Column(length = 30, nullable = false)
+    @NotBlank(message = "Address is required")
+    @Size(min = 5, message = "Address must be at least 5 characters")
+    @Column(nullable = false)
     private String address;
 
-    @Column(length = 50, nullable = false)
+    @NotBlank(message = "Organization name is required")
+    @Size(min = 2, message = "Organization name must be at least 2 characters")
+    @Column(name = "organization_name", nullable = false)
     private String organizationName;
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, max = 8, message = "Password must be between 6 to 8 characters")
+    @Column(nullable = false)
+    private String password;
 }

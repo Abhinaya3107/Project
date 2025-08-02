@@ -1,152 +1,144 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate, Link } from "react-router-dom";
 
-const RegisterEM = () => {
+const OrganizerSignUp = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    em_firstname: "",
-    em_lastname: "",
-    em_email: "",
-    em_mobile: "",
-    
-    em_address: "",
-    org_name: "",
-    em_password: "",
-    
+    firstName: "",
+    lastName: "",
+    email: "",
+    mobileNumber: "",
+    address: "",
+    organizationName: "",
+    password: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // navigate to dasboard
-    // Here, you can send data to the backend via an API request
+
+    // ✅ Validation
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.mobileNumber ||
+      !formData.address ||
+      !formData.organizationName ||
+      !formData.password
+    ) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/organizers/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json(); // ✅ Parse JSON response
+        alert(`Organizer ${data.firstName} registered successfully!`);
+        navigate("/organizer-signin"); // ✅ Redirect after success
+      } else {
+        const errorMessage = await response.text();
+        alert(`Error: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("Server error");
+    }
   };
 
   return (
-    <div className="container">
-      <div className="row flex-lg-row-reverse align-items-center g-5 py-4">
-        <div className="col-10 col-sm-8 col-lg-6">
-          <form
-            onSubmit={handleSubmit}
-            className="p-4 w-100 mx-auto border rounded "
-          >
-            <div className="row text-start">
-              {/* First Name */}
-              <div className="col-md-6 mb-3 ">
-                <label className="form-label ">First Name</label>
-                <input
-                  type="text"
-                  name="em_firstname"
-                  className="form-control"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              {/* Last Name */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Last Name</label>
-                <input
-                  type="text"
-                  name="em_lastname"
-                  className="form-control"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              {/* Email */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  name="em_email"
-                  className="form-control"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-                {/** Mobile Number */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Mobile Number</label>
-                <input
-                  type="tel"
-                  name="em_mobile"
-                  className="form-control"
-                  maxLength="10" // Restricts input to 10 characters
-                  value={formData.em_mobile}
-                  onChange={(e) => {
-                    const onlyNumbers = e.target.value.replace(/\D/g, ""); // Removes non-numeric characters
-                    setFormData({
-                      ...formData,
-                      em_mobile: onlyNumbers.slice(0, 10),
-                    }); // Limits to 10 digits
-                  }}
-                  required
-                />
-              </div>
-
-              {/* Address */}
-              <div className="col-12 mb-3">
-                <label className="form-label">Address</label>
-                <textarea
-                  name="em_address"
-                  className="form-control"
-                  onChange={handleChange}
-                  required
-                ></textarea>
-              </div>
-
-              {/* Organization Name */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Organization Name</label>
-                <input
-                  type="text"
-                  name="org_name"
-                  className="form-control"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              {/* Password */}
-              <div className="col-md-6 mb-3">
-                <label className="form-label">Password</label>
-                <input
-                  type="password"
-                  maxLength="8"
-                  name="em_password"
-                  className="form-control"
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </div>
-
-            <button type="submit" className="btn btn-success w-100">
-              Register
-            </button>
-          </form>
-        </div>
-        <div className="col-lg-6">
-          <h1 className="display-5 text-start    fw-bold text-body-emphasis lh-1 mb-3">
-            Register to Event Management System.
-          </h1>
-          <p className="lead text-start">
-            Manaing Events Makes Easy, Organize effectively.
-          </p>
-          <div className="text-start">
-            <Link to="/signin">Already Have an Account?</Link>
-          </div>
-        </div>
-      </div>
+    <div className="container mt-5">
+      <h2 className="text-center mb-4">Organizer Sign Up</h2>
+      <form className="w-25 mx-auto" onSubmit={handleSignUp}>
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="First Name"
+          name="firstName"
+          value={formData.firstName}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Last Name"
+          name="lastName"
+          value={formData.lastName}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="email"
+          className="form-control mb-3"
+          placeholder="Email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="tel"
+          className="form-control mb-3"
+          placeholder="Mobile Number"
+          name="mobileNumber"
+          value={formData.mobileNumber}
+          onChange={(e) => {
+            const onlyNumbers = e.target.value.replace(/\D/g, "");
+            setFormData({
+              ...formData,
+              mobileNumber: onlyNumbers.slice(0, 10),
+            });
+          }}
+          required
+        />
+        <textarea
+          className="form-control mb-3"
+          placeholder="Address"
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Organization Name"
+          name="organizationName"
+          value={formData.organizationName}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="password"
+          className="form-control mb-3"
+          placeholder="Password"
+          maxLength="8"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+        <button className="btn btn-success w-100 mt-3 mb-4">Sign Up</button>
+        <Link to="./organizer-signin" className="d-flex justify-content-center">
+          Already have an account? Sign In
+        </Link>
+      </form>
     </div>
   );
 };
 
-export default RegisterEM;
+export default OrganizerSignUp;
