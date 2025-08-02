@@ -70,12 +70,6 @@ const Caterers = () => {
               >
                 {showAvailableOnly ? "All" : "Available"}
               </button>
-              <button
-                onClick={() => setShowModal(true)}
-                className="btn btn-success btn-sm d-inline-flex align-items-center"
-              >
-                <i className="bi bi-plus me-2"></i> Add
-              </button>
               <AddCateors show={showModal} onHide={() => setShowModal(false)} />
             </div>
           </div>
@@ -107,14 +101,14 @@ const Caterers = () => {
                     <td>
                       <span
                         className={`badge bg-${
-                          caterer.status === "available" ? "success" : "danger"
+                          caterer.status === "available" ? "success" : "primary"
                         }`}
                       >
                         {caterer.status}
                       </span>
                     </td>
                     <td>
-                      <button
+                      {/* <button
                         className="btn btn-primary btn-sm me-2"
                         onClick={() => {
                           setSelectedCaterer(caterer);
@@ -122,7 +116,7 @@ const Caterers = () => {
                         }}
                       >
                         <i className="bi bi-pencil-square"></i>
-                      </button>
+                      </button> */}
                       <button className="btn btn-danger btn-sm">
                         <i className="bi bi-trash-fill"></i>
                       </button>
@@ -134,7 +128,7 @@ const Caterers = () => {
           )}
         </div>
 
-        {/* Modal Components */}
+        {/* //Modal Components */}
         <UpdateCatererModal
           show={showUpdateModal}
           onHide={() => setShowUpdateModal(false)}

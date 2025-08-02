@@ -101,10 +101,14 @@ public class VendorController {
         }
     }
     
+<<<<<<< HEAD
     @GetMapping("/summary")
     public List<VendorDTO> getVendorSummary() {
         return vendorService.getVendorSummary();
     }
+=======
+    
+>>>>>>> org5
 
    
 }
