@@ -1,5 +1,9 @@
 package com.example.model;
 
+import java.time.LocalDate;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,8 +17,8 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString 
-public class Vendors {
+@ToString
+public class Vendor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,21 +48,30 @@ public class Vendors {
     @Size(max = 50, message = "Category must not exceed 50 characters")
     @Column(nullable = false, length = 50)
     private String category;
+    
+    private String address;
+    
+    private String businessName;
 
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must be at least 6 characters")
     @Column(nullable = false, length = 100)
     private String password;
     
+    @CreationTimestamp
+    private LocalDate registeredAt;
+    
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
+    
+    @Lob
+    @Column(name="Image_data")
+    private byte[] profileImage; 
     
     @NotBlank(message = "Status is required")
     @Pattern(regexp = "^(available|booked)$", message = "Status must be either 'available' or 'booked'")
     @Column(nullable = false, length = 10)
     private String status;
-    
-    
 
 }
