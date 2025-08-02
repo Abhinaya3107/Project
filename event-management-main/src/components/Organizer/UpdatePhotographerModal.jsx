@@ -5,9 +5,7 @@ const UpdatePhotographerModal = ({ show, onHide, photographer }) => {
   // Initialize state for form data
   const [formData, setFormData] = useState({
     name: "",
-    specialty: "",
-    experience: "",
-    contact: "",
+    contact: ""
   });
 
   // Load selected photographer details when the modal opens
@@ -15,9 +13,7 @@ const UpdatePhotographerModal = ({ show, onHide, photographer }) => {
     if (photographer) {
       setFormData({
         name: photographer.name || "",
-        specialty: photographer.specialty || "",
-        experience: photographer.experience || "",
-        contact: photographer.contact || "",
+        contact: photographer.contact || ""
       });
     }
   }, [photographer]);
@@ -49,19 +45,6 @@ const UpdatePhotographerModal = ({ show, onHide, photographer }) => {
               </Form.Group>
             </Col>
 
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Specialty</Form.Label>
-                <Form.Control type="text" name="specialty" value={formData.specialty} onChange={handleChange} required />
-              </Form.Group>
-            </Col>
-
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Experience</Form.Label>
-                <Form.Control type="text" name="experience" value={formData.experience} onChange={handleChange} required />
-              </Form.Group>
-            </Col>
 
             <Col md={6}>
               <Form.Group className="mb-3">

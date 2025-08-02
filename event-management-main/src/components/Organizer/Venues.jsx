@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import UpdateVenueOwnerModal from "./UpdateVenueOwnerModal";
-import AskToCollaborateModal from "./AskToCollaborateModal";
+// import AskToCollaborateModal from "./AskToCollaborateModal";
 import VenueDetailsModal from "./VenueDetailsModal"; // ✅ New modal to show venue details
 import AddVendorModal from "../AddVendorModal";
 
@@ -14,8 +14,8 @@ const Venues = () => {
   const [selectedOwner, setSelectedOwner] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
-  const [showCollaborateModal, setShowCollaborateModal] = useState(false);
-  const [selectedCollaborator, setSelectedCollaborator] = useState(null);
+  // const [showCollaborateModal, setShowCollaborateModal] = useState(false);
+  // const [selectedCollaborator, setSelectedCollaborator] = useState(null);
   const [showVenueDetailsModal, setShowVenueDetailsModal] = useState(false);
   const [selectedVenues, setSelectedVenues] = useState([]);
 
@@ -140,7 +140,7 @@ const Venues = () => {
                       >
                         Details
                       </button>
-                      {/* Collaboration Button */}
+                      {/* Collaboration Button
                       {availableCount > 0 && (
                         <button
                           className="btn btn-warning btn-sm me-2"
@@ -151,7 +151,7 @@ const Venues = () => {
                         >
                           Ask to Collaborate
                         </button>
-                      )}
+                      )} */}
                       {/* Update Button */}
                       <button
                         className="btn btn-primary btn-sm me-2"
@@ -179,7 +179,7 @@ const Venues = () => {
 
         
         <UpdateVenueOwnerModal show={showUpdateModal} onHide={() => setShowUpdateModal(false)} owner={selectedOwner} />
-        <AskToCollaborateModal show={showCollaborateModal} onHide={() => setShowCollaborateModal(false)} collaborator={selectedCollaborator} />
+        {/* <AskToCollaborateModal show={showCollaborateModal} onHide={() => setShowCollaborateModal(false)} collaborator={selectedCollaborator} /> */}
         <VenueDetailsModal show={showVenueDetailsModal} onHide={() => setShowVenueDetailsModal(false)} venues={selectedVenues} />
       </div>
     </>

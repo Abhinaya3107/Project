@@ -1,6 +1,6 @@
 package com.example.model;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -25,11 +25,14 @@ public class BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	// for auditing purpose - can maintain creation n updation date|time|timestamp
-	@CreationTimestamp
-	@Column(name = "creation_date", updatable = false)
-	private LocalDate creationDate;
+    
 	
-	@UpdateTimestamp
+	@Column(name = "creation_date", updatable = false)
+	@CreationTimestamp
+	private LocalDateTime creationDate;
+
 	@Column(name = "updated_on")
+	@UpdateTimestamp
 	private LocalDateTime updatedOn;
+
 }

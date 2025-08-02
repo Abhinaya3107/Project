@@ -133,7 +133,7 @@ const OrganizerSignUp = () => {
           required
         />
         <button className="btn btn-success w-100 mt-3 mb-4">Sign Up</button>
-        <Link to="./organizer-signin" className="d-flex justify-content-center">
+        <Link to="/organizer-signin" className="d-flex justify-content-center">
           Already have an account? Sign In
         </Link>
       </form>
