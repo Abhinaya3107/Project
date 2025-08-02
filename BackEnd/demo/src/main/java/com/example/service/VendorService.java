@@ -1,10 +1,13 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 package com.example.service;
 import com.example.dto.VendorDTO;
 >>>>>>> org4
+=======
+package com.example.service;
+>>>>>>> c386f41bf25d56bcaf96b6601cd8e26d7554187d
 
-<<<<<<< HEAD
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+<<<<<<< HEAD
 import com.example.dto.VendorDTO;
+=======
+import com.example.dto.VendorProfileDTO;
+>>>>>>> c386f41bf25d56bcaf96b6601cd8e26d7554187d
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -68,6 +75,7 @@ public class VendorService {
 		
 		vendorRepository.save(vendor);
 }
+<<<<<<< HEAD
     
     public List<VendorDTO> getVendorSummary() {
         List<Vendor> vendors = vendorRepository.findAll();
@@ -76,7 +84,22 @@ public class VendorService {
                 .collect(Collectors.toList());
     }
 
+=======
+    public List<VendorProfileDTO> getVendorsByCategory(String category) {
+        List<Vendor> vendors = vendorRepository.findByCategoryIgnoreCase(category);
+        return vendors.stream()
+                .map(v -> new VendorProfileDTO(
+                    v.getVid(),
+                    v.getFirstName(),
+                    v.getLastName(),
+                    v.getMobile(),
+                    v.getBusinessName(),
+                    v.getStatus()
+                ))
+                .collect(Collectors.toList());
+    }
+
+
+>>>>>>> c386f41bf25d56bcaf96b6601cd8e26d7554187d
 
 }
-=======
->>>>>>> org3

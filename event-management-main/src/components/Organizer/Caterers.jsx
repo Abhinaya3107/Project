@@ -1,64 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-// import updateCatererModal from "./UpdateCatererModal";
-import AddCateors from "./AddCateors";
 import OrgNavbar from "./OrgNavBar";
 import Sidebar from "./Sidebar";
-import "bootstrap/dist/css/bootstrap.min.css";
-
+import AddCateors from "./AddCateors";
 import UpdateCatererModal from "./UpdateCatererModal";
-
-import AddVendorModal from "../AddVendorModal";
-// import { useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const Caterers = () => {
   const navigate = useNavigate();
 
-  function handleButtonClick() {
-    navigate("/addCateors"); // replace with your desired path
-  }
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedCaterer, setSelectedCaterer] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showAvailableOnly, setShowAvailableOnly] = useState(false);
-  // const [showCollaborateModal, setShowCollaborateModal] = useState(false);
-  // const [selectedCollaborator, setSelectedCollaborator] = useState(null);
+  const [caterers, setCaterers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Sample caterers data
-  const caterers = [
-    {
-      id: 1,
-      name: "Tasty Treats",
-      cuisine: "Indian",
-      contact: "9876543210",
-      sts: "available",
-    },
-    {
-      id: 2,
-      name: "Gourmet Delights",
-      cuisine: "Continental",
-      contact: "8765432109",
-      sts: "booked",
-    },
-    {
-      id: 3,
-      name: "Royal Feasts",
-      cuisine: "Traditional",
-      contact: "7654321098",
-      sts: "available",
-    },
-  ];
+  // Fetch caterers from backend
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/vendors/category/Caterer")
+      .then((res) => {
+        console.log("Caterers response:", res.data); // 👈 ADD THIS LINE
+        setCaterers(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch caterers", err);
+        setError("Failed to fetch data");
+        setLoading(false);
+      });
+  }, []);
 
+  // Filter based on search term
   const filteredCaterers = caterers.filter(
     (caterer) =>
-      caterer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      caterer.cuisine.toLowerCase().includes(searchTerm.toLowerCase())
+      caterer.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      caterer.mobile?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Apply "Available Only" Filter
+  // Apply "Available Only" filter
   const displayedCaterers = showAvailableOnly
-    ? filteredCaterers.filter((caterer) => caterer.sts === "available")
+    ? filteredCaterers.filter((caterer) => caterer.status === "available")
     : filteredCaterers;
 
   return (
@@ -70,27 +56,21 @@ const Caterers = () => {
           <div className="d-flex justify-content-between align-items-center pb-2 mb-3 border-bottom">
             <h4 className="h5">Caterers</h4>
             <div className="d-flex gap-2">
-              {/* Search Bar */}
               <input
                 type="text"
                 className="form-control me-2"
                 placeholder="Search caterers..."
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              {/* Toggle Available Only */}
               <button
                 className={`btn btn-${
                   showAvailableOnly ? "secondary" : "info"
                 } btn-sm`}
                 onClick={() => setShowAvailableOnly(!showAvailableOnly)}
-                // onClick={handleButtonClick}
               >
                 {showAvailableOnly ? "All" : "Available"}
               </button>
-              {/* Add Caterer Button */}
               <button
-                // onClick={() => setShowModal(true)}
-                // onClick={handleButtonClick}
                 onClick={() => setShowModal(true)}
                 className="btn btn-success btn-sm d-inline-flex align-items-center"
               >
@@ -100,74 +80,66 @@ const Caterers = () => {
             </div>
           </div>
 
-          {/* Caterers List Table */}
-          <table className="table table-hover table-bordered">
-            <thead className="table-secondary text-center">
-              <tr>
-                <th>Sr. No</th>
-                <th>Name</th>
-                <th>Contact</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody className="text-center">
-              {displayedCaterers.map((caterer, index) => (
-                <tr key={caterer.id}>
-                  <td>{index + 1}</td>
-                  <td>{caterer.name}</td>
-                  <td>{caterer.contact}</td>
-                  <td>
-                    <span
-                      className={`badge bg-${
-                        caterer.sts === "available" ? "success" : "danger"
-                      }`}
-                    >
-                      {caterer.sts}
-                    </span>
-                  </td>
-                  <td>
-                    {/* Collaboration Button
-                    {caterer.sts === "available" && (
+          {/* Loading/Error UI */}
+          {loading ? (
+            <div>Loading caterers...</div>
+          ) : error ? (
+            <div className="text-danger">{error}</div>
+          ) : (
+            <table className="table table-hover table-bordered">
+              <thead className="table-secondary text-center">
+                <tr>
+                  <th>Sr. No</th>
+                  <th>Name</th>
+                  <th>Business</th>
+                  <th>Contact</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody className="text-center">
+                {displayedCaterers.map((caterer, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{`${caterer.firstName} ${caterer.lastName}`}</td>
+                    <td>{caterer.businessName}</td>
+                    <td>{caterer.mobile}</td>
+                    <td>
+                      <span
+                        className={`badge bg-${
+                          caterer.status === "available" ? "success" : "danger"
+                        }`}
+                      >
+                        {caterer.status}
+                      </span>
+                    </td>
+                    <td>
                       <button
-                        className="btn btn-warning btn-sm me-2"
+                        className="btn btn-primary btn-sm me-2"
                         onClick={() => {
-                          setSelectedCollaborator(caterer);
-                          setShowCollaborateModal(true);
+                          setSelectedCaterer(caterer);
+                          setShowUpdateModal(true);
                         }}
                       >
-                        Ask to Collaborate
-                      </button> */}
-                    {/* )} */}
-                    {/* Update Button */}
-                    <button
-                      className="btn btn-primary btn-sm me-2"
-                      onClick={() => {
-                        setSelectedCaterer(caterer);
-                        setShowUpdateModal(true);
-                      }}
-                    >
-                      <i className="bi bi-pencil-square"></i>
-                    </button>
-                    {/* Delete Button */}
-                    <button className="btn btn-danger btn-sm">
-                      <i className="bi bi-trash-fill"></i>
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                        <i className="bi bi-pencil-square"></i>
+                      </button>
+                      <button className="btn btn-danger btn-sm">
+                        <i className="bi bi-trash-fill"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Modal Components */}
-        <AddCateors show={showModal} onHide={() => setShowModal(false)} />
-        <AddCateors
+        <UpdateCatererModal
           show={showUpdateModal}
           onHide={() => setShowUpdateModal(false)}
           caterer={selectedCaterer}
         />
-        {/* <AskToCollaborateModal show={showCollaborateModal} onHide={() => setShowCollaborateModal(false)} collaborator={selectedCollaborator} /> */}
       </div>
     </>
   );

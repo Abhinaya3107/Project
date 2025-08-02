@@ -24,8 +24,8 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const response = await axios.get(
-          //`http://localhost:8080/api/organizers/${organizerId}`
-          `http://localhost:8080/api/organizers/${organizerId}/profile`
+          `http://localhost:8080/api/organizers/${organizerId}`
+          // `http://localhost:8080/api/organizers/${organizerId}/profile`
         );
         const data = response.data;
 

@@ -1,7 +1,5 @@
 package com.example.model;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -11,42 +9,46 @@ import lombok.*;
 @Table(name = "organizer")
 @Data
 @NoArgsConstructor
-@AllArgsConstructor 
+@AllArgsConstructor
 @Builder
-public class Organizer extends BaseEntity {
+public class Organizer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "First name is required")
+    @Size(min = 2, max = 50, message = "First name must be between 2 to 50 characters")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @NotBlank(message = "Last name is required")
+    @Size(min = 2, max = 50, message = "Last name must be between 2 to 50 characters")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @NotBlank(message = "Email is required")
-    @Email
-    @Column(unique = true, nullable = false)
+    @Email(message = "Enter a valid email address")
+    @Column(nullable = false, unique = true)
     private String email;
 
     @NotBlank(message = "Mobile number is required")
+    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Mobile number must be a valid 10-digit Indian number")
+    @Column(name = "mobile", nullable = false, unique = true)
     private String mobileNumber;
 
     @NotBlank(message = "Address is required")
+    @Size(min = 5, message = "Address must be at least 5 characters")
+    @Column(nullable = false)
     private String address;
 
     @NotBlank(message = "Organization name is required")
+    @Size(min = 2, message = "Organization name must be at least 2 characters")
+    @Column(name = "organization_name", nullable = false)
     private String organizationName;
 
     @NotBlank(message = "Password is required")
+    @Size(min = 6, max = 8, message = "Password must be between 6 to 8 characters")
+    @Column(nullable = false)
     private String password;
-
-    @Lob
-    @Column(name = "profile_image")
-    private byte[] profileImage; // For image storage
-    
-
-
 }
-

@@ -70,6 +70,7 @@ public class Vendor {
     private byte[] profileImage; 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     
     @NotBlank(message = "Status is required")
@@ -80,11 +81,11 @@ public class Vendor {
 
 }
 =======
+=======
+>>>>>>> c386f41bf25d56bcaf96b6601cd8e26d7554187d
     
     @NotBlank(message = "Status is required")
     @Pattern(regexp = "^(available|booked)$", message = "Status must be either 'available' or 'booked'")
     @Column(nullable = false, length = 10)
     private String status;
-
 }
->>>>>>> org3

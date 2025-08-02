@@ -7,7 +7,7 @@ import {
 import "./App.css";
 import NavBar from "./components/NavBar";
 import Signin from "./components/Organizer/Signin";
-// import Signup from "./components/Organizer/Signup";
+// import Signup from "./components/Organizer/Signup";HEAD
 import Home from "./components/Home";
 
 import VendorSignin from "./components/Vendor/VendorSignin";
@@ -65,7 +65,11 @@ function App() {
         <Route path="/user-signin" element={<UserSignin />} />
         <Route path="/user-signup" element={<UserSignUp />} />
         <Route path="/vendor-dashboard" element={<VendorDash />} />
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> c386f41bf25d56bcaf96b6601cd8e26d7554187d
         <Route path="/organizer-signin" element={<Signin />} />
         <Route path="/updateCatererModal" element={<UpdateCatererModal />} />
         <Route path="/addCateors" element={<AddCateors />} />

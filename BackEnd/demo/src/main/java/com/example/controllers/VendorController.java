@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import com.example.dto.VendorDTO;
+=======
+package com.example.controllers;
+>>>>>>> c386f41bf25d56bcaf96b6601cd8e26d7554187d
 
 import com.example.dto.VendorSigninRequest;
 import com.example.model.Vendor;
