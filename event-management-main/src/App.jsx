@@ -38,7 +38,7 @@ import UserProfile from "./components/User/UserProfile";
 import UserBookings from "./components/User/UserBookings";
 import UserSettings from "./components/User/UserSettings";
 import CreateEvent from "./components/User/CreateEvent";
-import OMessages from "./components/Organizer/OMessages"
+// import OMessages from "./components/Organizer/OMessages"
 import EventDetails from "./components/Organizer/EventDetails";
 import ThemeDetails from "./components/ThemeDetails";
 function App() {
@@ -69,7 +69,7 @@ function App() {
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Settings />} />
           <Route path="caterers" element={<Caterers />} />
-          <Route path="messages" element={<OMessages />} />
+          {/* <Route path="messages" element={<OMessages />} /> */}
           <Route path="photographers" element={<Photographers />} />
           <Route path="venues" element={<Venues />} />
           <Route path="event-requests" element={<EventRequests />} />
