@@ -10,7 +10,7 @@ const VendorSignUp = () => {
     lastName: "",
     email: "",
     mobile: "",
-    category:" ",
+    category: " ",
     password: "",
   });
 
@@ -26,7 +26,7 @@ const VendorSignUp = () => {
       !formData.lastName ||
       !formData.email ||
       !formData.mobile ||
-       !formData.category ||
+      !formData.category ||
       !formData.password
     ) {
       alert("Please fill in all fields.");
@@ -95,17 +95,17 @@ const VendorSignUp = () => {
           required
         />
         <select
-        className="form-control mb-3"
-        name="category"
-        value={formData.category}
-        onChange={handleChange}
-        required
-    >
-  <option value="">Select Category</option>
-  <option value="food">Food</option>
-  <option value="decoration">Decoration</option>
-  <option value="photography">Photography</option>
-</select>
+          className="form-control mb-3"
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select Category</option>
+          <option value="Caterer">Caterer</option>
+          <option value="Venue">Venue</option>
+          <option value="Photography">Photography</option>
+        </select>
 
         <input
           type="password"

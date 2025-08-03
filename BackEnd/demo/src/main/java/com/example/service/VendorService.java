@@ -1,27 +1,26 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
+
 package com.example.service;
-import com.example.dto.VendorDTO;
->>>>>>> org4
-=======
-package com.example.service;
->>>>>>> c386f41bf25d56bcaf96b6601cd8e26d7554187d
+
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-<<<<<<< HEAD
+
 import com.example.dto.VendorDTO;
-=======
+
 import com.example.dto.VendorProfileDTO;
->>>>>>> c386f41bf25d56bcaf96b6601cd8e26d7554187d
+
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -41,7 +40,17 @@ public class VendorService {
         }
         vendorRepository.save(vendor);
         return "Vendor registered successfully!";
+    }  
+    
+    
+    public void deleteById(Long id) {
+        vendorRepository.deleteById(id);
     }
+
+    public boolean existsById(Long id) {
+        return vendorRepository.existsById(id);
+    }
+    
 
     public List<Vendor> findByCategory(String category) {
         return vendorRepository.findByCategory(category);
@@ -75,7 +84,7 @@ public class VendorService {
 		
 		vendorRepository.save(vendor);
 }
-<<<<<<< HEAD
+
     
     public List<VendorDTO> getVendorSummary() {
         List<Vendor> vendors = vendorRepository.findAll();
@@ -84,7 +93,6 @@ public class VendorService {
                 .collect(Collectors.toList());
     }
 
-=======
     public List<VendorProfileDTO> getVendorsByCategory(String category) {
         List<Vendor> vendors = vendorRepository.findByCategoryIgnoreCase(category);
         return vendors.stream()
@@ -97,10 +105,38 @@ public class VendorService {
                     v.getStatus()
                 ))
                 .collect(Collectors.toList());
+        
+     
     }
 
+    ///Search
+//    public List<Vendor> searchByCategoryAndName(String category, String name) {
+//        Set<Vendor> result = new HashSet<>();
+//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(category, name));
+//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(category, name));
+//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(category, name));
+//        return new ArrayList<>(result);
+//    
+//    }
+    public List<Vendor> searchByCategoryAndName(String category, String name) {
+        List<Vendor> combined = new ArrayList<>();
+        combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(category, name));
+        combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(category, name));
+        combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(category, name));
 
->>>>>>> c386f41bf25d56bcaf96b6601cd8e26d7554187d
+        // Remove duplicates based on vid
+        Map<Long, Vendor> uniqueMap = new LinkedHashMap<>();
+        for (Vendor v : combined) {
+            uniqueMap.putIfAbsent(v.getVid(), v);
+        }
+
+        return new ArrayList<>(uniqueMap.values());
+    }
+
+      
+    
+
+
 
 
 }
