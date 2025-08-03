@@ -40,27 +40,41 @@ const Caterers = () => {
 
   // Delete caterer handler
   const handleDelete = async (catererId) => {
-    if (!window.confirm("Are you sure you want to delete this caterer?")) return;
+    if (!window.confirm("Are you sure you want to delete this caterer?"))
+      return;
 
     try {
       await axios.delete(`http://localhost:8080/api/vendors/${catererId}`);
-      setCaterers((prev) => prev.filter((caterer) => caterer.vid !== catererId));
+      setCaterers((prev) =>
+        prev.filter((caterer) => caterer.vid !== catererId)
+      );
     } catch (error) {
       alert("Failed to delete caterer. Please try again.");
     }
   };
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (searchTerm.trim() === "") {
+        fetchCaterers(); // fetch all
+      } else {
+        axios
+          .get(
+            `http://localhost:8080/api/vendors/search?category=Caterer&term=${searchTerm}`
+          )
+          .then((res) => setCaterers(res.data))
+          .catch((err) => {
+            console.error("Search failed", err);
+            setError("Search failed");
+          });
+      }
+    }, 300); // 300ms delay
 
-  // Filter based on search term
-  const filteredCaterers = caterers.filter(
-    (caterer) =>
-      caterer.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      caterer.mobile?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    return () => clearTimeout(delayDebounce); // cleanup on each keystroke
+  }, [searchTerm]);
 
-  // Apply "Available Only" filter - here "available" means "active"
   const displayedCaterers = showAvailableOnly
-    ? filteredCaterers.filter((caterer) => caterer.status === "active")
-    : filteredCaterers;
+    ? caterers.filter((caterer) => caterer.status === "active")
+    : caterers;
 
   return (
     <>
@@ -78,7 +92,9 @@ const Caterers = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <button
-                className={`btn btn-${showAvailableOnly ? "secondary" : "info"} btn-sm`}
+                className={`btn btn-${
+                  showAvailableOnly ? "secondary" : "info"
+                } btn-sm`}
                 onClick={() => setShowAvailableOnly(!showAvailableOnly)}
               >
                 {showAvailableOnly ? "All" : "Active"}
@@ -96,7 +112,8 @@ const Caterers = () => {
               <thead className="table-secondary text-center">
                 <tr>
                   <th>Sr. No</th>
-                  <th>Name</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
                   <th>Business</th>
                   <th>Contact</th>
                   <th>Status</th>
@@ -107,7 +124,8 @@ const Caterers = () => {
                 {displayedCaterers.map((caterer, index) => (
                   <tr key={caterer.vid}>
                     <td>{index + 1}</td>
-                    <td>{`${caterer.firstName} ${caterer.lastName}`}</td>
+                    <td>{`${caterer.firstName}`}</td>
+                    <td>{`${caterer.lastName}`}</td>
                     <td>{caterer.businessName}</td>
                     <td>{caterer.mobile}</td>
                     <td>

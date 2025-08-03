@@ -113,4 +113,12 @@ public class VendorController {
         return ResponseEntity.ok("Vendor deleted successfully");
     }
    
+    //GetData By Searching
+    @GetMapping("/search")
+    public List<Vendor> searchByNameAndCategory(
+        @RequestParam String category,
+        @RequestParam String term
+    ) {
+        return vendorService.searchByCategoryAndName(category, term);
+    }
 }

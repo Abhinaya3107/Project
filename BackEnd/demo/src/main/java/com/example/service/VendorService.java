@@ -3,8 +3,13 @@ package com.example.service;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,8 +109,30 @@ public class VendorService {
      
     }
 
-    
-  
+    ///Search
+//    public List<Vendor> searchByCategoryAndName(String category, String name) {
+//        Set<Vendor> result = new HashSet<>();
+//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(category, name));
+//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(category, name));
+//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(category, name));
+//        return new ArrayList<>(result);
+//    
+//    }
+    public List<Vendor> searchByCategoryAndName(String category, String name) {
+        List<Vendor> combined = new ArrayList<>();
+        combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(category, name));
+        combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(category, name));
+        combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(category, name));
+
+        // Remove duplicates based on vid
+        Map<Long, Vendor> uniqueMap = new LinkedHashMap<>();
+        for (Vendor v : combined) {
+            uniqueMap.putIfAbsent(v.getVid(), v);
+        }
+
+        return new ArrayList<>(uniqueMap.values());
+    }
+
       
     
 

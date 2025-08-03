@@ -15,9 +15,12 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
 
 	Optional<Vendor> findByEmailAndPassword(String email, String password);
 
-	// These are already in your code:
 	List<Vendor> findByCategory(String category);
 	List<Vendor> findByEventId(Long eventId);
-
 	List<Vendor> findByCategoryIgnoreCase(String category);
+	
+	///Search Operation
+    List<Vendor> findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(String category, String name);
+    List<Vendor> findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(String category, String name);
+    List<Vendor> findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(String category, String name);
 }
