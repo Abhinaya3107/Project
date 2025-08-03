@@ -121,4 +121,13 @@ public class VendorController {
     ) {
         return vendorService.searchByCategoryAndName(category, term);
     }
+    
+    @GetMapping("/count")
+    public ResponseEntity<Long> getVendorCountByCategory(@RequestParam String category) {
+        long count = vendorService.countVendorsByCategory(category);
+        return ResponseEntity.ok(count);
+    }
+
+
+    
 }

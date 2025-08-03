@@ -39,4 +39,8 @@ public class EventService {
         return eventRepository.findByUser_Id(userId);
     }
 
+    public long countEvents() {
+        return eventRepository.count();
+    }
+
 }

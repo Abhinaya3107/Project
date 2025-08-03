@@ -133,6 +133,11 @@ public class VendorService {
         return new ArrayList<>(uniqueMap.values());
     }
 
+
+    public long countVendorsByCategory(String category) {
+        return vendorRepository.countByCategory(category);
+    }
+
       
     
 

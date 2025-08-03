@@ -82,5 +82,9 @@ public class EventController {
         return eventService.findByUserId(userId);
     }
 
-
+    @GetMapping("/events/count")
+    public ResponseEntity<Long> getEventCount() {
+        long count = eventService.countEvents(); // assume this method calls eventRepository.count()
+        return ResponseEntity.ok(count);
+    }
 }
