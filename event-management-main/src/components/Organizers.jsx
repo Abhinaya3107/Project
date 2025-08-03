@@ -92,9 +92,7 @@ const Organizers = () => {
                   />
                   <h5 className="card-title">{organizer.firstName} {organizer.lastName}</h5>
                   <p><strong>Email:</strong> {organizer.email}</p>
-                  <p><strong>Contact:</strong> {organizer.mobile}</p>
-                  <p><strong>Address:</strong> {organizer.address}</p>
-                  <p><strong>Category:</strong> {organizer.category}</p>
+                  <p><strong>Contact:</strong> {organizer.mobileNumber}</p>
 
                   <Link to="/user-signup" className="btn btn-primary mt-2">
                         Book Now
