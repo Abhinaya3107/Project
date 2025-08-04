@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-import com.example.dto.VendorDTO;
-=======
 package com.example.controllers;
->>>>>>> c386f41bf25d56bcaf96b6601cd8e26d7554187d
+import com.example.dto.VendorDTO;
 
 import com.example.dto.VendorSigninRequest;
 import com.example.model.Vendor;
@@ -101,14 +98,27 @@ public class VendorController {
         }
     }
     
-<<<<<<< HEAD
+
     @GetMapping("/summary")
     public List<VendorDTO> getVendorSummary() {
         return vendorService.getVendorSummary();
     }
-=======
-    
->>>>>>> org5
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteVendor(@PathVariable Long id) {
+        if (!vendorService.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        vendorService.deleteById(id);
+        return ResponseEntity.ok("Vendor deleted successfully");
+    }
    
+    //GetData By Searching
+    @GetMapping("/search")
+    public List<Vendor> searchByNameAndCategory(
+        @RequestParam String category,
+        @RequestParam String term
+    ) {
+        return vendorService.searchByCategoryAndName(category, term);
+    }
 }

@@ -20,32 +20,61 @@ const Caterers = () => {
   const [error, setError] = useState(null);
 
   // Fetch caterers from backend
-  useEffect(() => {
+  const fetchCaterers = () => {
+    setLoading(true);
     axios
       .get("http://localhost:8080/api/vendors/category/Caterer")
       .then((res) => {
-        console.log("Caterers response:", res.data); // 👈 ADD THIS LINE
         setCaterers(res.data);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to fetch caterers", err);
         setError("Failed to fetch data");
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchCaterers();
   }, []);
 
-  // Filter based on search term
-  const filteredCaterers = caterers.filter(
-    (caterer) =>
-      caterer.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      caterer.mobile?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Delete caterer handler
+  const handleDelete = async (catererId) => {
+    if (!window.confirm("Are you sure you want to delete this caterer?"))
+      return;
 
-  // Apply "Available Only" filter
+    try {
+      await axios.delete(`http://localhost:8080/api/vendors/${catererId}`);
+      setCaterers((prev) =>
+        prev.filter((caterer) => caterer.vid !== catererId)
+      );
+    } catch (error) {
+      alert("Failed to delete caterer. Please try again.");
+    }
+  };
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (searchTerm.trim() === "") {
+        fetchCaterers(); // fetch all
+      } else {
+        axios
+          .get(
+            `http://localhost:8080/api/vendors/search?category=Caterer&term=${searchTerm}`
+          )
+          .then((res) => setCaterers(res.data))
+          .catch((err) => {
+            console.error("Search failed", err);
+            setError("Search failed");
+          });
+      }
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(delayDebounce); // cleanup on each keystroke
+  }, [searchTerm]);
+
   const displayedCaterers = showAvailableOnly
-    ? filteredCaterers.filter((caterer) => caterer.status === "available")
-    : filteredCaterers;
+    ? caterers.filter((caterer) => caterer.status === "active")
+    : caterers;
 
   return (
     <>
@@ -68,13 +97,12 @@ const Caterers = () => {
                 } btn-sm`}
                 onClick={() => setShowAvailableOnly(!showAvailableOnly)}
               >
-                {showAvailableOnly ? "All" : "Available"}
+                {showAvailableOnly ? "All" : "Active"}
               </button>
               <AddCateors show={showModal} onHide={() => setShowModal(false)} />
             </div>
           </div>
 
-          {/* Loading/Error UI */}
           {loading ? (
             <div>Loading caterers...</div>
           ) : error ? (
@@ -84,7 +112,8 @@ const Caterers = () => {
               <thead className="table-secondary text-center">
                 <tr>
                   <th>Sr. No</th>
-                  <th>Name</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
                   <th>Business</th>
                   <th>Contact</th>
                   <th>Status</th>
@@ -93,22 +122,24 @@ const Caterers = () => {
               </thead>
               <tbody className="text-center">
                 {displayedCaterers.map((caterer, index) => (
-                  <tr key={index}>
+                  <tr key={caterer.vid}>
                     <td>{index + 1}</td>
-                    <td>{`${caterer.firstName} ${caterer.lastName}`}</td>
+                    <td>{`${caterer.firstName}`}</td>
+                    <td>{`${caterer.lastName}`}</td>
                     <td>{caterer.businessName}</td>
                     <td>{caterer.mobile}</td>
                     <td>
                       <span
                         className={`badge bg-${
-                          caterer.status === "available" ? "success" : "primary"
+                          caterer.status === "active" ? "success" : "danger"
                         }`}
                       >
                         {caterer.status}
                       </span>
                     </td>
                     <td>
-                      {/* <button
+                      {/* Uncomment for edit functionality
+                      <button
                         className="btn btn-primary btn-sm me-2"
                         onClick={() => {
                           setSelectedCaterer(caterer);
@@ -116,8 +147,12 @@ const Caterers = () => {
                         }}
                       >
                         <i className="bi bi-pencil-square"></i>
-                      </button> */}
-                      <button className="btn btn-danger btn-sm">
+                      </button>
+                      */}
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDelete(caterer.vid)}
+                      >
                         <i className="bi bi-trash-fill"></i>
                       </button>
                     </td>
@@ -128,7 +163,7 @@ const Caterers = () => {
           )}
         </div>
 
-        {/* //Modal Components */}
+        {/* Modal Components */}
         <UpdateCatererModal
           show={showUpdateModal}
           onHide={() => setShowUpdateModal(false)}
