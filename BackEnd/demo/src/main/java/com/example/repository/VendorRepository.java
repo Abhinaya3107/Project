@@ -23,4 +23,9 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
     List<Vendor> findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(String category, String name);
     List<Vendor> findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(String category, String name);
     List<Vendor> findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(String category, String name);
+<<<<<<< HEAD
+=======
+    long countByCategory(String category);
+    
+>>>>>>> organizer3
 }

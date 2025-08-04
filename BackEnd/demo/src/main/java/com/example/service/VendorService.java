@@ -107,6 +107,33 @@ public class VendorService {
                 .collect(Collectors.toList());
         
      
+<<<<<<< HEAD
+=======
+    }
+
+    ///Search
+//    public List<Vendor> searchByCategoryAndName(String category, String name) {
+//        Set<Vendor> result = new HashSet<>();
+//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(category, name));
+//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(category, name));
+//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(category, name));
+//        return new ArrayList<>(result);
+//    
+//    }
+    public List<Vendor> searchByCategoryAndName(String category, String name) {
+        List<Vendor> combined = new ArrayList<>();
+        combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(category, name));
+        combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(category, name));
+        combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(category, name));
+
+        // Remove duplicates based on vid
+        Map<Long, Vendor> uniqueMap = new LinkedHashMap<>();
+        for (Vendor v : combined) {
+            uniqueMap.putIfAbsent(v.getVid(), v);
+        }
+
+        return new ArrayList<>(uniqueMap.values());
+>>>>>>> organizer3
     }
 
     ///Search
@@ -137,6 +164,17 @@ public class VendorService {
     
 
 
+<<<<<<< HEAD
+=======
+    public long countVendorsByCategory(String category) {
+        return vendorRepository.countByCategory(category);
+    }
+
+      
+    
+
+
+>>>>>>> organizer3
 
 
 }

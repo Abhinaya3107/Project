@@ -1,95 +1,106 @@
-import OrgNavbar from "./OrgNavBar";
 import Sidebar from "./Sidebar";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import profileImg from "../Organizer/img/profile.png";
+import OrgNavbar from "./OrgNavbar";
+import defaultProfileImg from "../../assets/profile.png";
 
 const Profile = () => {
   const [formData, setFormData] = useState({
-    em_firstname: "",
-    em_lastname: "",
-    em_email: "",
-    em_mobile: "",
-    em_profileimg: profileImg,
-    em_address: "",
-    org_name: "",
-  });
+  profileImage: null,
+  previewImage: defaultProfileImg,// ✅ fixed
+  firstName: "",
+  lastName: "",
+  mobileNumber: "",
+  email: "",
+  address: "",
+  organizationName: ""
+});
 
-  const [loading, setLoading] = useState(true);
-  const organizerId = localStorage.getItem("organizerId"); // ✅ Organizer ID from login
-
+  const organizerId = localStorage.getItem("organizerId"); //  Organizer ID from login
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/api/organizers/${organizerId}`
-        );
-        const data = response.data;
+        const response = await fetch(
+          `http://localhost:8080/api/organizers/profile/${organizerId}`);
+         if (response.ok) {
+                  const data = await response.json();
+                  setFormData({
+  profileImage: data.profileImage || null,
+  previewImage: data.profileImage
+    ? `data:image/jpeg;base64,${data.profileImage}`
+    : defaultProfileImg,
+  firstName: data.firstName || "",
+  lastName: data.lastName || "",
+  mobileNumber: data.mobileNumber || "",
+  email: data.email || "",
+  address: data.address || "",
+  organizationName: data.organizationName || ""
+});
 
-        setFormData({
-          em_firstname: data.firstName,
-          em_lastname: data.lastName,
-          em_email: data.email,
-          em_mobile: data.mobileNumber,
-          em_profileimg: data.profileImage
-            ? `data:image/jpeg;base64,${data.profileImage}`
-            : profileImg,
-          em_address: data.address,
-          org_name: data.organizationName,
-        });
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-        alert("Failed to load profile data!");
-      } finally {
-        setLoading(false);
-      }
-    };
+                } else {
+                  console.error("Failed to fetch organizer profile.");
+                }
+              } catch (err) {
+                console.error("Error fetching organizer profile:", err);
+              }
+            };
+        
+            if (organizerId) {
+              fetchProfile();
+            }
+          }, [organizerId]);
+      
 
-    fetchProfile();
-  }, [organizerId]);
-
-  const handleChange = (e) => {
+   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Handle image upload (instant preview)
+
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, em_profileimg: file });
-    }
-  };
+  const file = e.target.files[0];
+  if (file) {
+    setFormData((prev) => ({
+      ...prev,
+      profileImage: file, // actual file to send to backend
+      previewImage: URL.createObjectURL(file) // used for preview
+    }));
+  }
+};
 
   // ✅ Submit updated profile
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("firstName", formData.em_firstname);
-      formDataToSend.append("lastName", formData.em_lastname);
-      formDataToSend.append("mobileNumber", formData.em_mobile);
-      formDataToSend.append("address", formData.em_address);
-      formDataToSend.append("organizationName", formData.org_name);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-      if (formData.em_profileimg instanceof File) {
-        formDataToSend.append("profileImage", formData.em_profileimg);
-      }
+  const updatedForm = new FormData();
+  updatedForm.append("firstName", formData.firstName);
+  updatedForm.append("lastName", formData.lastName);
+  updatedForm.append("mobile", formData.mobileNumber);
+  updatedForm.append("address", formData.address);
+  updatedForm.append("organizationName", formData.organizationName);
 
-      await axios.put(
-        `http://localhost:8080/api/organizers/${organizerId}`,
-        formDataToSend,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+  // Only append image if user selected a new file
+  if (formData.profileImage instanceof File) {
+    updatedForm.append("profileImage", formData.profileImage);
+  }
 
+  try {
+    const response = await fetch(`http://localhost:8080/api/organizers/profile/${organizerId}`, {
+      method: "PUT",
+      body: updatedForm, // no headers for FormData
+    });
+
+    const message = await response.text();
+    if (response.ok) {
       alert("Profile updated successfully!");
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Failed to update profile!");
+    } else {
+      alert(`Update failed: ${message}`);
     }
-  };
-
-  if (loading) return <p className="text-center mt-5">Loading profile...</p>;
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    alert("Server error while updating profile.");
+  }
+};
 
   return (
     <>
@@ -98,117 +109,51 @@ const Profile = () => {
         <Sidebar />
         <div className="content w-100 p-3">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h4 className="h5">Profile</h4>
+            <h4 className="h5">Organizer Profile</h4>
           </div>
 
           <div className="row px-4">
-            {/* Profile Image Section */}
             <div className="col-md-4 d-flex flex-column align-items-center">
-              <img
-                src={
-                  formData.em_profileimg instanceof File
-                    ? URL.createObjectURL(formData.em_profileimg)
-                    : formData.em_profileimg
-                }
-                className="rounded-circle mb-3"
-                width="150"
-                height="150"
-                alt="Profile"
-              />
-              <input
-                type="file"
-                accept="image/*"
-                className="form-control"
-                onChange={handleImageChange}
-              />
+            <img src={formData.previewImage} className="rounded-circle mb-3" width="150" alt="Profile" />
+              <input type="file" accept="image/*" className="form-control" onChange={handleImageChange} />
             </div>
 
-            {/* User Info Section */}
             <div className="col-md-8">
               <form onSubmit={handleSubmit}>
                 <div className="row">
-                  {/* First Name */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">First Name</label>
-                    <input
-                      type="text"
-                      name="em_firstname"
-                      className="form-control"
-                      value={formData.em_firstname}
-                      onChange={handleChange}
-                      required
-                    />
+                    <input type="text" name="firstName" className="form-control" value={formData.firstName} onChange={handleChange} required />
                   </div>
 
-                  {/* Last Name */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Last Name</label>
-                    <input
-                      type="text"
-                      name="em_lastname"
-                      className="form-control"
-                      value={formData.em_lastname}
-                      onChange={handleChange}
-                      required
-                    />
+                    <input type="text" name="lastName" className="form-control" value={formData.lastName} onChange={handleChange} required />
                   </div>
 
-                  {/* Email (Non-editable) */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Email</label>
-                    <input
-                      type="email"
-                      name="em_email"
-                      className="form-control"
-                      value={formData.em_email}
-                      disabled
-                    />
+                    <input type="email" className="form-control" value={formData.email} disabled />
                   </div>
 
-                  {/* Mobile Number */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Mobile Number</label>
-                    <input
-                      type="tel"
-                      name="em_mobile"
-                      className="form-control"
-                      value={formData.em_mobile}
-                      onChange={handleChange}
-                      maxLength="10"
-                      required
-                    />
+                    <input type="tel" name="mobileNumber" className="form-control" value={formData.mobileNumber} onChange={handleChange} maxLength="10" required />
                   </div>
 
-                  {/* Address */}
                   <div className="col-md-12 mb-3">
                     <label className="form-label">Address</label>
-                    <textarea
-                      name="em_address"
-                      className="form-control"
-                      value={formData.em_address}
-                      onChange={handleChange}
-                      required
-                    ></textarea>
+                    <textarea name="address" className="form-control" value={formData.address} onChange={handleChange} required />
                   </div>
 
-                  {/* Organization Name */}
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Organization Name</label>
-                    <input
-                      type="text"
-                      name="org_name"
-                      className="form-control"
-                      value={formData.org_name}
-                      onChange={handleChange}
-                      required
-                    />
+                    <input type="text" name="businessName" className="form-control" value={formData.organizationName} onChange={handleChange} required />
                   </div>
-                </div>
 
-                {/* Update Button */}
-                <button type="submit" className="btn btn-success w-100">
-                  Update Profile
-                </button>
+          
+                </div>
+                <button type="submit" className="btn btn-success w-100">Update Profile</button>
               </form>
             </div>
           </div>

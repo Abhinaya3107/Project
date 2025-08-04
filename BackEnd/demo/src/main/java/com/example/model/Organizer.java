@@ -51,4 +51,8 @@ public class Organizer {
     @Size(min = 6, max = 8, message = "Password must be between 6 to 8 characters")
     @Column(nullable = false)
     private String password;
+    
+    @Lob
+    @Column(name="Image_data")
+    private byte[] profileImage;
 }

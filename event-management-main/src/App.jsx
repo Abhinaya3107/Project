@@ -66,10 +66,13 @@ function App() {
         <Route path="/user-signup" element={<UserSignUp />} />
         <Route path="/vendor-dashboard" element={<VendorDash />} />
 <<<<<<< HEAD
+<<<<<<< HEAD
         
 
 =======
 >>>>>>> org6
+=======
+>>>>>>> organizer3
         <Route path="/organizer-signin" element={<Signin />} />
         <Route path="/updateCatererModal" element={<UpdateCatererModal />} />
         <Route path="/addCateors" element={<AddCateors />} />
