@@ -10,30 +10,41 @@ function VendorOrders() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [filter, setFilter] = useState(""); // Tracks current filter
-  
+  const [filter, setFilter] = useState("");
+  const [vendorOrders, setVendorOrders] = useState([]);
+
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  // Extract "sts" query parameter from URL
+  // 🔁 Fetch from backend API
+  useEffect(() => {
+    fetch("http://localhost:8080/api/vendor-orders")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch vendor orders");
+        }
+        return res.json();
+      })
+      .then((data) => setVendorOrders(data))
+      .catch((err) => {
+        console.error(err);
+        alert("Could not load vendor orders.");
+      });
+  }, []);
+
+  // 🌐 Extract query param from URL
   useEffect(() => {
     const urlFilter = searchParams.get("sts");
     if (urlFilter) setFilter(urlFilter);
   }, [location.search]);
 
-  const vendorOrders = [
-    { id: 1, organizer: "Elite Event Planners", eventName: "Corporate Gala", dateTime: "2025-06-20 18:00", proposedRate: "$7000", sts: "Upcoming" },
-    { id: 2, organizer: "Grand Celebrations", eventName: "Wedding Reception", dateTime: "2025-07-05 15:00", proposedRate: "$9500", sts: "In Progress" },
-    { id: 3, organizer: "Premier Events", eventName: "Music Festival", dateTime: "2025-08-12 20:00", proposedRate: "$12000", sts: "Cancelled" },
-  ];
-
-  // Filter orders based on the selected status
+  // 🔍 Filter + search
   const filteredOrders = vendorOrders.filter(
     (order) =>
-      (filter ? order.sts.toLowerCase() === filter.toLowerCase() : true) &&
-      (order.organizer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.dateTime.includes(searchTerm))
+      (filter ? order.sts?.toLowerCase() === filter.toLowerCase() : true) &&
+      (order.organizer?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.eventName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        order.dateTime?.includes(searchTerm))
   );
 
   return (
@@ -46,7 +57,12 @@ function VendorOrders() {
             <h4 className="h5">Vendor Orders</h4>
             <div className="d-flex mb-2 mb-md-0 gap-2">
               {/* Search Bar */}
-              <input type="text" className="form-control w-50" placeholder="Search orders..." onChange={(e) => setSearchTerm(e.target.value)} />
+              <input
+                type="text"
+                className="form-control w-50"
+                placeholder="Search orders..."
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
 
               {/* Filter Buttons */}
               <button className="btn bg-c-pink text-white" onClick={() => setFilter("Cancelled")}>Cancelled</button>
@@ -64,7 +80,7 @@ function VendorOrders() {
                 <th>Event Name</th>
                 <th>Date & Time</th>
                 <th>Proposed Rate</th>
-                <th>Status</th> {/* Status column */}
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -77,12 +93,16 @@ function VendorOrders() {
                   <td>{order.dateTime}</td>
                   <td>{order.proposedRate}</td>
                   <td>
-                    <span className={`badge ${order.sts === "Cancelled" ? "bg-c-pink" : order.sts === "In Progress" ? "bg-c-green" : "bg-c-yellow"} text-white`}>
+                    <span className={`badge ${
+                      order.sts === "Cancelled" ? "bg-c-pink" :
+                      order.sts === "In Progress" ? "bg-c-green" :
+                      "bg-c-yellow"
+                    } text-white`}>
                       {order.sts}
                     </span>
                   </td>
                   <td>
-                    {/* Accept & Reject Buttons */}
+                    {/* Accept/Reject or Action Buttons */}
                     {/* <button className="btn btn-success me-2">
                       <FontAwesomeIcon icon={faCheck} />
                     </button> */}

@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.example.dto.VendorDTO;
+import com.example.dto.VendorSignupDto;
 import com.example.model.Vendor;
 
 public interface VendorRepository extends JpaRepository<Vendor, Long> {
@@ -23,9 +25,9 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
     List<Vendor> findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(String category, String name);
     List<Vendor> findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(String category, String name);
     List<Vendor> findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(String category, String name);
-<<<<<<< HEAD
-=======
+
+
     long countByCategory(String category);
-    
->>>>>>> organizer3
+
+	void save(VendorSignupDto vendorDTO);
 }

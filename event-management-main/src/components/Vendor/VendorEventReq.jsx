@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import VendorNav from "./VendorNav";
 import VendorSidebar from "./VendorSidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -8,19 +8,27 @@ import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 const VendorEventReq = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [budgetLimit, setBudgetLimit] = useState(5000); // Default budget limit
+  const [eventRequests, setEventRequest]=useState([]);
 
-  const eventRequests = [
-    { id: 1, organizer: "Elite Events", eventName: "Corporate Gala", dateTime: "2025-06-20 18:00", budget: 7000 },
-    { id: 2, organizer: "Grand Weddings", eventName: "Wedding Reception", dateTime: "2025-07-05 15:00", budget: 4500 },
-    { id: 3, organizer: "Premier Fest", eventName: "Music Festival", dateTime: "2025-08-12 20:00", budget: 12000 },
-  ];
+  useEffect(()=>{
+    fetch("http://localhost:8080/api/event-requests")
+    .then((res)=>{
+      if(!res.ok)throw new Error("Failed to fetch");
+      return res.json();
+    })
+    .then((data)=>setEventRequest(data))
+    .catch((err)=>{
+      console.error("Error fetching event requests : ",err);
+      alert("Failes to load event requests.");
+    })
+  },[])
 
   const filteredRequests = eventRequests.filter(
     (request) =>
       request.budget >= budgetLimit &&
-      (request.organizer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.eventName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.dateTime.includes(searchTerm))
+      (request.organizer?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.eventName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.dateTime?.includes(searchTerm))
   );
 
   return (

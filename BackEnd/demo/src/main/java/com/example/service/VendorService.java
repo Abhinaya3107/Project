@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.dto.VendorDTO;
 
 import com.example.dto.VendorProfileDTO;
-
+import com.example.dto.VendorSignupDto;
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -34,13 +34,20 @@ public class VendorService {
         return vendorRepository.findByEmailAndPassword(email, password);
     }
 
-    public String registerVendor(Vendor vendor) {
-        if (vendorRepository.existsByEmail(vendor.getEmail())) {
-            return "Vendor already exists";
-        }
-        vendorRepository.save(vendor);
-        return "Vendor registered successfully!";
-    }  
+    public void registerVendor(VendorSignupDto dto) {
+        Vendor vendor = new Vendor();
+        vendor.setFirstName(dto.getFirstName());
+        vendor.setLastName(dto.getLastName());
+        vendor.setEmail(dto.getEmail());
+        vendor.setMobile(dto.getMobile());
+        vendor.setCategory(dto.getCategory());
+        vendor.setPassword(dto.getPassword());
+        vendor.setAddress(dto.getAddress());
+        vendor.setBusinessName(dto.getBusinessName());
+        vendor.setStatus("available"); // Default status if needed
+
+        vendorRepository.save(vendor); // ✅ Now save entity, not DTO
+    }
     
     
     public void deleteById(Long id) {
@@ -107,20 +114,11 @@ public class VendorService {
                 .collect(Collectors.toList());
         
      
-<<<<<<< HEAD
-=======
+
     }
 
-    ///Search
-//    public List<Vendor> searchByCategoryAndName(String category, String name) {
-//        Set<Vendor> result = new HashSet<>();
-//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(category, name));
-//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(category, name));
-//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(category, name));
-//        return new ArrayList<>(result);
-//    
-//    }
-    public List<Vendor> searchByCategoryAndName(String category, String name) {
+  
+    public List<Vendor> searchByCategoryAndName1(String category, String name) {
         List<Vendor> combined = new ArrayList<>();
         combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(category, name));
         combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(category, name));
@@ -133,18 +131,9 @@ public class VendorService {
         }
 
         return new ArrayList<>(uniqueMap.values());
->>>>>>> organizer3
+
     }
 
-    ///Search
-//    public List<Vendor> searchByCategoryAndName(String category, String name) {
-//        Set<Vendor> result = new HashSet<>();
-//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(category, name));
-//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndLastNameContainingIgnoreCase(category, name));
-//        result.addAll(vendorRepository.findByCategoryIgnoreCaseAndBusinessNameContainingIgnoreCase(category, name));
-//        return new ArrayList<>(result);
-//    
-//    }
     public List<Vendor> searchByCategoryAndName(String category, String name) {
         List<Vendor> combined = new ArrayList<>();
         combined.addAll(vendorRepository.findByCategoryIgnoreCaseAndFirstNameContainingIgnoreCase(category, name));
@@ -160,21 +149,9 @@ public class VendorService {
         return new ArrayList<>(uniqueMap.values());
     }
 
-      
-    
-
-
-<<<<<<< HEAD
-=======
     public long countVendorsByCategory(String category) {
         return vendorRepository.countByCategory(category);
     }
 
-      
-    
-
-
->>>>>>> organizer3
-
-
+	
 }

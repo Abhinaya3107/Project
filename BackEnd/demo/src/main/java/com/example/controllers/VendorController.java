@@ -1,5 +1,6 @@
 package com.example.controllers;
 import com.example.dto.VendorDTO;
+import com.example.dto.*;
 
 import com.example.dto.VendorSigninRequest;
 import com.example.model.Vendor;
@@ -27,9 +28,9 @@ public class VendorController {
     
     // Vendor Signup
     @PostMapping("/signup")
-    public ResponseEntity<String> registerVendor(@RequestBody Vendor vendor) {
-        String result = vendorService.registerVendor(vendor);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<String> registerVendor(@RequestBody VendorSignupDto dto) {
+        vendorService.registerVendor(dto); // call the void method
+        return ResponseEntity.ok("Vendor registered successfully");
     }
 
     // Vendor Signin
@@ -121,9 +122,7 @@ public class VendorController {
     ) {
         return vendorService.searchByCategoryAndName(category, term);
     }
-<<<<<<< HEAD
-=======
-    
+
     @GetMapping("/count")
     public ResponseEntity<Long> getVendorCountByCategory(@RequestParam String category) {
         long count = vendorService.countVendorsByCategory(category);
@@ -131,6 +130,5 @@ public class VendorController {
     }
 
 
-    
->>>>>>> organizer3
+ 
 }
