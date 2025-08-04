@@ -7,7 +7,6 @@ import {
 import "./App.css";
 import NavBar from "./components/NavBar";
 import Signin from "./components/Organizer/Signin";
-// import Signup from "./components/Organizer/Signup";HEAD
 import Home from "./components/Home";
 
 import VendorSignin from "./components/Vendor/VendorSignin";
@@ -17,7 +16,7 @@ import OrgDash from "./components/Organizer/OrgDash";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./components/Organizer/Profile";
 import Settings from "./components/Organizer/Settings";
-import NotFound from "./components/NotFound"; // Import Error Page
+import NotFound from "./components/NotFound";
 import Caterers from "./components/Organizer/Caterers";
 import Photographers from "./components/Organizer/Photographers";
 import Venues from "./components/Organizer/Venues";
@@ -39,47 +38,42 @@ import Messages from "./components/User/Messages";
 import UserProfile from "./components/User/UserProfile";
 import UserBookings from "./components/User/UserBookings";
 import UserSettings from "./components/User/UserSettings";
-import CreateEvent from "./components/User/CreateEvent";
-// import OMessages from "./components/Organizer/OMessages"
+import CreateEvent from "./components/User/CreateEvent"; // ✅ Ensure this is correctly imported
 import EventDetails from "./components/Organizer/EventDetails";
 import ThemeDetails from "./components/ThemeDetails";
-import OrganizerSignUp from "./components/Organizer/RegisterEM";
 import UpdateCatererModal from "./components/Organizer/UpdateCatererModal";
 import AddCateors from "./components/Organizer/AddCateors";
+
 function App() {
   const location = useLocation();
-  //localStorage.clear();
+
   return (
     <>
       {/* Show NavBar unless user is on /Dashboard or its subpaths */}
-      {/* {!location.pathname.startsWith("/Dashboard") && <NavBar />} */}
       {!["/Dashboard", "/My-Dashboard", "/index"].some((path) =>
         location.pathname.startsWith(path)
       ) && <NavBar />}
 
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/vendor-signin" element={<VendorSignin />} />
         <Route path="/vendor-signup" element={<VendorSignUp />} />
         <Route path="/user-signin" element={<UserSignin />} />
         <Route path="/user-signup" element={<UserSignUp />} />
-        <Route path="/vendor-dashboard" element={<VendorDash />} />
         <Route path="/organizer-signin" element={<Signin />} />
+        <Route path="/register" element={<RegisterEM />} />
+        <Route path="/forgot-password" element={<ForgotPass />} />
         <Route path="/updateCatererModal" element={<UpdateCatererModal />} />
         <Route path="/addCateors" element={<AddCateors />} />
-        {/* <Route path="/organizer-signup" element={<SignUp />} /> */}
 
-        <Route path="/register" element={<RegisterEM />} />
-        <Route path="forgot-password" element={<ForgotPass />} />
-
-        {/* Protected Dashboard Route with Nested Routes - Event Organizer */}
+        {/* Organizer Dashboard */}
         <Route path="/Dashboard" element={<ProtectedRoute />}>
           <Route index element={<OrgDash />} />
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Settings />} />
           <Route path="caterers" element={<Caterers />} />
-          {/* <Route path="messages" element={<OMessages />} /> */}
           <Route path="photographers" element={<Photographers />} />
           <Route path="venues" element={<Venues />} />
           <Route path="event-requests" element={<EventRequests />} />
@@ -87,7 +81,7 @@ function App() {
           <Route path="events" element={<EventDetails />} />
         </Route>
 
-        {/* Protected Dashboard Route with Nested Routes - Service Providers */}
+        {/* Vendor Dashboard */}
         <Route path="/My-Dashboard" element={<ProtectedRoute />}>
           <Route index element={<VendorDash />} />
           <Route path="requests" element={<VendorEventReq />} />
@@ -96,7 +90,8 @@ function App() {
           <Route path="settings" element={<VendorSettings />} />
           <Route path="logout" element={<VLogout />} />
         </Route>
-        {/* Protected Dashboard Route with Nested Routes - users */}
+
+        {/* User Dashboard */}
         <Route path="/index" element={<ProtectedRoute />}>
           <Route index element={<HomePage />} />
           <Route path="Profile" element={<UserProfile />} />
@@ -105,11 +100,10 @@ function App() {
           <Route path="Logout" element={<ULogout />} />
           <Route path="Bookings" element={<UserBookings />} />
           <Route path="Settings" element={<UserSettings />} />
-          <Route path="create-event" element={<CreateEvent />} />
+          <Route path="create-event" element={<CreateEvent />} /> {/* ✅ Here */}
         </Route>
-        <Route path="/themes/:themeName" element={<ThemeDetails />} />
 
-        {/* Catch-All Route for Unknown Paths */}
+        <Route path="/themes/:themeName" element={<ThemeDetails />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
