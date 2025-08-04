@@ -1,6 +1,8 @@
 package com.example.controllers;
 
 import com.example.dto.EventSummaryDTO;
+import com.example.dto.EventSummaryDTOofapprove;
+import com.example.dto.UpcomingEventDTO;
 import com.example.model.Event;
 import com.example.model.EventStatus;
 import com.example.model.User;
@@ -12,6 +14,7 @@ import com.example.service.EventService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -110,7 +113,11 @@ public class EventController {
         return ResponseEntity.ok("Event status updated to " + status);
     }
 
-    
+    @GetMapping("/upcoming")
+    public ResponseEntity<List<UpcomingEventDTO>> getUpcomingEvents() {
+        List<UpcomingEventDTO> upcomingEvents = eventService.getUpcomingEvents();
+        return ResponseEntity.ok(upcomingEvents);
+    }
 
 
    
