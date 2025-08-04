@@ -10,7 +10,7 @@ import com.example.service.VenueService;
 
 @RestController
 @RequestMapping("/api/venues")
-@CrossOrigin(origins = "*") // Allow frontend to access API
+@CrossOrigin(origins = "*")
 public class VenueController {
 
     @Autowired

@@ -49,6 +49,11 @@ public class Vendor {
     @Column(nullable = false, length = 50)
     private String category;
     
+    @NotBlank(message = "CategoryName is required")
+    @Size(max = 50, message = "Category must not exceed 50 characters")
+    @Column(nullable = false, length = 50)
+    private String categoryName;
+    
     private String address;
     
     private String businessName;

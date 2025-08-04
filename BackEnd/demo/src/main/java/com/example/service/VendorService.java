@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.dto.VendorDTO;
 
 import com.example.dto.VendorProfileDTO;
-
+import com.example.dto.VendorSigninRequest;
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -34,7 +34,7 @@ public class VendorService {
         return vendorRepository.findByEmailAndPassword(email, password);
     }
 
-    public String registerVendor(Vendor vendor) {
+    public String registerVendor(VendorSigninRequest vendor) {
         if (vendorRepository.existsByEmail(vendor.getEmail())) {
             return "Vendor already exists";
         }

@@ -1,6 +1,7 @@
 package com.example.controllers;
 import com.example.dto.VendorDTO;
 
+
 import com.example.dto.VendorSigninRequest;
 import com.example.model.Vendor;
 import com.example.service.VendorService;
@@ -25,12 +26,6 @@ public class VendorController {
 
     
     
-    // Vendor Signup
-    @PostMapping("/signup")
-    public ResponseEntity<String> registerVendor(@RequestBody Vendor vendor) {
-        String result = vendorService.registerVendor(vendor);
-        return ResponseEntity.ok(result);
-    }
 
     // Vendor Signin
     @PostMapping("/signin")

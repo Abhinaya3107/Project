@@ -15,21 +15,20 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@MappedSuperclass
-					
+@MappedSuperclass					
 @Getter
 @Setter
 @ToString
 public class BaseEntity {
-	@Id // mandatory , PK
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	// for auditing purpose - can maintain creation n updation date|time|timestamp
-	@CreationTimestamp
-	@Column(name = "creation_date", updatable = false)
-	private LocalDate creationDate;
-	
-	@UpdateTimestamp
-	@Column(name = "updated_on")
-	private LocalDateTime updatedOn;
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @CreationTimestamp
+    @Column(name = "creation_date", updatable = false)
+    private LocalDate creationDate;
+
+    @UpdateTimestamp
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
 }
