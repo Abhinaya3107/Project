@@ -29,6 +29,9 @@ public class Event {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
-	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-	private List<Vendor> vendors;	
+	@OneToMany(mappedBy = "event", fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
+	private List<Vendor> vendors;
+	  @Enumerated(EnumType.STRING)
+	    @Column(nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
+	    private EventStatus status = EventStatus.PENDING;
 }

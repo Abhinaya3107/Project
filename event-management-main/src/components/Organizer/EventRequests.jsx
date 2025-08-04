@@ -1,51 +1,101 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import EventRequestModal from "./EventRequestModal";
+import "bootstrap/dist/css/bootstrap.min.css";
 import OrgNavbar from "./OrgNavBar";
 import Sidebar from "./Sidebar";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
-import EventRequestModal from "./EventRequestModal"; // Import Modal Component
 
 function EventRequests() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [requests, setRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  const eventRequests = [
-    {
-      id: 1,
-      username: "John Doe",
-      eventType: "Wedding",
-      dateTime: "2025-06-15 14:00",
-      budget: "$5000",
-    },
-    {
-      id: 2,
-      username: "Jane Smith",
-      eventType: "Birthday",
-      dateTime: "2025-07-10 18:00",
-      budget: "$2000",
-    },
-    {
-      id: 3,
-      username: "Alice Brown",
-      eventType: "Corporate",
-      dateTime: "2025-08-22 09:00",
-      budget: "$8000",
-    },
-  ];
+  const fetchRequests = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/events/summary");
+      console.log("Fetched requests:", response.data); // Debug log
+      setRequests(response.data);
+    } catch (error) {
+      console.error("Error fetching event requests:", error);
+    }
+  };
 
-  const filteredRequests = eventRequests.filter(
-    (request) =>
-      request.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.eventType.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.dateTime.includes(searchTerm)
-  );
+  useEffect(() => {
+    fetchRequests();
+  }, []);
 
-  // Function to Open Modal with Selected Request Details
-  const openModal = (request) => {
+  const handleStatusUpdate = async (request, status) => {
+    try {
+      if (!request || !request.id) {
+        console.error("Invalid request or missing ID:", request);
+        return;
+      }
+
+      console.log("Updating:", request.id, "to", status);
+
+      await axios.put(
+        `http://localhost:8080/api/events/${request.id}/status?status=${status}`
+      );
+
+      await fetchRequests();
+    } catch (error) {
+      console.error("Failed to update status", error);
+      alert("Status update failed.");
+    }
+  };
+
+  const acceptRequest = (id) => {
+    if (!id) {
+      console.error("acceptRequest called with invalid id:", id);
+      return;
+    }
+
+    const request = requests.find((req) => req.id === id);
+    if (request) {
+      handleStatusUpdate(request, "APPROVED");
+    } else {
+      console.error("Request not found for id:", id);
+    }
+  };
+
+  const rejectRequest = (id) => {
+    if (!id) {
+      console.error("rejectRequest called with invalid id:", id);
+      return;
+    }
+
+    const request = requests.find((req) => req.id === id);
+    if (request) {
+      handleStatusUpdate(request, "REJECTED");
+    } else {
+      console.error("Request not found for id:", id);
+    }
+  };
+
+  const handleAccept = (request) => {
+    if (!request || !request.id) {
+      console.error("handleAccept called with invalid request:", request);
+      return;
+    }
+    acceptRequest(request.id);
+  };
+
+  const handleReject = (request) => {
+    if (!request || !request.id) {
+      console.error("handleReject called with invalid request:", request);
+      return;
+    }
+    rejectRequest(request.id);
+  };
+
+  const handleView = (request) => {
     setSelectedRequest(request);
     setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedRequest(null);
   };
 
   return (
@@ -53,74 +103,66 @@ function EventRequests() {
       <OrgNavbar />
       <div className="d-flex">
         <Sidebar />
-        <div className="content w-100 p-3">
-
-          <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h4 className="h5">Event Requests</h4>
-            <div className="d-flex mb-2 mb-md-0">
-              <div className="btn-group w-100 me-2">
-                {/* Search Bar */}
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search requests..."
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                
-              </div>
-            </div>
-          </div>
-
-
-          <table className="table table-hover table-bordered">
-            <thead className="table-secondary  text-center">
+        <div className="container mt-5">
+          <h3 className="mb-4">Event Requests</h3>
+          <table className="table table-bordered">
+            <thead className="table-light">
               <tr>
                 <th>Sr. No</th>
                 <th>User Name</th>
                 <th>Event Type</th>
                 <th>Date & Time</th>
+                <th>Venue</th>
                 <th>Budget</th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody className="text-center">
-              {filteredRequests.map((request, index) => (
-                <tr key={request.id}>
-                  <td>{index + 1}</td>
-                  <td>{request.username}</td>
-                  <td>{request.eventType}</td>
-                  <td>{request.dateTime}</td>
-                  <td>{request.budget}</td>
-                  <td>
-                    {/* Eye Button to Open Modal */}
-                    <button
-                      className="btn btn-info me-2"
-                      onClick={() => openModal(request)}
-                    >
-                      <FontAwesomeIcon icon={faEye} />
-                    </button>
-
-                    {/* Accept & Reject Buttons */}
-                    <button className="btn btn-success me-2">
-                      <FontAwesomeIcon icon={faCheck} />
-                    </button>
-                    <button className="btn btn-danger">
-                      <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+            <tbody>
+              {requests
+                .filter((request) => request && request.id) // Skip invalid entries
+                .map((request, index) => (
+                  <tr key={request.id}>
+                    <td>{index + 1}</td>
+                    <td>{request.username}</td>
+                    <td>{request.eventName}</td>
+                    <td>{request.dateTime}</td>
+                    <td>{request.venue}</td>
+                    <td>₹{request.budget}</td>
+                    <td>
+                      <button
+                        className="btn btn-success btn-sm me-2"
+                        onClick={() => handleAccept(request)}
+                      >
+                        Accept
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm me-2"
+                        onClick={() => handleReject(request)}
+                      >
+                        Reject
+                      </button>
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => handleView(request)}
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
+
+          {selectedRequest && (
+            <EventRequestModal
+              show={showModal}
+              onHide={handleCloseModal}
+              request={selectedRequest}
+              handleStatusUpdate={handleStatusUpdate}
+            />
+          )}
         </div>
       </div>
-
-      {/* Modal Component */}
-      <EventRequestModal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        request={selectedRequest}
-      />
     </>
   );
 }
