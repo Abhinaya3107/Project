@@ -1,8 +1,12 @@
 package com.example.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -66,10 +70,6 @@ public class Vendor {
     @CreationTimestamp
     private LocalDate registeredAt;
     
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
-    
     @Lob
     @Column(name="Image_data")
     private byte[] profileImage; 
@@ -78,5 +78,10 @@ public class Vendor {
     @Pattern(regexp = "^(available|booked)$", message = "Status must be either 'available' or 'booked'")
     @Column(nullable = false, length = 10)
     private String status;
+    
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    @JsonBackReference
+    private Event event;
 
 }

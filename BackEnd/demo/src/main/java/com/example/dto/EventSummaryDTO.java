@@ -1,5 +1,7 @@
 package com.example.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.*;
 
 @Data
@@ -9,7 +11,7 @@ public class EventSummaryDTO {
 	private Long id;
     private String username;
     private String eventName;
-    private String dateTime;
+    private LocalDateTime dateTime;
     private String venue;
     private int budget;
 }

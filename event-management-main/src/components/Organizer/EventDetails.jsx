@@ -22,6 +22,20 @@ function EventDetails() {
   const [photographers, setPhotographers] = useState([]);
   const [saving, setSaving] = useState(false);
 
+  const fetchPhotographers = () => {
+    fetch("http://localhost:8080/api/vendors/business-names/photography")
+      .then((res) => res.json())
+      .then((data) => setPhotographers(data))
+      .catch((err) => console.error("Error fetching photographers:", err));
+  };
+
+  const fetchCaterers = () => {
+    fetch("http://localhost:8080/api/vendors/business-names/caterer")
+      .then((res) => res.json())
+      .then((data) => setCaterers(data))
+      .catch((err) => console.error("Error fetching caterers:", err));
+  };
+
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
     setEditData({
@@ -35,66 +49,71 @@ function EventDetails() {
       caterer: event.vendors?.find((v) => v.type === "Caterer")?.name || "",
       budget: event.budget,
     });
+
+    fetchPhotographers();
+    fetchCaterers();
   };
 
-  // Fetch all data on mount
   useEffect(() => {
     fetch("http://localhost:8080/api/events")
       .then((res) => res.json())
       .then((data) => setEventsData(data))
       .catch((err) => console.error("Error fetching events:", err));
 
-    fetch("http://localhost:8080/api/caterers")
-      .then((res) => res.json())
-      .then((data) => setCaterers(data))
-      .catch((err) => console.error("Error fetching caterers:", err));
-
-    fetch("http://localhost:8080/api/photographers")
-      .then((res) => res.json())
-      .then((data) => setPhotographers(data))
-      .catch((err) => console.error("Error fetching photographers:", err));
+    fetchPhotographers();
+    fetchCaterers();
   }, []);
 
-  // Update filtered events based on status and month
   useEffect(() => {
-    const updatedEvents = eventsData.map((event) => ({
-      ...event,
-      status:
-        event.dateTime?.split("T")[0] === getTodayDate()
-          ? "In Progress"
-          : "Upcoming",
-    }));
+    const updatedEvents = eventsData
+      .filter((event) => event.status === "APPROVED")
+      .map((event) => {
+        const eventDate = event.dateTime?.split("T")[0];
+        const today = getTodayDate();
+        return {
+          ...event,
+          computedStatus: eventDate === today ? "In Progress" : "Upcoming",
+        };
+      });
 
     const monthFilteredEvents = updatedEvents.filter(
-      (event) => new Date(event.dateTime).getMonth() + 1 === parseInt(selectedMonth)
+      (event) =>
+        new Date(event.dateTime).getMonth() + 1 === parseInt(selectedMonth)
     );
 
     setFilteredEvents(
       status
-        ? monthFilteredEvents.filter((event) => event.status === status)
+        ? monthFilteredEvents.filter(
+            (event) => event.computedStatus === status
+          )
         : monthFilteredEvents
     );
   }, [eventsData, status, selectedMonth]);
 
-  // Save edited event to backend
   const handleSaveChanges = () => {
     if (!selectedEvent || !editData) return;
     setSaving(true);
 
-    // Construct updated vendors array
     const updatedVendors = [];
 
     if (editData.photographer) {
-      updatedVendors.push({ type: "Photographer", name: editData.photographer });
+      updatedVendors.push({
+        type: "Photographer",
+        name: editData.photographer,
+      });
     }
+
     if (editData.caterer) {
-      updatedVendors.push({ type: "Caterer", name: editData.caterer });
+      updatedVendors.push({
+        type: "Caterer",
+        name: editData.caterer,
+      });
     }
 
     const updatedEvent = {
       ...selectedEvent,
       eventName: editData.name,
-      dateTime: editData.date + "T00:00:00", // keep time at midnight for simplicity
+      dateTime: editData.date + "T00:00:00",
       venue: editData.venue,
       status: editData.status,
       capacity: editData.capacity,
@@ -103,35 +122,20 @@ function EventDetails() {
     };
 
     fetch(`http://localhost:8080/api/events/${selectedEvent.id}`, {
-      method: "PUT", // or PATCH if your backend supports partial updates
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedEvent),
     })
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to save event");
-        }
+        if (!res.ok) throw new Error("Failed to save event");
         return res.json();
       })
       .then((data) => {
-        // Update local eventsData with updated event
         setEventsData((prev) =>
           prev.map((e) => (e.id === data.id ? data : e))
         );
-        setSelectedEvent(data);
-        setEditData({
-          name: data.eventName,
-          date: data.dateTime?.split("T")[0] || "",
-          venue: data.venue,
-          status: data.status,
-          capacity: data.capacity,
-          photographer:
-            data.vendors?.find((v) => v.type === "Photographer")?.name || "",
-          caterer: data.vendors?.find((v) => v.type === "Caterer")?.name || "",
-          budget: data.budget,
-        });
         alert("Event updated successfully!");
       })
       .catch((err) => {
@@ -143,7 +147,6 @@ function EventDetails() {
 
   return (
     <>
-      <OrgNavbar />
       <div className="d-flex">
         <Sidebar />
         <div className="content w-100 p-3">
@@ -180,9 +183,13 @@ function EventDetails() {
                 </button>
                 <button
                   className={`btn btn-sm ${
-                    status === "In Progress" ? "btn-primary" : "btn-outline-primary"
+                    status === "In Progress"
+                      ? "btn-primary"
+                      : "btn-outline-primary"
                   }`}
-                  onClick={() => navigate("/Dashboard/events?status=In Progress")}
+                  onClick={() =>
+                    navigate("/Dashboard/events?status=In Progress")
+                  }
                 >
                   In Progress Events
                 </button>
@@ -211,10 +218,12 @@ function EventDetails() {
                         <small>{event.dateTime?.split("T")[0]}</small>
                         <span
                           className={`badge ${
-                            event.status === "In Progress" ? "bg-primary" : "bg-warning"
+                            event.computedStatus === "In Progress"
+                              ? "bg-primary"
+                              : "bg-warning"
                           } mt-1`}
                         >
-                          {event.status}
+                          {event.computedStatus}
                         </span>
                       </div>
                     </button>
@@ -222,9 +231,12 @@ function EventDetails() {
                 ) : (
                   <p className="text-center text-muted">
                     No events found for {status} in{" "}
-                    {new Date(2025, selectedMonth - 1, 1).toLocaleString("default", {
-                      month: "long",
-                    })}
+                    {new Date(2025, selectedMonth - 1, 1).toLocaleString(
+                      "default",
+                      {
+                        month: "long",
+                      }
+                    )}
                   </p>
                 )}
               </div>
@@ -236,6 +248,7 @@ function EventDetails() {
                 {selectedEvent ? (
                   <>
                     <h4 className="fw-bold">{editData.name}</h4>
+
                     <div className="row">
                       <div className="col-md-6 mb-3">
                         <label className="form-label">Event Name</label>
@@ -294,13 +307,16 @@ function EventDetails() {
                           className="form-select"
                           value={editData.photographer}
                           onChange={(e) =>
-                            setEditData({ ...editData, photographer: e.target.value })
+                            setEditData({
+                              ...editData,
+                              photographer: e.target.value,
+                            })
                           }
                         >
                           <option value="">Select Photographer</option>
                           {photographers.map((p) => (
-                            <option key={p.id} value={p.name}>
-                              {p.name}
+                            <option key={p} value={p}>
+                              {p}
                             </option>
                           ))}
                         </select>
@@ -310,15 +326,17 @@ function EventDetails() {
                         <select
                           className="form-select"
                           value={editData.caterer}
-                          onChange={(e) => {
-                            console.log("Caterer changed to:", e.target.value);
-                            setEditData({ ...editData, caterer: e.target.value });
-                          }}
+                          onChange={(e) =>
+                            setEditData({
+                              ...editData,
+                              caterer: e.target.value,
+                            })
+                          }
                         >
                           <option value="">Select Caterer</option>
                           {caterers.map((cat) => (
-                            <option key={cat.id} value={cat.name}>
-                              {cat.name}
+                            <option key={cat} value={cat}>
+                              {cat}
                             </option>
                           ))}
                         </select>
@@ -343,7 +361,9 @@ function EventDetails() {
                     </button>
                   </>
                 ) : (
-                  <p className="text-center text-muted">Select an event to view details</p>
+                  <p className="text-center text-muted">
+                    Select an event to view details
+                  </p>
                 )}
               </div>
             </div>

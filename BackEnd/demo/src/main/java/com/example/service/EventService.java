@@ -149,6 +149,8 @@
 
 package com.example.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -216,30 +218,49 @@ public class EventService {
         }).collect(Collectors.toList());
     }
 
-    public List<UpcomingEventDTO> getUpcomingEvents() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-        // Fetch events with APPROVED status
-        List<Event> events = eventRepository.findByStatus(EventStatus.APPROVED);
-
-        return events.stream().map(event -> {
-            String username = event.getUser() != null
-                    ? event.getUser().getFirstName() + " " + event.getUser().getLastName()
-                    : "Unknown";
-
-            String formattedDateTime = "";
-            if (event.getDateTime() != null) {
-                formattedDateTime = event.getDateTime().formatted(formatter); // fixed here
-            }
-
-            return new UpcomingEventDTO(
-                    event.getId(),
-                    username,
-                    event.getEventName(),
-                    formattedDateTime,
-                    event.getVenue(),
-                    event.getBudget()
-            );
-        }).collect(Collectors.toList());
+//    public List<UpcomingEventDTO> getUpcomingEvents() {
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//
+//        // Fetch events with APPROVED status
+//        List<Event> events = eventRepository.findByStatus(EventStatus.APPROVED);
+//
+//        return events.stream().map(event -> {
+//            String username = event.getUser() != null
+//                    ? event.getUser().getFirstName() + " " + event.getUser().getLastName()
+//                    : "Unknown";
+//
+//            String formattedDateTime = "";
+//            if (event.getDateTime() != null) {
+//                formattedDateTime = event.getDateTime().formatted(formatter); // fixed here
+//            }
+//
+//            return new UpcomingEventDTO(
+//                    event.getId(),
+//                    username,
+//                    event.getEventName(),
+//                    formattedDateTime,
+//                    event.getVenue(),
+//                    event.getBudget()
+//            );
+//        }).collect(Collectors.toList());
+//    }
+    public List<UpcomingEventDTO> getUpcomingApprovedEvents() {
+        List<UpcomingEventDTO> events = eventRepository.findByDateTimeGreaterThanAndStatus(
+            LocalDateTime.now(), EventStatus.APPROVED
+        );
+        
+        return events.stream()
+            .map(e -> new UpcomingEventDTO(
+                e.getId(),
+                e.getEventName(),
+                e.getVenue(),
+                e.getDateTime(),
+                e.getStatus().toString(),  // assuming status is enum
+                e.getBudget()
+            ))
+            .collect(Collectors.toList());
     }
+
+
+
 }
