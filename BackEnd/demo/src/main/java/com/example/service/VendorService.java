@@ -24,7 +24,7 @@ import com.example.dto.VendorProfileDTO;
 import com.example.dto.VendorSignupDto;
 
 import com.example.dto.VendorSigninRequest;
-
+import com.example.model.User;
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -163,6 +163,15 @@ public class VendorService {
                       .map(Vendor::getBusinessName)
                       .collect(Collectors.toList());
     }
+
+    public Optional<Vendor> findByEmail(Long long1) {
+        return vendorRepository.findByEmail(long1);
+    }
+
+	public void save(Vendor existingVendor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	
 }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.dto.VendorDTO;
 import com.example.dto.VendorSignupDto;
+import com.example.model.User;
 import com.example.model.Vendor;
 
 public interface VendorRepository extends JpaRepository<Vendor, Long> {
@@ -31,5 +32,8 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
 
 	void save(VendorSignupDto vendorDTO);
 	///Get CAtegoryNAme
-	List<Vendor> findAllByCategory(String category); 
+	List<Vendor> findAllByCategory(String category);
+
+	Optional<Vendor> findByEmail(Long long1);
+
 }
