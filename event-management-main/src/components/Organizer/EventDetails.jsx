@@ -22,7 +22,6 @@ function EventDetails() {
   const [photographers, setPhotographers] = useState([]);
   const [saving, setSaving] = useState(false);
 
-  // Reusable vendor fetchers
   const fetchPhotographers = () => {
     fetch("http://localhost:8080/api/vendors/business-names/photography")
       .then((res) => res.json())
@@ -51,21 +50,24 @@ function EventDetails() {
       budget: event.budget,
     });
 
-    // Refresh vendors on event selection
     fetchPhotographers();
     fetchCaterers();
   };
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/events")
-      .then((res) => res.json())
-      .then((data) => setEventsData(data))
-      .catch((err) => console.error("Error fetching events:", err));
+  console.log("Fetching events from backend...");
+  fetch("http://localhost:8080/api/events/upcoming")
+    .then((res) => {
+      console.log("Response status:", res.status);
+      return res.json();
+    })
+    .then((data) => {
+      console.log("Fetched events data:", data);
+      setEventsData(data);
+    })
+    .catch((err) => console.error("Error fetching events:", err));
+}, []);
 
-    // Initial vendor list
-    fetchPhotographers();
-    fetchCaterers();
-  }, []);
 
   useEffect(() => {
     const updatedEvents = eventsData
@@ -100,10 +102,17 @@ function EventDetails() {
     const updatedVendors = [];
 
     if (editData.photographer) {
-      updatedVendors.push({ type: "Photographer", name: editData.photographer });
+      updatedVendors.push({
+        type: "Photographer",
+        name: editData.photographer,
+      });
     }
+
     if (editData.caterer) {
-      updatedVendors.push({ type: "Caterer", name: editData.caterer });
+      updatedVendors.push({
+        type: "Caterer",
+        name: editData.caterer,
+      });
     }
 
     const updatedEvent = {
@@ -132,18 +141,6 @@ function EventDetails() {
         setEventsData((prev) =>
           prev.map((e) => (e.id === data.id ? data : e))
         );
-        setSelectedEvent(data);
-        setEditData({
-          name: data.eventName,
-          date: data.dateTime?.split("T")[0] || "",
-          venue: data.venue,
-          status: data.status,
-          capacity: data.capacity,
-          photographer:
-            data.vendors?.find((v) => v.type === "Photographer")?.name || "",
-          caterer: data.vendors?.find((v) => v.type === "Caterer")?.name || "",
-          budget: data.budget,
-        });
         alert("Event updated successfully!");
       })
       .catch((err) => {
@@ -155,7 +152,6 @@ function EventDetails() {
 
   return (
     <>
-      <OrgNavbar />
       <div className="d-flex">
         <Sidebar />
         <div className="content w-100 p-3">
@@ -192,9 +188,13 @@ function EventDetails() {
                 </button>
                 <button
                   className={`btn btn-sm ${
-                    status === "In Progress" ? "btn-primary" : "btn-outline-primary"
+                    status === "In Progress"
+                      ? "btn-primary"
+                      : "btn-outline-primary"
                   }`}
-                  onClick={() => navigate("/Dashboard/events?status=In Progress")}
+                  onClick={() =>
+                    navigate("/Dashboard/events?status=In Progress")
+                  }
                 >
                   In Progress Events
                 </button>
@@ -236,9 +236,12 @@ function EventDetails() {
                 ) : (
                   <p className="text-center text-muted">
                     No events found for {status} in{" "}
-                    {new Date(2025, selectedMonth - 1, 1).toLocaleString("default", {
-                      month: "long",
-                    })}
+                    {new Date(2025, selectedMonth - 1, 1).toLocaleString(
+                      "default",
+                      {
+                        month: "long",
+                      }
+                    )}
                   </p>
                 )}
               </div>
@@ -251,18 +254,7 @@ function EventDetails() {
                   <>
                     <h4 className="fw-bold">{editData.name}</h4>
 
-                    <button
-                      className="btn btn-secondary btn-sm mb-3"
-                      onClick={() => {
-                        fetchPhotographers();
-                        fetchCaterers();
-                      }}
-                    >
-                      Refresh Vendor List
-                    </button>
-
                     <div className="row">
-                      {/* Event Info */}
                       <div className="col-md-6 mb-3">
                         <label className="form-label">Event Name</label>
                         <input
@@ -320,13 +312,16 @@ function EventDetails() {
                           className="form-select"
                           value={editData.photographer}
                           onChange={(e) =>
-                            setEditData({ ...editData, photographer: e.target.value })
+                            setEditData({
+                              ...editData,
+                              photographer: e.target.value,
+                            })
                           }
                         >
                           <option value="">Select Photographer</option>
                           {photographers.map((p) => (
                             <option key={p} value={p}>
-                              {p.name || p}
+                              {p}
                             </option>
                           ))}
                         </select>
@@ -337,13 +332,16 @@ function EventDetails() {
                           className="form-select"
                           value={editData.caterer}
                           onChange={(e) =>
-                            setEditData({ ...editData, caterer: e.target.value })
+                            setEditData({
+                              ...editData,
+                              caterer: e.target.value,
+                            })
                           }
                         >
                           <option value="">Select Caterer</option>
                           {caterers.map((cat) => (
                             <option key={cat} value={cat}>
-                              {cat.name || cat}
+                              {cat}
                             </option>
                           ))}
                         </select>
@@ -368,7 +366,9 @@ function EventDetails() {
                     </button>
                   </>
                 ) : (
-                  <p className="text-center text-muted">Select an event to view details</p>
+                  <p className="text-center text-muted">
+                    Select an event to view details
+                  </p>
                 )}
               </div>
             </div>

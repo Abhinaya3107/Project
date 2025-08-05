@@ -1,8 +1,12 @@
 package com.example.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -17,7 +21,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Vendor {
 
     @Id
@@ -49,9 +52,9 @@ public class Vendor {
     @Column(nullable = false, length = 50)
     private String category;
     
-    @NotBlank(message = "CategoryName is required")
+//    @NotBlank(message = "CategoryName is required")
     @Size(max = 50, message = "Category must not exceed 50 characters")
-    @Column(nullable = false, length = 50)
+    @Column(nullable = true, length = 50)
     private String categoryName;
     
     private String address;
@@ -66,10 +69,6 @@ public class Vendor {
     @CreationTimestamp
     private LocalDate registeredAt;
     
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
-    
     @Lob
     @Column(name="Image_data")
     private byte[] profileImage; 
@@ -78,5 +77,10 @@ public class Vendor {
     @Pattern(regexp = "^(available|booked)$", message = "Status must be either 'available' or 'booked'")
     @Column(nullable = false, length = 10)
     private String status;
+    
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    @JsonBackReference
+    private Event event;
 
 }

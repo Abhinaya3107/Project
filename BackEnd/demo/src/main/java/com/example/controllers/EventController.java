@@ -3,6 +3,8 @@ package com.example.controllers;
 import com.example.dto.EventSummaryDTO;
 import com.example.dto.EventSummaryDTOofapprove;
 import com.example.dto.UpcomingEventDTO;
+import com.example.dto.VendoDTO1;
+import com.example.dto.VendorUpdateDTO;
 import com.example.model.Event;
 import com.example.model.EventStatus;
 import com.example.model.User;
@@ -10,10 +12,16 @@ import com.example.model.Vendor;
 import com.example.repository.EventRepository;
 import com.example.repository.UserRepository;
 import com.example.service.EventService;
+import com.example.service.VendorService;
+
+import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +35,9 @@ public class EventController {
 
     @Autowired
     private EventService eventService;
+    
+    @Autowired
+    private VendorService vendorService;
 
     @Autowired
     private UserRepository userRepo;
@@ -43,10 +54,19 @@ public class EventController {
         event.setUser(user);
 
         if (event.getVendors() != null) {
+            List<Vendor> attachedVendors = new ArrayList<>();
             for (Vendor vendor : event.getVendors()) {
-                vendor.setEvent(event);
+                Vendor existingVendor = vendorService.findByEmail(vendor.getEmail())
+                    .orElseThrow(() -> new RuntimeException("Vendor not found: " + vendor.getEmail()));
+
+                existingVendor.setStatus("booked");
+                existingVendor.setEvent(event);
+                attachedVendors.add(existingVendor);
             }
+            event.setVendors(attachedVendors);
+
         }
+
 
         Event savedEvent = eventService.save(event);
         return new ResponseEntity<>(savedEvent, HttpStatus.CREATED);
@@ -78,7 +98,7 @@ public class EventController {
 
 
     // Get all events (for admin or public use)
-    @GetMapping
+    @GetMapping("/events")
     public List<Event> getAllEvents() {
     	 return eventService.getAllEvents();
     }
@@ -113,12 +133,45 @@ public class EventController {
         return ResponseEntity.ok("Event status updated to " + status);
     }
 
+
+    @Transactional
+    @PutMapping("/update")
+    public Event updateEvent(@RequestParam Long eventId, @RequestBody VendorUpdateDTO updatedEvent) {
+       Event existingEvent = eventService.findById(eventId)
+            .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        // Update event properties
+        existingEvent.setEventName(updatedEvent.getEventName());
+        existingEvent.setDateTime(updatedEvent.getDateTime());
+        existingEvent.setVenue(updatedEvent.getVenue());
+        existingEvent.setStatus(updatedEvent.getStatus());
+        existingEvent.setCapacity(updatedEvent.getCapacity());
+
+       // Detach previous vendors (modify in-place)
+        List<Vendor> currentVendors = existingEvent.getVendors();
+        currentVendors.clear();
+
+       // Attach new vendors (no duplicates)
+        Set<Long> seenVendorIds = new HashSet<>();
+        for (VendoDTO1 vendorInput : updatedEvent.getVendors()) {
+            if (seenVendorIds.add(vendorInput.getVendorId())) {
+                Vendor existingVendor = vendorService.findById(vendorInput.getVendorId())
+                    .orElseThrow(() -> new RuntimeException("Vendor not found: " + vendorInput.getVendorId()));
+
+                existingVendor.setStatus("booked");
+               existingVendor.setEvent(existingEvent);
+                currentVendors.add(existingVendor);
+            }
+       }
+
+        return eventService.save(existingEvent);
+    }
+    
+   
     @GetMapping("/upcoming")
-    public ResponseEntity<List<UpcomingEventDTO>> getUpcomingEvents() {
+    public ResponseEntity<List<UpcomingEventDTO>> getUpcomingEvent() {
         List<UpcomingEventDTO> upcomingEvents = eventService.getUpcomingEvents();
         return ResponseEntity.ok(upcomingEvents);
     }
 
-
-    
 }

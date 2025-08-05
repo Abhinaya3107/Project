@@ -1,7 +1,4 @@
-//package com.example.service;
-//
-//import java.util.List;
-//import java.util.Optional;
+
 //import java.util.stream.Collectors;
 //
 //import org.springframework.beans.factory.annotation.Autowired;
@@ -149,6 +146,8 @@
 
 package com.example.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -219,7 +218,6 @@ public class EventService {
     public List<UpcomingEventDTO> getUpcomingEvents() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        // Fetch events with APPROVED status
         List<Event> events = eventRepository.findByStatus(EventStatus.APPROVED);
 
         return events.stream().map(event -> {
@@ -229,17 +227,20 @@ public class EventService {
 
             String formattedDateTime = "";
             if (event.getDateTime() != null) {
-                formattedDateTime = event.getDateTime().formatted(formatter); // fixed here
+                formattedDateTime = event.getDateTime().format(formatter);
             }
 
             return new UpcomingEventDTO(
-                    event.getId(),
-                    username,
-                    event.getEventName(),
-                    formattedDateTime,
-                    event.getVenue(),
-                    event.getBudget()
+            		event.getId(),
+            	    event.getEventName(),
+            	    event.getVenue(),
+            	    event.getDateTime(),
+            	    event.getStatus().name(),  // Assuming it's an enum, or use getStatus()
+            	    event.getBudget(),
+            	    event.getCapacity()
             );
         }).collect(Collectors.toList());
     }
+
 }
+

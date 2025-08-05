@@ -24,7 +24,7 @@ import com.example.dto.VendorProfileDTO;
 import com.example.dto.VendorSignupDto;
 
 import com.example.dto.VendorSigninRequest;
-
+import com.example.model.User;
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -164,5 +164,16 @@ public class VendorService {
                       .collect(Collectors.toList());
     }
 
+    public Optional<Vendor> findByEmail(String email) {
+        return vendorRepository.findByEmail(email);
+    }
+
+	public void save(Vendor existingVendor) {
+		// TODO Auto-generated method stub
+		
+	}
+	public Optional<Vendor> findById(Long id) {
+	    return vendorRepository.findById(id);
+	}
 	
 }
