@@ -26,16 +26,13 @@ public class VendorController {
     private VendorService vendorService;
 
     
-    
-<<<<<<< HEAD
+
     // Vendor Signup
     @PostMapping("/signup")
     public ResponseEntity<String> registerVendor(@RequestBody VendorSignupDto dto) {
         vendorService.registerVendor(dto); // call the void method
         return ResponseEntity.ok("Vendor registered successfully");
     }
-=======
->>>>>>> orgnizer6
 
     // Vendor Signin
     @PostMapping("/signin")
@@ -132,7 +129,16 @@ public class VendorController {
         long count = vendorService.countVendorsByCategory(category);
         return ResponseEntity.ok(count);
     }
-
+    
+    //GEt Businessname of photography
+    @GetMapping("/business-names/photography")
+    public List<String> getPhotographyBusinessNames() {
+        return vendorService.getBusinessNamesByCategory("photography");
+    }
+    @GetMapping("/business-names/caterer")
+    public List<String> getCatererBusinessNames() {
+        return vendorService.getBusinessNamesByCategory("caterer");
+    }
 
  
 }

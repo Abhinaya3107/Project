@@ -20,11 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.dto.VendorDTO;
 
 import com.example.dto.VendorProfileDTO;
-<<<<<<< HEAD
+
 import com.example.dto.VendorSignupDto;
-=======
+
 import com.example.dto.VendorSigninRequest;
->>>>>>> orgnizer6
+
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -38,7 +38,6 @@ public class VendorService {
         return vendorRepository.findByEmailAndPassword(email, password);
     }
 
-<<<<<<< HEAD
     public void registerVendor(VendorSignupDto dto) {
         Vendor vendor = new Vendor();
         vendor.setFirstName(dto.getFirstName());
@@ -53,15 +52,6 @@ public class VendorService {
 
         vendorRepository.save(vendor); // ✅ Now save entity, not DTO
     }
-=======
-    public String registerVendor(VendorSigninRequest vendor) {
-        if (vendorRepository.existsByEmail(vendor.getEmail())) {
-            return "Vendor already exists";
-        }
-        vendorRepository.save(vendor);
-        return "Vendor registered successfully!";
-    }  
->>>>>>> orgnizer6
     
     
     public void deleteById(Long id) {
@@ -165,6 +155,13 @@ public class VendorService {
 
     public long countVendorsByCategory(String category) {
         return vendorRepository.countByCategory(category);
+    }
+    //Get Category Name
+    public List<String> getBusinessNamesByCategory(String category) {
+        List<Vendor> vendors = vendorRepository.findAllByCategory(category);  // renamed method
+        return vendors.stream()
+                      .map(Vendor::getBusinessName)
+                      .collect(Collectors.toList());
     }
 
 	

@@ -30,4 +30,6 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
     long countByCategory(String category);
 
 	void save(VendorSignupDto vendorDTO);
+	///Get CAtegoryNAme
+	List<Vendor> findAllByCategory(String category); 
 }

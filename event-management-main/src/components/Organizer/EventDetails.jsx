@@ -22,6 +22,21 @@ function EventDetails() {
   const [photographers, setPhotographers] = useState([]);
   const [saving, setSaving] = useState(false);
 
+  // Reusable vendor fetchers
+  const fetchPhotographers = () => {
+    fetch("http://localhost:8080/api/vendors/business-names/photography")
+      .then((res) => res.json())
+      .then((data) => setPhotographers(data))
+      .catch((err) => console.error("Error fetching photographers:", err));
+  };
+
+  const fetchCaterers = () => {
+    fetch("http://localhost:8080/api/vendors/business-names/caterer")
+      .then((res) => res.json())
+      .then((data) => setCaterers(data))
+      .catch((err) => console.error("Error fetching caterers:", err));
+  };
+
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
     setEditData({
@@ -35,53 +50,53 @@ function EventDetails() {
       caterer: event.vendors?.find((v) => v.type === "Caterer")?.name || "",
       budget: event.budget,
     });
+
+    // Refresh vendors on event selection
+    fetchPhotographers();
+    fetchCaterers();
   };
 
-  // Fetch all data on mount
   useEffect(() => {
     fetch("http://localhost:8080/api/events")
       .then((res) => res.json())
       .then((data) => setEventsData(data))
       .catch((err) => console.error("Error fetching events:", err));
 
-    fetch("http://localhost:8080/api/caterers")
-      .then((res) => res.json())
-      .then((data) => setCaterers(data))
-      .catch((err) => console.error("Error fetching caterers:", err));
-
-    fetch("http://localhost:8080/api/photographers")
-      .then((res) => res.json())
-      .then((data) => setPhotographers(data))
-      .catch((err) => console.error("Error fetching photographers:", err));
+    // Initial vendor list
+    fetchPhotographers();
+    fetchCaterers();
   }, []);
 
-  // Update filtered events based on status and month
   useEffect(() => {
-    const updatedEvents = eventsData.map((event) => ({
-      ...event,
-      status:
-        event.dateTime?.split("T")[0] === getTodayDate()
-          ? "In Progress"
-          : "Upcoming",
-    }));
+    const updatedEvents = eventsData
+      .filter((event) => event.status === "APPROVED")
+      .map((event) => {
+        const eventDate = event.dateTime?.split("T")[0];
+        const today = getTodayDate();
+        return {
+          ...event,
+          computedStatus: eventDate === today ? "In Progress" : "Upcoming",
+        };
+      });
 
     const monthFilteredEvents = updatedEvents.filter(
-      (event) => new Date(event.dateTime).getMonth() + 1 === parseInt(selectedMonth)
+      (event) =>
+        new Date(event.dateTime).getMonth() + 1 === parseInt(selectedMonth)
     );
 
     setFilteredEvents(
       status
-        ? monthFilteredEvents.filter((event) => event.status === status)
+        ? monthFilteredEvents.filter(
+            (event) => event.computedStatus === status
+          )
         : monthFilteredEvents
     );
   }, [eventsData, status, selectedMonth]);
 
-  // Save edited event to backend
   const handleSaveChanges = () => {
     if (!selectedEvent || !editData) return;
     setSaving(true);
 
-    // Construct updated vendors array
     const updatedVendors = [];
 
     if (editData.photographer) {
@@ -94,7 +109,7 @@ function EventDetails() {
     const updatedEvent = {
       ...selectedEvent,
       eventName: editData.name,
-      dateTime: editData.date + "T00:00:00", // keep time at midnight for simplicity
+      dateTime: editData.date + "T00:00:00",
       venue: editData.venue,
       status: editData.status,
       capacity: editData.capacity,
@@ -103,20 +118,17 @@ function EventDetails() {
     };
 
     fetch(`http://localhost:8080/api/events/${selectedEvent.id}`, {
-      method: "PUT", // or PATCH if your backend supports partial updates
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedEvent),
     })
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to save event");
-        }
+        if (!res.ok) throw new Error("Failed to save event");
         return res.json();
       })
       .then((data) => {
-        // Update local eventsData with updated event
         setEventsData((prev) =>
           prev.map((e) => (e.id === data.id ? data : e))
         );
@@ -211,10 +223,12 @@ function EventDetails() {
                         <small>{event.dateTime?.split("T")[0]}</small>
                         <span
                           className={`badge ${
-                            event.status === "In Progress" ? "bg-primary" : "bg-warning"
+                            event.computedStatus === "In Progress"
+                              ? "bg-primary"
+                              : "bg-warning"
                           } mt-1`}
                         >
-                          {event.status}
+                          {event.computedStatus}
                         </span>
                       </div>
                     </button>
@@ -236,7 +250,19 @@ function EventDetails() {
                 {selectedEvent ? (
                   <>
                     <h4 className="fw-bold">{editData.name}</h4>
+
+                    <button
+                      className="btn btn-secondary btn-sm mb-3"
+                      onClick={() => {
+                        fetchPhotographers();
+                        fetchCaterers();
+                      }}
+                    >
+                      Refresh Vendor List
+                    </button>
+
                     <div className="row">
+                      {/* Event Info */}
                       <div className="col-md-6 mb-3">
                         <label className="form-label">Event Name</label>
                         <input
@@ -299,8 +325,8 @@ function EventDetails() {
                         >
                           <option value="">Select Photographer</option>
                           {photographers.map((p) => (
-                            <option key={p.id} value={p.name}>
-                              {p.name}
+                            <option key={p} value={p}>
+                              {p.name || p}
                             </option>
                           ))}
                         </select>
@@ -310,15 +336,14 @@ function EventDetails() {
                         <select
                           className="form-select"
                           value={editData.caterer}
-                          onChange={(e) => {
-                            console.log("Caterer changed to:", e.target.value);
-                            setEditData({ ...editData, caterer: e.target.value });
-                          }}
+                          onChange={(e) =>
+                            setEditData({ ...editData, caterer: e.target.value })
+                          }
                         >
                           <option value="">Select Caterer</option>
                           {caterers.map((cat) => (
-                            <option key={cat.id} value={cat.name}>
-                              {cat.name}
+                            <option key={cat} value={cat}>
+                              {cat.name || cat}
                             </option>
                           ))}
                         </select>
