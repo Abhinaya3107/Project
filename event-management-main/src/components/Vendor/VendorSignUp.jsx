@@ -10,44 +10,59 @@ const VendorSignUp = () => {
     lastName: "",
     email: "",
     mobile: "",
-    category: " ",
+    category: "",
     password: "",
-    address: "",          
+    address: "",
     businessName: "",
   });
 
+  // const [profileImage, setProfileImage] = useState(null);
+
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleFileChange = (e) => setProfileImage(e.target.files[0]);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
 
     // Basic client-side validation
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.mobile ||
-      !formData.category ||
-      !formData.password ||
-      !formData.address ||       
-      !formData.businessName 
-    ) {
-      alert("Please fill in all fields.");
-      return;
+    for (let field in formData) {
+      if (!formData[field]) {
+        alert("Please fill in all fields.");
+        return;
+      }
     }
+
+    const formPayload = new FormData();
+    formPayload.append("firstName", formData.firstName);
+    formPayload.append("lastName", formData.lastName);
+    formPayload.append("email", formData.email);
+    formPayload.append("mobile", formData.mobile);
+    formPayload.append("category", formData.category);
+    formPayload.append("categoryName", formData.category); // backend expects this too
+    formPayload.append("password", formData.password);
+    formPayload.append("address", formData.address);
+    formPayload.append("businessName", formData.businessName);
+    formPayload.append("status", "available"); // default value
+    // if (profileImage) formPayload.append("profileImage", profileImage);
 
     try {
       const response = await fetch("http://localhost:8080/api/vendors/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",  // ← required
+      },
+      body: JSON.stringify({
+        ...formData,
+        categoryName: formData.category, // include this if needed
+        status: "available",             // include default fields manually
+      }),
+    });
       const message = await response.text();
 
       if (response.ok) {
-        alert(`${message}`);
+        alert(message);
         navigate("/vendor-signin");
       } else {
         alert(`Error: ${message}`);
@@ -61,7 +76,7 @@ const VendorSignUp = () => {
   return (
     <div className="container mt-5">
       <h2 className="text-center mb-4">Vendor Sign Up</h2>
-      <form className="w-25 mx-auto" onSubmit={handleSignUp}>
+      <form className="w-50 mx-auto" onSubmit={handleSignUp}>
         <input
           type="text"
           className="form-control mb-3"
@@ -110,7 +125,7 @@ const VendorSignUp = () => {
           <option value="Venue">Venue</option>
           <option value="Photography">Photography</option>
         </select>
-                <input
+        <input
           type="text"
           className="form-control mb-3"
           placeholder="Business Name"
@@ -119,7 +134,6 @@ const VendorSignUp = () => {
           onChange={handleChange}
           required
         />
-
         <input
           type="text"
           className="form-control mb-3"
@@ -138,6 +152,7 @@ const VendorSignUp = () => {
           onChange={handleChange}
           required
         />
+        
         <button className="btn btn-primary w-100 mt-3 mb-4">Sign Up</button>
         <Link to="/user-signin" className="d-flex justify-content-center">
           Already have an account? Sign In
