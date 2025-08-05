@@ -60,7 +60,7 @@ const OrgDash = () => {
 
   return (
     <>
-      <OrgNavbar />
+      
       <div className="d-flex">
         <Sidebar />
         <div className="w-100 p-3">

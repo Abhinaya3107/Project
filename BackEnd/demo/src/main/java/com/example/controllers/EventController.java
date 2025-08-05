@@ -1,14 +1,20 @@
 package com.example.controllers;
 
+import com.example.dto.EventSummaryDTO;
+import com.example.dto.EventSummaryDTOofapprove;
+import com.example.dto.UpcomingEventDTO;
 import com.example.model.Event;
+import com.example.model.EventStatus;
 import com.example.model.User;
 import com.example.model.Vendor;
 import com.example.repository.EventRepository;
 import com.example.repository.UserRepository;
 import com.example.service.EventService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -74,7 +80,7 @@ public class EventController {
     // Get all events (for admin or public use)
     @GetMapping
     public List<Event> getAllEvents() {
-        return eventService.findAll();
+    	 return eventService.getAllEvents();
     }
 
     @GetMapping("/user/{userId}")
@@ -87,4 +93,34 @@ public class EventController {
         long count = eventService.countEvents(); // assume this method calls eventRepository.count()
         return ResponseEntity.ok(count);
     }
+    //Select all
+    @GetMapping("/summary")
+    public List<EventSummaryDTO> getEventSummaries() {
+        return eventService.getEventSummaries();
+    }
+    //Accept or reject event
+ 
+    @PutMapping("/{id}/status")
+    public ResponseEntity<String> updateStatus(@PathVariable Long id, @RequestParam EventStatus status) {
+        Optional<Event> optionalEvent = eventService.findById(id);
+        if (optionalEvent.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Event event = optionalEvent.get();
+        event.setStatus(status);
+        eventService.save(event);
+        return ResponseEntity.ok("Event status updated to " + status);
+    }
+
+    @GetMapping("/upcoming")
+    public ResponseEntity<List<UpcomingEventDTO>> getUpcomingEvents() {
+        List<UpcomingEventDTO> upcomingEvents = eventService.getUpcomingEvents();
+        return ResponseEntity.ok(upcomingEvents);
+    }
+
+
+   
+
+    
 }

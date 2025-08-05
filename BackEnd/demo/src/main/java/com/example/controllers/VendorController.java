@@ -2,6 +2,7 @@ package com.example.controllers;
 import com.example.dto.VendorDTO;
 import com.example.dto.*;
 
+
 import com.example.dto.VendorSigninRequest;
 import com.example.model.Vendor;
 import com.example.service.VendorService;
@@ -26,12 +27,15 @@ public class VendorController {
 
     
     
+<<<<<<< HEAD
     // Vendor Signup
     @PostMapping("/signup")
     public ResponseEntity<String> registerVendor(@RequestBody VendorSignupDto dto) {
         vendorService.registerVendor(dto); // call the void method
         return ResponseEntity.ok("Vendor registered successfully");
     }
+=======
+>>>>>>> orgnizer6
 
     // Vendor Signin
     @PostMapping("/signin")

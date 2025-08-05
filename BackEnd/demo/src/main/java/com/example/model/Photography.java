@@ -5,9 +5,9 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "venue")
+@Table(name = "Photography")
 @Data
-public class Venue extends BaseEntity {
+public class Photography extends BaseEntity {
     private String name;
 }
 

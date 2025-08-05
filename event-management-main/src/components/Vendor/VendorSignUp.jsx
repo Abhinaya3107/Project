@@ -10,7 +10,12 @@ const VendorSignUp = () => {
     lastName: "",
     email: "",
     mobile: "",
+<<<<<<< HEAD
     category: "",
+=======
+    category: " ",
+    categoryName:" ",
+>>>>>>> orgnizer6
     password: "",
     address: "",
     businessName: "",
@@ -27,11 +32,25 @@ const VendorSignUp = () => {
     e.preventDefault();
 
     // Basic client-side validation
+<<<<<<< HEAD
     for (let field in formData) {
       if (!formData[field]) {
         alert("Please fill in all fields.");
         return;
       }
+=======
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.mobile ||
+      !formData.category ||
+      !formData.categoryName ||
+      !formData.password
+    ) {
+      alert("Please fill in all fields.");
+      return;
+>>>>>>> orgnizer6
     }
 
     const formPayload = new FormData();
@@ -128,6 +147,7 @@ const VendorSignUp = () => {
         <input
           type="text"
           className="form-control mb-3"
+<<<<<<< HEAD
           placeholder="Business Name"
           name="businessName"
           value={formData.businessName}
@@ -140,6 +160,11 @@ const VendorSignUp = () => {
           placeholder="Address"
           name="address"
           value={formData.address}
+=======
+          placeholder="Category Name"
+          name="categoryName"
+          value={formData.categoryName}
+>>>>>>> orgnizer6
           onChange={handleChange}
           required
         />
