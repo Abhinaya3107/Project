@@ -10,6 +10,7 @@ import lombok.Data;
 public class VendorUpdateDTO {
 	private String eventName;
     private LocalDateTime dateTime;
+    private String category;
     private int capacity;
     private String venue;
     private EventStatus status;

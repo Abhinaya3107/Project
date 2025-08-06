@@ -1,5 +1,6 @@
 package com.example.controllers;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.dto.LoginRequest;
 import com.example.model.Organizer;
+import com.example.model.User;
 import com.example.model.Vendor;
 import com.example.service.OrganizerService;
 
@@ -46,13 +48,16 @@ public class OrganizerController {
             if (organizer.getPassword().trim().equals(request.getPassword().trim())) {
                 return ResponseEntity.ok(Map.of(
                     "message", "Login successful!",
-                    "organizerId", organizer.getId()
+                    "organizer", organizer  // ✅ Return full organizer object
                 ));
             }
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password"));
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(Map.of("message", "Invalid email or password"));
     }
+
 
     
     @PostMapping("/register")
@@ -67,7 +72,52 @@ public class OrganizerController {
     @GetMapping
     public List<Organizer> getAllOrganizers() {
         return organizerService.findAll();
+    } 
+   
+//Update password in settings
+
+    @PutMapping("/{id}/change-password")
+    public ResponseEntity<String> changeOrganizerPassword(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> request) {
+
+        Optional<Organizer> optionalOrganizer = organizerService.findById(id);
+        if (optionalOrganizer.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organizer not found");
+        }
+
+        Organizer organizer = optionalOrganizer.get();
+
+        // Get current and new passwords from the request
+        String currentPassword = request.get("currentPassword");
+        String newPassword = request.get("newPassword");
+
+        // Check if current password matches
+        if (currentPassword == null || !organizer.getPassword().equals(currentPassword)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect");
+        }
+
+        // Validate new password
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("New password must not be null or empty");
+        }
+
+        newPassword = newPassword.trim();
+        if (newPassword.length() < 6 || newPassword.length() > 8) {
+            return ResponseEntity.badRequest().body("Password must be between 6 to 8 characters");
+        }
+
+        // Save updated password
+        organizer.setPassword(newPassword);
+        organizerService.save(organizer);
+
+        return ResponseEntity.ok("Password updated successfully");
     }
+
+
+
+    
+
     
     @GetMapping("/profile/{id}")
     public ResponseEntity<?> getVendorProfile(@PathVariable Long id) {
@@ -98,6 +148,6 @@ public class OrganizerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organizer not found");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process image");
-        }
     }
+}
 }

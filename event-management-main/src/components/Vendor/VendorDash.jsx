@@ -116,6 +116,25 @@ const VendorDash = () => {
                                 </div>
                             </div>
                         </div>
+                        {/**Ongoing */}
+                        <div className="col-md-4 col-xl-3">
+                            <div className="card bg-c-yellow order-card">
+                                <div className="card-block">
+                                    <h6 className="m-b-20">Todays Bokkings</h6>
+                                    <h2 className="text-end">
+                                        <i className="fa fa-calendar-plus mt-2 f-left"></i>
+                                        <span >486</span>
+                                    </h2>
+                                    <p className="m-b-0">
+                                        Details<span className="f-right">
+                                            <Link to="/My-Dashboard/orders?sts=In Progress" className="text-decoration-none text-dark">
+                                                View
+                                            </Link>
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                         {/**Cancelled */}
                         <div className="col-md-4 col-xl-3">
                             <div className="card bg-c-pink order-card">

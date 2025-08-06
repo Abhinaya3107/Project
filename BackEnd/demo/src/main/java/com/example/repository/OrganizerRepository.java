@@ -1,7 +1,7 @@
 package com.example.repository;
 
 import com.example.model.Organizer;
-import com.example.model.Vendor;
+
 
 import java.util.Optional;
 
@@ -11,7 +11,9 @@ public interface OrganizerRepository extends JpaRepository<Organizer, Long> {
     boolean existsByEmail(String email);
     boolean existsByMobileNumber(String mobileNumber);
     Optional<Organizer> findByEmail(String email);
-    Optional<Organizer> findById(Long id);
+    Optional<Organizer> findById(Long id); 
+   
+
 }
 
 

@@ -1,5 +1,7 @@
 package com.example.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -46,7 +48,8 @@ public class Organizer {
     @Size(min = 2, message = "Organization name must be at least 2 characters")
     @Column(name = "organization_name", nullable = false)
     private String organizationName;
-
+    
+    @JsonIgnore
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 8, message = "Password must be between 6 to 8 characters")
     @Column(nullable = false)
