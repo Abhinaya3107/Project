@@ -12,7 +12,10 @@ public interface OrganizerRepository extends JpaRepository<Organizer, Long> {
     boolean existsByMobileNumber(String mobileNumber);
     Optional<Organizer> findByEmail(String email);
     Optional<Organizer> findById(Long id); 
-   
+
+ 
+    
+
 
 }
 
