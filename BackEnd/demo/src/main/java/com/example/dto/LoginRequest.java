@@ -9,7 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 public class LoginRequest {
     @NotBlank
-    @Email
+    @Email 
+    
     private String email;
 
     @NotBlank
