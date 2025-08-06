@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ForgotPassword = () => {
+const OrganizerForgotPassword = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
@@ -17,9 +17,10 @@ const ForgotPassword = () => {
       const result = await response.json();
       if (result.exists) {
         localStorage.setItem("resetEmail", email);
-        navigate("/reset-password");
+        alert("Email found. Redirecting to reset form...");
+        navigate("/organizer/reset-password"); // ✅ Correct path
       } else {
-        alert("Email not found.");
+        alert("You are not registered.");
       }
     } catch (error) {
       console.error("Error checking email:", error);
@@ -45,4 +46,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default OrganizerForgotPassword;

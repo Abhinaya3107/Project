@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ResetPassword = () => {
+const OrganizerResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
@@ -9,8 +9,20 @@ const ResetPassword = () => {
 
   const handleReset = async (e) => {
     e.preventDefault();
+
+    if (!email) {
+      alert("Session expired. Please start the reset process again.");
+      navigate("/organizer/forgot-password"); // ✅ Correct fallback
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       alert("Passwords do not match.");
+      return;
+    }
+
+    if (newPassword.length < 8 || newPassword.length > 64) {
+      alert("Password must be between 8 to 64 characters.");
       return;
     }
 
@@ -25,7 +37,7 @@ const ResetPassword = () => {
       if (response.ok) {
         alert(result.message);
         localStorage.removeItem("resetEmail");
-        navigate("/login");
+        navigate("/organizer-signin"); // ✅ Organizer login
       } else {
         alert(result.message || "Failed to reset password.");
       }
@@ -61,4 +73,4 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+export default OrganizerResetPassword;

@@ -51,7 +51,7 @@ public class Organizer {
     
     @JsonIgnore
     @NotBlank(message = "Password is required")
-    @Size(min = 6, max = 8, message = "Password must be between 6 to 8 characters")
+    @Size(min = 6, max = 12, message = "Password must be between 6 to 8 characters")
     @Column(nullable = false)
     private String password;
     
