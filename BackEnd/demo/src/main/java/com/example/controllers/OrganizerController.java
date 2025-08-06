@@ -48,13 +48,16 @@ public class OrganizerController {
             if (organizer.getPassword().trim().equals(request.getPassword().trim())) {
                 return ResponseEntity.ok(Map.of(
                     "message", "Login successful!",
-                    "organizerId", organizer.getId()
+                    "organizer", organizer  // ✅ Return full organizer object
                 ));
             }
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password"));
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(Map.of("message", "Invalid email or password"));
     }
+
 
     
     @PostMapping("/register")
