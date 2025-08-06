@@ -1,16 +1,21 @@
 
+//package com.example.service;
+//
+//import java.time.LocalDate;
+//import java.time.LocalDateTime;
+//import java.time.format.DateTimeFormatter;
+//import java.util.List;
+//import java.util.Optional;
 //import java.util.stream.Collectors;
 //
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.stereotype.Service;
 //
 //import com.example.dto.EventSummaryDTO;
-//import com.example.dto.EventSummaryDTOofapprove;
+//import com.example.dto.UpcomingEventDTO;
 //import com.example.model.Event;
 //import com.example.model.EventStatus;
 //import com.example.repository.EventRepository;
-//
-//import jakarta.persistence.EntityNotFoundException;
 //
 //@Service
 //public class EventService {
@@ -64,89 +69,38 @@
 //            );
 //        }).collect(Collectors.toList());
 //    }
-//     
-//     
-//    
+//
+//    public List<UpcomingEventDTO> getUpcomingEvents() {
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//
+//        List<Event> events = eventRepository.findByStatus(EventStatus.APPROVED);
+//
+//        return events.stream().map(event -> {
+//            String username = event.getUser() != null
+//                    ? event.getUser().getFirstName() + " " + event.getUser().getLastName()
+//                    : "Unknown";
+//
+//            String formattedDateTime = "";
+//            if (event.getDateTime() != null) {
+//                formattedDateTime = event.getDateTime().format(formatter);
+//            }
+//
+//            return new UpcomingEventDTO(
+//            		event.getId(),
+//            	    event.getEventName(),
+//            	    event.getVenue(),
+//            	    event.getDateTime(),
+//            	    event.getStatus().name(),  // Assuming it's an enum, or use getStatus()
+//            	    event.getBudget(),
+//            	    event.getCapacity()
+//            );
+//        }).collect(Collectors.toList());
+//    }
 //
 //}
-
-
-
-
-//import java.time.LocalDateTime;
-//import java.time.ZoneId;
-//import java.time.format.DateTimeFormatter;
-//import java.util.List;
-//import java.util.Optional;
-//import java.util.stream.Collectors;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//
-//import com.example.dto.EventSummaryDTO;
-//import com.example.dto.UpcomingEventDTO;
-//import com.example.model.Event;
-//import com.example.model.EventStatus;
-//import com.example.repository.EventRepository; 
-//@Service
-//public class EventService {
-//@Autowired
-//private EventRepository eventRepository;
-//
-//// Add this method inside your EventService class
-//public List<UpcomingEventDTO> getUpcomingEvents() {
-//    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-//
-//    // Fetch events with status UPCOMING from your repository
-//    Optional<Event> events = eventRepository.findByStatus(EventStatus.APPROVED);
-//
-//    return events.stream().map(event -> {
-//        String username = event.getUser() != null
-//                ? event.getUser().getFirstName() + " " + event.getUser().getLastName()
-//                : "Unknown";
-//
-//        String formattedDateTime = "";
-//        if (event.getDateTime() != null) {
-//            LocalDateTime localDateTime = event.getDateTime().toInstant()
-//                    .atZone(ZoneId.systemDefault())
-//                    .toLocalDateTime();
-//            formattedDateTime = localDateTime.format(formatter);
-//        }
-//
-//        return new UpcomingEventDTO(
-//                event.getId(),
-//                username,
-//                event.getEventName(),
-//                formattedDateTime,
-//                event.getVenue(),
-//                event.getBudget()
-//        );
-//    }).collect(Collectors.toList());
-//}
-//
-//public void save(Event event) {
-//	// TODO Auto-generated method stub
-//	
-//}
-//
-//public List<EventSummaryDTO> getEventSummaries() {
-//	// TODO Auto-generated method stub
-//	return null;
-//}
-//
-//public Optional<Event> findById(Long id) {
-//	// TODO Auto-generated method stub
-//	return null;
-//}
-//}
-
-
-
-
 
 package com.example.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -231,16 +185,19 @@ public class EventService {
             }
 
             return new UpcomingEventDTO(
-            		event.getId(),
-            	    event.getEventName(),
-            	    event.getVenue(),
-            	    event.getDateTime(),
-            	    event.getStatus().name(),  // Assuming it's an enum, or use getStatus()
-            	    event.getBudget(),
-            	    event.getCapacity()
+                    event.getId(),
+                    event.getEventName(),
+                    event.getVenue(),
+                    event.getDateTime(),
+                    event.getStatus().name(),
+                    event.getBudget(),
+                    event.getCapacity()
             );
         }).collect(Collectors.toList());
     }
 
+    // ✅ NEW: Filter events by status string
+    public List<Event> findByStatus(String status) {
+        return eventRepository.findByStatus(status);
+    }
 }
-

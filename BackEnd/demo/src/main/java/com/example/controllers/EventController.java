@@ -167,6 +167,21 @@ public class EventController {
         return eventService.save(existingEvent);
     }
     
+ // ✅ NEW: Filter events by status (used in dashboard links)
+    @GetMapping
+    public ResponseEntity<List<Event>> getEventsByStatus(@RequestParam(required = false) String status) {
+        List<Event> events;
+
+        if (status != null && !status.isBlank()) {
+            events = eventService.findByStatus(status.trim());
+        } else {
+            events = eventService.getAllEvents();
+        }
+
+        return ResponseEntity.ok(events);
+    }
+ 
+    
    
     @GetMapping("/upcoming")
     public ResponseEntity<List<UpcomingEventDTO>> getUpcomingEvent() {
