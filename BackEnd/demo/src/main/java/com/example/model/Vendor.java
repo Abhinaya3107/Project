@@ -21,7 +21,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Vendor {
 
     @Id
@@ -53,9 +52,9 @@ public class Vendor {
     @Column(nullable = false, length = 50)
     private String category;
     
-    @NotBlank(message = "CategoryName is required")
+//    @NotBlank(message = "CategoryName is required")
     @Size(max = 50, message = "Category must not exceed 50 characters")
-    @Column(nullable = false, length = 50)
+    @Column(nullable = true, length = 50)
     private String categoryName;
     
     private String address;

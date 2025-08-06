@@ -14,10 +14,14 @@ import com.example.repository.UserRepository;
 import com.example.service.EventService;
 import com.example.service.VendorService;
 
+import jakarta.transaction.Transactional;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +60,7 @@ public class EventController {
                     .orElseThrow(() -> new RuntimeException("Vendor not found: " + vendor.getEmail()));
 
                 existingVendor.setStatus("booked");
-                existingVendor.setEvent(event); // ✅ Add this line
+                existingVendor.setEvent(event);
                 attachedVendors.add(existingVendor);
             }
             event.setVendors(attachedVendors);
@@ -129,41 +133,11 @@ public class EventController {
         return ResponseEntity.ok("Event status updated to " + status);
     }
 
-    @GetMapping("/upcoming")
-    public ResponseEntity<List<UpcomingEventDTO>> getUpcomingEvents() {
-        List<UpcomingEventDTO> events = eventService.getUpcomingApprovedEvents();
-        return new ResponseEntity<>(events, HttpStatus.OK);
-    }
 
-//    @PutMapping("/update")
-//    public Event updateEvent1(@RequestParam Long eventId, @RequestBody Event updatedEvent) {
-//        Event existingEvent = eventService.findById(eventId)
-//            .orElseThrow(() -> new RuntimeException("Event not found"));
-//
-//        // Update basic event fields
-//        existingEvent.setEventName(updatedEvent.getEventName());
-//        existingEvent.setDateTime(updatedEvent.getDateTime());
-//        existingEvent.setVenue(updatedEvent.getVenue());
-//        existingEvent.setStatus(updatedEvent.getStatus());
-//        existingEvent.setCapacity(updatedEvent.getCapacity());
-////        existingEvent.setBudget(updatedEvent.getBudget());
-//
-//        // Update vendors
-//        List<Vendor> attachedVendors = new ArrayList<>();
-//        for (Vendor vendorInput : updatedEvent.getVendors()) {
-//            Vendor existingVendor = vendorService.findByEmail(vendorInput.getEmail())
-//                .orElseThrow(() -> new RuntimeException("Vendor not found: " + vendorInput.getEmail()));
-//
-//            existingVendor.setStatus("booked");
-//            existingVendor.setEvent(existingEvent); // ✅ Add this line
-//            attachedVendors.add(existingVendor);
-//        }
-//        existingEvent.setVendors(attachedVendors);
-//        return eventService.save(existingEvent);
-//    }
+    @Transactional
     @PutMapping("/update")
     public Event updateEvent(@RequestParam Long eventId, @RequestBody VendorUpdateDTO updatedEvent) {
-        Event existingEvent = eventService.findById(eventId)
+       Event existingEvent = eventService.findById(eventId)
             .orElseThrow(() -> new RuntimeException("Event not found"));
 
         // Update event properties
@@ -173,21 +147,31 @@ public class EventController {
         existingEvent.setStatus(updatedEvent.getStatus());
         existingEvent.setCapacity(updatedEvent.getCapacity());
 
-        // Attach vendors
-        List<Vendor> attachedVendors = new ArrayList<>();
-        for (VendoDTO1 vendorInput : updatedEvent.getVendors()) {
-            Vendor existingVendor = vendorService.findByEventId(vendorInput.getId())
-                .orElseThrow(() -> new RuntimeException("Vendor not found: " + vendorInput.getId()));
-            existingVendor.setStatus("booked");
-            existingVendor.setEvent(existingEvent);
-            attachedVendors.add(existingVendor);
-        }
+       // Detach previous vendors (modify in-place)
+        List<Vendor> currentVendors = existingEvent.getVendors();
+        currentVendors.clear();
 
-        existingEvent.setVendors(attachedVendors);
+       // Attach new vendors (no duplicates)
+        Set<Long> seenVendorIds = new HashSet<>();
+        for (VendoDTO1 vendorInput : updatedEvent.getVendors()) {
+            if (seenVendorIds.add(vendorInput.getVendorId())) {
+                Vendor existingVendor = vendorService.findById(vendorInput.getVendorId())
+                    .orElseThrow(() -> new RuntimeException("Vendor not found: " + vendorInput.getVendorId()));
+
+                existingVendor.setStatus("booked");
+               existingVendor.setEvent(existingEvent);
+                currentVendors.add(existingVendor);
+            }
+       }
+
         return eventService.save(existingEvent);
     }
-
-
-
+    
+   
+    @GetMapping("/upcoming")
+    public ResponseEntity<List<UpcomingEventDTO>> getUpcomingEvent() {
+        List<UpcomingEventDTO> upcomingEvents = eventService.getUpcomingEvents();
+        return ResponseEntity.ok(upcomingEvents);
+    }
 
 }

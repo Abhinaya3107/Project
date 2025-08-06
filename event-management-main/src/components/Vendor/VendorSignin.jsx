@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import VendorDash from "./VendorDash";
 import { useNavigate, Link } from "react-router-dom";
 
 const VendorSignin = () => {
@@ -26,7 +25,7 @@ const VendorSignin = () => {
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("vendorEmail", formData.email);
         localStorage.setItem("vendorId", result.vendorId); // store user ID for later use
-        navigate("/My-Dashboard");
+        navigate("/vendor-dashboard");
 
       } else {
         alert(result.message || "Invalid credentials.");

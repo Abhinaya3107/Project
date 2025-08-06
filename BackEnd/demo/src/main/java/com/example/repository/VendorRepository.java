@@ -33,7 +33,7 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
 	void save(VendorSignupDto vendorDTO);
 	///Get CAtegoryNAme
 	List<Vendor> findAllByCategory(String category);
-
-	Optional<Vendor> findByEmail(Long long1);
+	
+	Optional<Vendor> findByEmail(String email);
 
 }

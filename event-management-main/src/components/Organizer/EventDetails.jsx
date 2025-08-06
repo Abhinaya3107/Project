@@ -55,14 +55,19 @@ function EventDetails() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/events")
-      .then((res) => res.json())
-      .then((data) => setEventsData(data))
-      .catch((err) => console.error("Error fetching events:", err));
+  console.log("Fetching events from backend...");
+  fetch("http://localhost:8080/api/events/upcoming")
+    .then((res) => {
+      console.log("Response status:", res.status);
+      return res.json();
+    })
+    .then((data) => {
+      console.log("Fetched events data:", data);
+      setEventsData(data);
+    })
+    .catch((err) => console.error("Error fetching events:", err));
+}, []);
 
-    fetchPhotographers();
-    fetchCaterers();
-  }, []);
 
   useEffect(() => {
     const updatedEvents = eventsData

@@ -1,20 +1,26 @@
 package com.example.model;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Entity
-@Data
-@ToString(callSuper = true)
+@Getter
+@Setter
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users")
 public class User extends BaseEntity{
     @Column(name = "first_name", length = 20)

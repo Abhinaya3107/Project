@@ -3,12 +3,16 @@ package com.example.service;
 import com.example.model.Organizer;
 import com.example.model.Vendor;
 import com.example.repository.OrganizerRepository;
+//import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -60,5 +64,13 @@ public class OrganizerService {
 			
 			organizerRepository.save(organizer);
 	}
+	 public Optional<Organizer> findById(Long id) {
+		    return organizerRepository.findById(id);
+		}
+	 public void save(Organizer organizer) {
+		    organizerRepository.save(organizer);
+		}
+
+
 }
 

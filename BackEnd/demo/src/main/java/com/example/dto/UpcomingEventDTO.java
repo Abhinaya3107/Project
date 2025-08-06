@@ -12,10 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpcomingEventDTO {
-    private Long id;
+	private Long id;
     private String eventName;
     private String venue;
     private LocalDateTime dateTime;
     private String status;
     private int budget;
+    private int capacity;
 }
