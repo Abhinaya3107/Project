@@ -8,20 +8,40 @@ const Settings = () => {
     newPassword: "",
     confirmPassword: "",
   });
-
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("danger");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.newPassword !== formData.confirmPassword) {
       setMessage("New passwords do not match!");
-    } else {
-      setMessage("Password changed successfully!");
-      // Add API call here to update password in the database
+      setMessageType("danger");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/organizers/${id}/change-password`,
+        {
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
+        }
+      );
+
+      setMessage(response.data); // "Password updated successfully"
+      setMessageType("success");
+    } catch (error) {
+      if (error.response) {
+        setMessage(error.response.data); // "Current password is incorrect", etc.
+      } else {
+        setMessage("An error occurred while changing the password.");
+      }
+      setMessageType("danger");
     }
   };
 
@@ -31,14 +51,10 @@ const Settings = () => {
       <div className="d-flex ">
         <Sidebar /> {/* Always Visible */}
         <div className=" w-100  p-3">
-
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
             <h4 className="h5">Update Password</h4>
             <div className="btn-toolbar mb-2 mb-md-0">
-              <div className="btn-group w-100 me-2">
-
-
-              </div>
+              <div className="btn-group w-100 me-2"></div>
             </div>
           </div>
 

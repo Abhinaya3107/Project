@@ -70,66 +70,8 @@ public class OrganizerController {
     public List<Organizer> getAllOrganizers() {
         return organizerService.findAll();
     } 
-    
-//    @PutMapping("/{id}/change-password")
-//    public ResponseEntity<String> changeOrganizerPassword(
-//        @PathVariable Long id,
-//        @RequestBody Map<String, String> request
-//    ) {
-//        Optional<Organizer> optionalOrganizer = organizerService.findById(id);
-//
-//        if (optionalOrganizer.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organizer not found");
-//        }
-//
-//        Organizer organizer = optionalOrganizer.get();
-//        String currentPassword = request.get("currentPassword");
-//        String newPassword = request.get("newPassword");
-//
-//        if (!organizer.getPassword().equals(currentPassword)) {
-//           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect");
-//        }
-//
-//        // Validate new password length
-//        if (newPassword.length() < 6 || newPassword.length() > 8) {
-//            return ResponseEntity.badRequest().body("Password must be between 6 to 8 characters");
-//        }
-//
-//        organizer.setPassword(newPassword);
-//        organizerService.save(organizer);
-//
-//        return ResponseEntity.ok("Password updated successfully");
-////    }
-//    @PutMapping("/{id}/change-password")
-//    public ResponseEntity<String> changeOrganizerPassword(
-//            @PathVariable Long id,
-//            @RequestBody Map<String, String> request) {
-//
-//        Optional<Organizer> optionalOrganizer = organizerService.findById(id);
-//        if (optionalOrganizer.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organizer not found");
-//        }
-//
-//        String newPassword = request.get("newPassword");
-//
-//        // Null check before using trim or length
-//        if (newPassword == null || newPassword.trim().isEmpty()) {
-//            return ResponseEntity.badRequest().body("New password must not be null or empty");
-//        }
-//
-//        newPassword = newPassword.trim();
-//
-//        if (newPassword.length() < 6 || newPassword.length() > 8) {
-//            return ResponseEntity.badRequest().body("Password must be between 6 to 8 characters");
-//        }
-//
-//        Organizer organizer = optionalOrganizer.get();
-//        organizer.setPassword(newPassword);
-//        organizerService.save(organizer);
-//
-//        return ResponseEntity.ok("Password updated successfully");
-//    }
-
+   
+//Update password in settings
 
     @PutMapping("/{id}/change-password")
     public ResponseEntity<String> changeOrganizerPassword(
