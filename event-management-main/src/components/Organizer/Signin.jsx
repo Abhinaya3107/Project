@@ -6,26 +6,40 @@ const OrganizerSignin = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
+  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSignin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/api/organizers/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "http://localhost:8080/api/organizers/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const result = await response.json();
 
       if (response.ok && result.message === "Login successful!") {
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("organizerEmail", formData.email);
-        localStorage.setItem("organizerId", result.organizerId); // store user ID or any info
-        navigate("/dashboard");
+        const organizer = result.organizer;
+
+        if (organizer && organizer.id) {
+          // ✅ Store relevant organizer info in localStorage
+          localStorage.setItem("isAuthenticated", "true");
+          localStorage.setItem("organizerId", organizer.id.toString());
+          localStorage.setItem("organizerEmail", organizer.email);
+          localStorage.setItem("organizer", JSON.stringify(organizer)); // optional: full object
+
+          navigate("/dashboard");
+        } else {
+          alert("Organizer ID missing in response.");
+        }
       } else {
         alert(result.message || "Invalid email or password.");
       }
