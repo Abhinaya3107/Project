@@ -23,7 +23,8 @@ const Photographers = () => {
   const fetchPhotographers = () => {
     setLoading(true);
     axios
-      .get("http://localhost:8080/api/vendors/category/Photography")
+      axios.get("http://localhost:8080/api/vendors/business-names/photography")
+
       .then((res) => {
         setPhotographers(res.data);
         setLoading(false);

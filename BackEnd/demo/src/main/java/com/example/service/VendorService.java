@@ -17,15 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.example.dto.VendorDTO;
 import com.example.dto.VendorProfileDTO;
-<<<<<<< HEAD
+
 import com.example.dto.VendorSignupDto;
-=======
+
 
 import com.example.dto.VendorSignupDto;
 
 import com.example.dto.VendorSigninRequest;
 import com.example.model.User;
->>>>>>> orgnaizers
+
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -39,10 +39,6 @@ public class VendorService {
         return vendorRepository.findByEmailAndPassword(email, password);
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> orgnaizers
     public void registerVendor(VendorSignupDto dto) {
         Vendor vendor = new Vendor();
         vendor.setFirstName(dto.getFirstName());
@@ -57,11 +53,7 @@ public class VendorService {
 
         vendorRepository.save(vendor); // ✅ Now save entity, not DTO
     }
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> orgnaizers
     
     public void deleteById(Long id) {
         vendorRepository.deleteById(id);
@@ -173,13 +165,16 @@ public class VendorService {
                       .collect(Collectors.toList());
     }
 
-    public Optional<Vendor> findByEmail(Long long1) {
-        return vendorRepository.findByEmail(long1);
+    public Optional<Vendor> findByEmail(String email) {
+        return vendorRepository.findByEmail(email); // ✅ Correct
     }
 
 	public void save(Vendor existingVendor) {
 		// TODO Auto-generated method stub
 		
+	}
+	public Optional<Vendor> findById(Long id) {
+	    return vendorRepository.findById(id);
 	}
 
 	

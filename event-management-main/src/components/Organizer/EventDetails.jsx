@@ -55,7 +55,7 @@ function EventDetails() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/events")
+    fetch("http://localhost:8080/api/events/upcoming")
       .then((res) => res.json())
       .then((data) => setEventsData(data))
       .catch((err) => console.error("Error fetching events:", err));

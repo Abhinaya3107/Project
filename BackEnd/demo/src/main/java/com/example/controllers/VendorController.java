@@ -25,22 +25,13 @@ public class VendorController {
     @Autowired
     private VendorService vendorService;
 
-    
-<<<<<<< HEAD
  
-=======
-
->>>>>>> orgnaizers
     // Vendor Signup
     @PostMapping("/signup")
     public ResponseEntity<String> registerVendor(@RequestBody VendorSignupDto dto) {
         vendorService.registerVendor(dto); // call the void method
         return ResponseEntity.ok("Vendor registered successfully");
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> orgnaizers
 
     // Vendor Signin
     @PostMapping("/signin")

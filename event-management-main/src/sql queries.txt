@@ -1,0 +1,7 @@
+//Events queries
+INSERT INTO events (budget, capacity, date_time, description, event_name, status, venue, organizer_id, user_id)
+    -> VALUES
+    -> (50000, 100, '2025-08-20 18:00:00', 'Birthday celebration event', 'Birthday', 'APPROVED', 'Bangalore Palace', 8, 1),
+    -> (75000, 200, '2025-09-10 19:30:00', 'Wedding ceremony and reception', 'Wedding', 'PENDING', 'Hyderabad Convention Center', 9, 1),
+    -> (30000, 80, '2025-08-25 16:00:00', 'Corporate team-building event', 'Corporate Meet', 'APPROVED', 'Pune Marriott Hotel', 10, 1),
+    -> (40000, 120, '2025-08-30 17:00:00', 'Cultural fest with dance and music', 'Cultural Fest', 'PENDING', 'Delhi Arts Centre', 12, 1);

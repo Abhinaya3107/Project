@@ -79,9 +79,8 @@ public class Vendor {
     @Column(nullable = false, length = 10)
     private String status;
     
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    @JsonBackReference
-    private Event event;
+    @ManyToMany(mappedBy = "vendors")
+    private List<Event> events = new ArrayList<>();
+
 
 }

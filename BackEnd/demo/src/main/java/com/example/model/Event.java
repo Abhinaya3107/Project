@@ -10,34 +10,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-//@Entity
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Table(name="events")
-//public class Event {
-//	@Id
-//	@GeneratedValue(strategy=GenerationType.IDENTITY)
-//	private Long id;
-//	private String eventName;
-//	private String dateTime;
-//	private int capacity;
-//	private int budget;
-//	@Column(length=1000)
-//	private String description;
-//	@ManyToOne
-//	@JoinColumn(name = "organizer_id")
-//	private Organizer organizer;
-//	private String venue;
-//	@ManyToOne
-//	@JoinColumn(name = "user_id")
-//	private User user;
-//	@OneToMany(mappedBy = "event", fetch = FetchType.EAGER ,cascade = CascadeType.ALL)
-//	private List<Vendor> vendors;
-//	  @Enumerated(EnumType.STRING)
-//	    @Column(nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
-//	    private EventStatus status = EventStatus.PENDING;
-//}
 @Entity
 @Data
 @NoArgsConstructor
@@ -66,11 +38,14 @@ public class Event {
     @JoinColumn(name = "user_id")
     private User user;
    
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @ManyToMany
+    @JoinTable(
+        name = "event_vendors",
+        joinColumns = @JoinColumn(name = "event_id"),
+        inverseJoinColumns = @JoinColumn(name = "vendor_id")
+    )
     private List<Vendor> vendors = new ArrayList<>();
-    
-    
+ 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
     private EventStatus status = EventStatus.PENDING;

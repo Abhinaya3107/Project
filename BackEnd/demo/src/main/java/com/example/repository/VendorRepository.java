@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.example.dto.VendorDTO;
 import com.example.dto.VendorSignupDto;
@@ -19,7 +21,7 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
 	Optional<Vendor> findByEmailAndPassword(String email, String password);
 
 	List<Vendor> findByCategory(String category);
-	List<Vendor> findByEventId(Long eventId);
+//	List<Vendor> findByEventId(Long eventId);
 	List<Vendor> findByCategoryIgnoreCase(String category);
 	
 	///Search Operation
@@ -34,6 +36,9 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
 	///Get CAtegoryNAme
 	List<Vendor> findAllByCategory(String category);
 
-	Optional<Vendor> findByEmail(Long long1);
+	Optional<Vendor> findByEmail(String email);
+	@Query("SELECT v FROM Vendor v JOIN v.events e WHERE e.id = :eventId")
+	List<Vendor> findByEventId(@Param("eventId") Long eventId);
+
 
 }
