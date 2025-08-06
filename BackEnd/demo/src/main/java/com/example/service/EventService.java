@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 
 //import java.util.stream.Collectors;
 //
@@ -146,10 +144,11 @@
 
 
 
->>>>>>> origin/Password
+
 package com.example.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -224,12 +223,12 @@ public class EventService {
         }).collect(Collectors.toList());
     }
 
-<<<<<<< HEAD
+
     // Get list of upcoming approved events
     public List<UpcomingEventDTO> getUpcomingApprovedEvents() {
         return eventRepository.findUpcomingEvents(LocalDateTime.now(), EventStatus.APPROVED);
     }
-=======
+
     public List<UpcomingEventDTO> getUpcomingEvents() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -257,6 +256,5 @@ public class EventService {
         }).collect(Collectors.toList());
     }
 
->>>>>>> origin/Password
 }
 

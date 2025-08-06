@@ -8,12 +8,11 @@ import lombok.Setter;
 @Setter
 @Data
 public class VendoDTO1 {
-	
-<<<<<<< HEAD
+
 	private Long id;
 	private String email;
-=======
+
 	private Long vendorId;
 
->>>>>>> origin/Password
+
 }

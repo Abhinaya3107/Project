@@ -35,15 +35,10 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
 	void save(VendorSignupDto vendorDTO);
 	///Get CAtegoryNAme
 	List<Vendor> findAllByCategory(String category);
-<<<<<<< HEAD
 
 	Optional<Vendor> findByEmail(String email);
 	@Query("SELECT v FROM Vendor v JOIN v.events e WHERE e.id = :eventId")
 	List<Vendor> findByEventId(@Param("eventId") Long eventId);
 
-=======
 	
-	Optional<Vendor> findByEmail(String email);
->>>>>>> origin/Password
-
 }

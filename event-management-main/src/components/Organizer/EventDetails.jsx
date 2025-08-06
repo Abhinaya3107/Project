@@ -55,12 +55,6 @@ function EventDetails() {
   };
 
   useEffect(() => {
-<<<<<<< HEAD
-    fetch("http://localhost:8080/api/events/upcoming")
-      .then((res) => res.json())
-      .then((data) => setEventsData(data))
-      .catch((err) => console.error("Error fetching events:", err));
-=======
   console.log("Fetching events from backend...");
   fetch("http://localhost:8080/api/events/upcoming")
     .then((res) => {
@@ -73,7 +67,6 @@ function EventDetails() {
     })
     .catch((err) => console.error("Error fetching events:", err));
 }, []);
->>>>>>> origin/Password
 
 
   useEffect(() => {

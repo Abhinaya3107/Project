@@ -78,7 +78,7 @@ public class Vendor {
     @Column(nullable = false, length = 10)
     private String status;
     
-    @ManyToMany(mappedBy = "vendors")
+    @ManyToMany(mappedBy = "vendors",fetch=FetchType.EAGER)
     private List<Event> events = new ArrayList<>();
 
 

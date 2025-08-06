@@ -20,7 +20,7 @@ public class UpcomingEventDTO {
     private LocalDateTime dateTime;
     private String status;
     private int budget;
-<<<<<<< HEAD
+
     
     public UpcomingEventDTO(Long id, String eventName, String venue, LocalDateTime dateTime, EventStatus status, int budget) {
         this.id = id;
@@ -30,7 +30,7 @@ public class UpcomingEventDTO {
         this.status = status.name(); // Convert enum to string if needed
         this.budget = budget;
     }
-=======
+
     private int capacity;
->>>>>>> origin/Password
+
 }

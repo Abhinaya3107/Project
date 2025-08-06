@@ -20,21 +20,16 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.dto.VendorDTO;
 
 import com.example.dto.VendorProfileDTO;
-<<<<<<< HEAD
 
 import com.example.dto.VendorSignupDto;
 
-=======
->>>>>>> origin/Password
+
 
 import com.example.dto.VendorSignupDto;
 
 import com.example.dto.VendorSigninRequest;
 import com.example.model.User;
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/Password
 import com.example.model.Vendor;
 import com.example.repository.VendorRepository;
 
@@ -62,11 +57,7 @@ public class VendorService {
 
         vendorRepository.save(vendor); // ✅ Now save entity, not DTO
     }
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> origin/Password
     
     public void deleteById(Long id) {
         vendorRepository.deleteById(id);
@@ -179,11 +170,11 @@ public class VendorService {
     }
 
     public Optional<Vendor> findByEmail(String email) {
-<<<<<<< HEAD
+
         return vendorRepository.findByEmail(email); // ✅ Correct
-=======
-        return vendorRepository.findByEmail(email);
->>>>>>> origin/Password
+
+   
+
     }
 
 	public void save(Vendor existingVendor) {
@@ -193,9 +184,6 @@ public class VendorService {
 	public Optional<Vendor> findById(Long id) {
 	    return vendorRepository.findById(id);
 	}
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/Password
 	
 }

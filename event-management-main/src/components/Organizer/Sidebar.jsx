@@ -46,11 +46,6 @@ const Sidebar = () => {
         {isHovered && <span className="ms-3">Photographers</span>}
       </Link>
 
-      <Link to="/Dashboard/venues" className="nav-link text-dark d-flex align-items-center p-2 hover-effect">
-        <FaMapMarkerAlt size={14} />
-        {isHovered && <span className="ms-3">Venues</span>}
-      </Link>
-
 
 
       <Link to="/Dashboard/settings" className="nav-link text-dark d-flex align-items-center p-2 hover-effect">

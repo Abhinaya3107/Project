@@ -38,9 +38,9 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-<<<<<<< HEAD
+
    
-    @ManyToMany
+    @ManyToMany(fetch=FetchType.EAGER)
     @JoinTable(
         name = "event_vendors",
         joinColumns = @JoinColumn(name = "event_id"),
@@ -48,13 +48,9 @@ public class Event {
     )
     private List<Vendor> vendors = new ArrayList<>();
  
-=======
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private List<Vendor> vendors = new ArrayList<>();
 
->>>>>>> origin/Password
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "VARCHAR(20) DEFAULT 'PENDING'")
     private EventStatus status = EventStatus.PENDING;

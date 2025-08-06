@@ -25,12 +25,7 @@ public class VendorController {
     @Autowired
     private VendorService vendorService;
 
-<<<<<<< HEAD
- 
-=======
-    
 
->>>>>>> origin/Password
     // Vendor Signup
     @PostMapping("/signup")
     public ResponseEntity<String> registerVendor(@RequestBody VendorSignupDto dto) {
@@ -62,6 +57,7 @@ public class VendorController {
         List<Vendor> vendors = vendorService.findByCategory(category);
         return ResponseEntity.ok(vendors);
     }
+    
 
     // Get vendors by event ID
     @GetMapping("/event/{eventId}")
