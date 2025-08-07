@@ -126,7 +126,7 @@ const OrganizerSignUp = () => {
           type="password"
           className="form-control mb-3"
           placeholder="Password"
-          maxLength="8"
+          maxLength="12"
           name="password"
           value={formData.password}
           onChange={handleChange}

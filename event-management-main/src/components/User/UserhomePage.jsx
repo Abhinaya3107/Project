@@ -99,9 +99,8 @@ const UserHome = () => {
                 <p><strong>Name:</strong> {organizer.firstName} {organizer.lastName}</p>
                 <p><strong>Organization:</strong> {organizer.organizationName}</p>
                 <p><strong>Email:</strong> {organizer.email}</p>
-                <p><strong>Contact:</strong> {organizer.mobile}</p>
-                <p><strong>Address:</strong> {organizer.address}</p>
-                <p><strong>Category:</strong> {organizer.category}</p>
+                <p><strong>Contact:</strong> {organizer.mobileNumber}</p>
+               
                  {/* Optional: Pass organizer ID to CreateEvent form */}
                   <Link to={`/index/create-event?organizerId=${organizer.id}`} className="btn btn-primary mt-2">
                     Book Now

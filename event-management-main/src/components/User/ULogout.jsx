@@ -9,7 +9,7 @@ function ULogout() {
 
   function handleClick() {
     localStorage.clear();
-    navigate("/"); // Redirect to Dashboard
+    navigate("/home/Logout"); // Redirect to Dashboard
   }
   return (
     <>

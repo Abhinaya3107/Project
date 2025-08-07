@@ -1,5 +1,13 @@
 package com.example.model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -13,11 +21,19 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Organizer {
+public class Organizer{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @CreationTimestamp
+    @Column(name = "creation_date", updatable = false)
+    private LocalDate creationDate;
+
+    @UpdateTimestamp
+    @Column(name = "updated_on")
+    private LocalDateTime updatedOn;
 
     @NotBlank(message = "First name is required")
     @Size(min = 2, max = 50, message = "First name must be between 2 to 50 characters")
@@ -49,7 +65,7 @@ public class Organizer {
     @Column(name = "organization_name", nullable = false)
     private String organizationName;
     
-    @JsonIgnore
+    
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 12, message = "Password must be between 6 to 8 characters")
     @Column(nullable = false)
@@ -58,4 +74,8 @@ public class Organizer {
     @Lob
     @Column(name="Image_data")
     private byte[] profileImage;
+    
+    @OneToMany(mappedBy = "organizer",fetch =FetchType.EAGER,cascade=CascadeType.ALL)
+    private List<User> users=new ArrayList<>();
+    
 }

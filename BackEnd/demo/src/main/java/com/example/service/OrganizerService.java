@@ -144,6 +144,7 @@ public class OrganizerService {
         organizer.setMobileNumber(mobileNumber);
         organizer.setAddress(address);
         organizer.setOrganizationName(organizationName);
+//        organizer.setPassword(password);
 
         if (profileImage != null && !profileImage.isEmpty()) {
             organizer.setProfileImage(profileImage.getBytes()); // Save as byte[]

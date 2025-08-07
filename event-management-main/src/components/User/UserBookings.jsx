@@ -108,6 +108,7 @@ const UserBookings = () => {
                 <th>Venue</th>
                 <th>Budget</th>
                 <th>Action</th>
+               
               </tr>
             </thead>
             <tbody>
@@ -136,10 +137,16 @@ const UserBookings = () => {
                         </button>
                       )}
                       <button
-                        className="btn btn-danger btn-sm"
+                        className="btn btn-danger btn-sm me-2"
                         onClick={() => handleDeleteBooking(booking.id)}
                       >
                         Delete
+                      </button>
+                        <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDeleteBooking(booking.id)}
+                      >
+                        Status
                       </button>
                     </td>
                   </tr>

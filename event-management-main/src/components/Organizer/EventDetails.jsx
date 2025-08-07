@@ -5,7 +5,6 @@ import OrgNavbar from "./OrgNavBar";
 import Sidebar from "./Sidebar";
 
 const getTodayDate = () => new Date().toISOString().split("T")[0];
-const getCurrentMonth = () => new Date().getMonth() + 1;
 
 function EventDetails() {
   const location = useLocation();
@@ -16,7 +15,7 @@ function EventDetails() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [editData, setEditData] = useState(null);
-  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
+  const [selectedMonth, setSelectedMonth] = useState(null);
   const [eventsData, setEventsData] = useState([]);
   const [caterers, setCaterers] = useState([]);
   const [photographers, setPhotographers] = useState([]);
@@ -55,19 +54,11 @@ function EventDetails() {
   };
 
   useEffect(() => {
-  console.log("Fetching events from backend...");
-  fetch("http://localhost:8080/api/events/upcoming")
-    .then((res) => {
-      console.log("Response status:", res.status);
-      return res.json();
-    })
-    .then((data) => {
-      console.log("Fetched events data:", data);
-      setEventsData(data);
-    })
-    .catch((err) => console.error("Error fetching events:", err));
-}, []);
-
+    fetch("http://localhost:8080/api/events/upcoming")
+      .then((res) => res.json())
+      .then((data) => setEventsData(data))
+      .catch((err) => console.error("Error fetching events:", err));
+  }, []);
 
   useEffect(() => {
     const updatedEvents = eventsData
@@ -81,18 +72,21 @@ function EventDetails() {
         };
       });
 
-    const monthFilteredEvents = updatedEvents.filter(
-      (event) =>
-        new Date(event.dateTime).getMonth() + 1 === parseInt(selectedMonth)
-    );
+    let monthFilteredEvents = updatedEvents;
+    if (selectedMonth) {
+      monthFilteredEvents = updatedEvents.filter(
+        (event) =>
+          new Date(event.dateTime).getMonth() + 1 === parseInt(selectedMonth)
+      );
+    }
 
-    setFilteredEvents(
-      status
-        ? monthFilteredEvents.filter(
-            (event) => event.computedStatus === status
-          )
-        : monthFilteredEvents
-    );
+    const finalFiltered = status
+      ? monthFilteredEvents.filter(
+          (event) => event.computedStatus === status
+        )
+      : monthFilteredEvents;
+
+    setFilteredEvents(finalFiltered);
   }, [eventsData, status, selectedMonth]);
 
   const handleSaveChanges = () => {
@@ -150,232 +144,237 @@ function EventDetails() {
       .finally(() => setSaving(false));
   };
 
+  const handleAllEventsClick = () => {
+    setSelectedMonth(null);
+    navigate("/Dashboard/events");
+  };
+
   return (
-    <>
-      <div className="d-flex">
-        <Sidebar />
-        <div className="content w-100 p-3">
-          <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h6 className="text-start mb-2">
-              {status ? `${status} Events` : "All Events"}
-            </h6>
+    <div className="d-flex">
+      <Sidebar />
+      <div className="content w-100 p-3">
+        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+          <h6 className="text-start mb-2">
+            {status ? `${status} Events` : "All Events"}
+          </h6>
 
-            <div className="btn-toolbar mb-2 mb-md-0">
-              <div className="btn-group me-2">
-                <select
-                  className="form-select"
-                  value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(e.target.value)}
-                >
-                  {[...Array(12)].map((_, index) => (
-                    <option key={index + 1} value={index + 1}>
-                      {new Date(2025, index, 1).toLocaleString("default", {
-                        month: "long",
-                      })}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          <div className="btn-toolbar mb-2 mb-md-0">
+            <div className="btn-group me-2">
+              <select
+                className="form-select"
+                value={selectedMonth || ""}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+              >
+                <option value="">Select Month</option>
+                {[...Array(12)].map((_, index) => (
+                  <option key={index + 1} value={index + 1}>
+                    {new Date(2025, index, 1).toLocaleString("default", {
+                      month: "long",
+                    })}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-              <div className="btn-group me-2">
-                <button
-                  className={`btn btn-sm ${
-                    status === "Upcoming" ? "btn-warning" : "btn-outline-warning"
-                  }`}
-                  onClick={() => navigate("/Dashboard/events?status=Upcoming")}
-                >
-                  Upcoming Events
-                </button>
-                <button
-                  className={`btn btn-sm ${
-                    status === "In Progress"
-                      ? "btn-primary"
-                      : "btn-outline-primary"
-                  }`}
-                  onClick={() =>
-                    navigate("/Dashboard/events?status=In Progress")
-                  }
-                >
-                  In Progress Events
-                </button>
-              </div>
+            <div className="btn-group me-2">
+              <button
+                className={`btn btn-sm ${
+                  status === "Upcoming" ? "btn-warning" : "btn-outline-warning"
+                }`}
+                onClick={() =>
+                  navigate("/Dashboard/events?status=Upcoming")
+                }
+              >
+                Upcoming Events
+              </button>
+              <button
+                className={`btn btn-sm ${
+                  status === "In Progress"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
+                }`}
+                onClick={() =>
+                  navigate("/Dashboard/events?status=In Progress")
+                }
+              >
+                In Progress Events
+              </button>
+              
+            </div>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-md-4">
+            <div
+              className="list-group shadow"
+              style={{ maxHeight: "400px", overflowY: "auto" }}
+            >
+              {filteredEvents.length > 0 ? (
+                filteredEvents.map((event) => (
+                  <button
+                    key={event.id}
+                    className={`list-group-item list-group-item-action d-flex align-items-center justify-content-between ${
+                      selectedEvent?.id === event.id ? "active" : ""
+                    }`}
+                    onClick={() => handleSelectEvent(event)}
+                  >
+                    <div className="d-flex flex-column">
+                      <strong>{event.eventName}</strong>
+                      <small>{event.dateTime?.split("T")[0]}</small>
+                      <span
+                        className={`badge ${
+                          event.computedStatus === "In Progress"
+                            ? "bg-primary"
+                            : "bg-warning"
+                        } mt-1`}
+                      >
+                        {event.computedStatus}
+                      </span>
+                    </div>
+                  </button>
+                ))
+              ) : (
+                <p className="text-center text-muted">
+                  No events found for {status || "selected"} in{" "}
+                  {selectedMonth
+                    ? new Date(2025, selectedMonth - 1, 1).toLocaleString(
+                        "default",
+                        { month: "long" }
+                      )
+                    : "all months"}
+                </p>
+              )}
             </div>
           </div>
 
-          <div className="row">
-            {/* Event List */}
-            <div className="col-md-4">
-              <div
-                className="list-group shadow"
-                style={{ maxHeight: "400px", overflowY: "auto" }}
-              >
-                {filteredEvents.length > 0 ? (
-                  filteredEvents.map((event) => (
-                    <button
-                      key={event.id}
-                      className={`list-group-item list-group-item-action d-flex align-items-center justify-content-between ${
-                        selectedEvent?.id === event.id ? "active" : ""
-                      }`}
-                      onClick={() => handleSelectEvent(event)}
-                    >
-                      <div className="d-flex flex-column">
-                        <strong>{event.eventName}</strong>
-                        <small>{event.dateTime?.split("T")[0]}</small>
-                        <span
-                          className={`badge ${
-                            event.computedStatus === "In Progress"
-                              ? "bg-primary"
-                              : "bg-warning"
-                          } mt-1`}
-                        >
-                          {event.computedStatus}
-                        </span>
-                      </div>
-                    </button>
-                  ))
-                ) : (
-                  <p className="text-center text-muted">
-                    No events found for {status} in{" "}
-                    {new Date(2025, selectedMonth - 1, 1).toLocaleString(
-                      "default",
-                      {
-                        month: "long",
-                      }
-                    )}
-                  </p>
-                )}
-              </div>
-            </div>
+          <div className="col-md-8">
+            <div className="card shadow p-3">
+              {selectedEvent ? (
+                <>
+                  <h4 className="fw-bold">{editData.name}</h4>
 
-            {/* Event Details */}
-            <div className="col-md-8">
-              <div className="card shadow p-3">
-                {selectedEvent ? (
-                  <>
-                    <h4 className="fw-bold">{editData.name}</h4>
-
-                    <div className="row">
-                      <div className="col-md-6 mb-3">
-                        <label className="form-label">Event Name</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={editData.name}
-                          disabled
-                        />
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label className="form-label">Date</label>
-                        <input
-                          type="date"
-                          className="form-control"
-                          value={editData.date}
-                          disabled
-                        />
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label className="form-label">Venue</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={editData.venue}
-                          disabled
-                        />
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label className="form-label">Status</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={editData.status}
-                          disabled
-                        />
-                      </div>
-                      <div className="col-md-6 mb-3">
-                        <label className="form-label">Capacity</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={editData.capacity}
-                          disabled
-                        />
-                      </div>
+                  <div className="row">
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Event Name</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={editData.name}
+                        disabled
+                      />
                     </div>
-
-                    <div className="row mt-3">
-                      <div className="col-md-12">
-                        <h5 className="fw-bold">Vendor Information</h5>
-                      </div>
-                      <div className="col-md-4 mb-3">
-                        <label className="form-label">Photographer</label>
-                        <select
-                          className="form-select"
-                          value={editData.photographer}
-                          onChange={(e) =>
-                            setEditData({
-                              ...editData,
-                              photographer: e.target.value,
-                            })
-                          }
-                        >
-                          <option value="">Select Photographer</option>
-                          {photographers.map((p) => (
-                            <option key={p} value={p}>
-                              {p}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="col-md-4 mb-3">
-                        <label className="form-label">Caterer</label>
-                        <select
-                          className="form-select"
-                          value={editData.caterer}
-                          onChange={(e) =>
-                            setEditData({
-                              ...editData,
-                              caterer: e.target.value,
-                            })
-                          }
-                        >
-                          <option value="">Select Caterer</option>
-                          {caterers.map((cat) => (
-                            <option key={cat} value={cat}>
-                              {cat}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="col-md-4 mb-3">
-                        <label className="form-label">Budget</label>
-                        <input
-                          type="number"
-                          className="form-control"
-                          value={editData.budget}
-                          disabled
-                        />
-                      </div>
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Date</label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        value={editData.date}
+                        disabled
+                      />
                     </div>
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Venue</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={editData.venue}
+                        disabled
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Status</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={editData.status}
+                        disabled
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Capacity</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={editData.capacity}
+                        disabled
+                      />
+                    </div>
+                  </div>
 
-                    <button
-                      className="btn btn-success mt-3"
-                      onClick={handleSaveChanges}
-                      disabled={saving}
-                    >
-                      {saving ? "Saving..." : "Save Changes"}
-                    </button>
-                  </>
-                ) : (
-                  <p className="text-center text-muted">
-                    Select an event to view details
-                  </p>
-                )}
-              </div>
+                  <div className="row mt-3">
+                    <div className="col-md-12">
+                      <h5 className="fw-bold">Vendor Information</h5>
+                    </div>
+                    <div className="col-md-4 mb-3">
+                      <label className="form-label">Photographer</label>
+                      <select
+                        className="form-select"
+                        value={editData.photographer}
+                        onChange={(e) =>
+                          setEditData({
+                            ...editData,
+                            photographer: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="">Select Photographer</option>
+                        {photographers.map((p) => (
+                          <option key={p} value={p}>
+                            {p}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-md-4 mb-3">
+                      <label className="form-label">Caterer</label>
+                      <select
+                        className="form-select"
+                        value={editData.caterer}
+                        onChange={(e) =>
+                          setEditData({
+                            ...editData,
+                            caterer: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="">Select Caterer</option>
+                        {caterers.map((cat) => (
+                          <option key={cat} value={cat}>
+                            {cat}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-md-4 mb-3">
+                      <label className="form-label">Budget</label>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={editData.budget}
+                        disabled
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    className="btn btn-success mt-3"
+                    onClick={handleSaveChanges}
+                    disabled={saving}
+                  >
+                    {saving ? "Saving..." : "Save Changes"}
+                  </button>
+                </>
+              ) : (
+                <p className="text-center text-muted">
+                  Select an event to view details
+                </p>
+              )}
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

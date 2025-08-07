@@ -18,20 +18,6 @@ function EventRequestModal({ show, onHide, request, handleStatusUpdate }) {
         <p><strong>Status:</strong> {request.status}</p>
       </Modal.Body>
       <Modal.Footer>
-        <Button
-          variant="success"
-          onClick={() => handleStatusUpdate(request, "APPROVED")}
-          disabled={request.status !== "PENDING"}
-        >
-          Accept
-        </Button>
-        <Button
-          variant="danger"
-          onClick={() => handleStatusUpdate(request, "REJECTED")}
-          disabled={request.status !== "PENDING"}
-        >
-          Reject
-        </Button>
         <Button variant="secondary" onClick={onHide}>
           Close
         </Button>

@@ -3,6 +3,8 @@ package com.example.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -37,7 +39,8 @@ public class User extends BaseEntity{
 	@Column(length = 10,nullable = false)
 	private String password;
 	
-	 @ManyToOne
+	@JsonIgnore
+	@ManyToOne
 	 @JoinColumn(name = "oId")
 	 private Organizer organizer;
 	

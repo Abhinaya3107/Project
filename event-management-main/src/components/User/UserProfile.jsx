@@ -1,39 +1,39 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import UserNav from "./UserNav";
-import profileImg from "../../assets/profile.png"; // default profile image
+ import UserNav from "./UserNav";
+ import profileImg from "../../assets/profile.png"; // default profile image
 
-const UserProfile = () => {
-  const [formData, setFormData] = useState(null);
+ const UserProfile = () => {
+ const [formData, setFormData] = useState(null);
 
-  useEffect(() => {
-  const storedUser = localStorage.getItem("user");
-  if (storedUser) {
-    const user = JSON.parse(storedUser);
-    setFormData({
-      profile_image: profileImg,
-      firstname: user.firstName,
-      lastname: user.lastName,
-      mobile: user.mobile,
-      email: user.email,
-      address: user.address,
-      created_at: user.createdAt || "", // fallback for missing keys
-    });
-  } else {
-    console.warn("No user found in localStorage.");
-  }
-}, []);
+   useEffect(() => {
+   const storedUser = localStorage.getItem("user");
+   if (storedUser) {
+     const user = JSON.parse(storedUser);
+     setFormData({
+       profile_image: profileImg,
+       firstname: user.firstName,
+       lastname: user.lastName,
+       mobile: user.mobile,
+       email: user.email,
+       address: user.address,
+       created_at: user.createdAt || "", // fallback for missing keys
+     });
+   } else {
+     console.warn("No user found in localStorage.");
+   }
+ }, []);
 
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+   const handleChange = (e) => {
+     const { name, value } = e.target;
+     setFormData({ ...formData, [name]: value });
+   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
+   const handleImageChange = (e) => {
+     const file = e.target.files[0];
+     if (file) {
+    const imageUrl = URL.createObjectURL(file);
       setFormData({ ...formData, profile_image: imageUrl });
     }
   };
@@ -140,3 +140,4 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
+

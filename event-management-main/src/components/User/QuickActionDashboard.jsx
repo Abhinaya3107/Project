@@ -3,8 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
 
 const quickActions = [
-  { text: "Create Event", link: "/index/create-event", icon: "fas fa-calendar-plus" },
-  { text: "View My Bookings", link: "/index/Bookings", icon: "fas fa-calendar-check" },
+  { text: "Create Event", link: "/home/create-event", icon: "fas fa-calendar-plus" },
+  { text: "View My Bookings", link: "/home/Bookings", icon: "fas fa-calendar-check" },
 ];
 
 const QuickActionDashboard = () => {

@@ -26,7 +26,7 @@ const UserSignin = () => {
         localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem("userId", result.user.id); // ✅ Set userId directly
 
-        navigate("/index");
+        navigate("/home");
       } else {
         alert(result.message || "Invalid credentials.");
       }

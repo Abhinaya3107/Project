@@ -32,10 +32,11 @@ import VLogout from "./components/Vendor/VLogout";
 import VendorEventReq from "./components/Vendor/VendorEventReq";
 import UserSignUp from "./components/User/UserSignUp";
 import Organizers from "./components/Organizers";
-import HomePage from "./components/User/HomePage";
 import ULogout from "./components/User/ULogout";
 import Messages from "./components/User/Messages";
 import UserProfile from "./components/User/UserProfile";
+
+
 import UserBookings from "./components/User/UserBookings";
 import UserSettings from "./components/User/UserSettings";
 import CreateEvent from "./components/User/CreateEvent";
@@ -43,6 +44,8 @@ import EventDetails from "./components/Organizer/EventDetails";
 import ThemeDetails from "./components/ThemeDetails";
 import UpdateCatererModal from "./components/Organizer/UpdateCatererModal";
 import AddCateors from "./components/Organizer/AddCateors";
+import UserhomePage from "./components/User/UserhomePage";
+
 
 // ✅ Organizer Password Recovery Components
 import OrganizerForgotPassword from "./components/Organizer/OrganizerForgotPassword";
@@ -54,7 +57,7 @@ function App() {
   return (
     <>
       {/* Show NavBar unless user is on /Dashboard or its subpaths */}
-      {!["/Dashboard", "/My-Dashboard", "/index"].some((path) =>
+      {!["/Dashboard", "/My-Dashboard", "/index","/home"].some((path) =>
         location.pathname.startsWith(path)
       ) && <NavBar />}
 
@@ -70,6 +73,8 @@ function App() {
         <Route path="/register" element={<RegisterEM />} />
         <Route path="/updateCatererModal" element={<UpdateCatererModal />} />
         <Route path="/addCateors" element={<AddCateors />} />
+        <Route path="/addCateors" element={<AddCateors />} />
+        
 
         {/* ✅ Organizer Forgot/Reset Password Routes */}
         <Route path="/organizer/forgot-password" element={<OrganizerForgotPassword />} />
@@ -99,11 +104,13 @@ function App() {
           <Route path="orders" element={<VendorOrders />} />
           <Route path="settings" element={<VendorSettings />} />
           <Route path="logout" element={<VLogout />} />
+          <Route path="signin" element={<VendorSignin />} />
+          <Route path="vendordash" element={<VendorDash />} />
         </Route>
 
         {/* User Dashboard */}
-        <Route path="/index" element={<ProtectedRoute />}>
-          <Route index element={<HomePage />} />
+        <Route path="home" element={<ProtectedRoute />}>
+          <Route index element={<UserhomePage />} />
           <Route path="Profile" element={<UserProfile />} />
           <Route path="Messages" element={<Messages />} />
           <Route path="Organizers" element={<Organizers />} />
@@ -111,6 +118,7 @@ function App() {
           <Route path="Bookings" element={<UserBookings />} />
           <Route path="Settings" element={<UserSettings />} />
           <Route path="create-event" element={<CreateEvent />} />
+          {/* <Route path="home" element={<UserhomePage />}/> */}
         </Route>
 
         <Route path="/themes/:themeName" element={<ThemeDetails />} />

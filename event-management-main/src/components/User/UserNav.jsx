@@ -10,13 +10,13 @@ const UserNav = () => {
       <div className="collapse navbar-collapse justify-content-center">
         <ul className="navbar-nav">
           <li className="nav-item mx-2">
-            <Link className="nav-link" to="/index">Home</Link>
+            <Link className="nav-link" to="/home">Home</Link>
           </li>
-          <li className="nav-item mx-2">
+          {/* <li className="nav-item mx-2">
             <Link className="nav-link" to="/index/Messages">Messages</Link>
-          </li>
+          </li> */}
           <li className="nav-item mx-2">
-            <Link className="nav-link" to="/index/Bookings">Bookings</Link>
+            <Link className="nav-link" to="/home/Bookings">Bookings</Link>
           </li>
         </ul>
       </div>

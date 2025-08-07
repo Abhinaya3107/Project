@@ -6,7 +6,7 @@ const OrgNavbar = () => {
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
         {/* Left Side: Event Management System */}
-        <h1 className="h4">Majestic Events</h1>
+        <h1 className="h4">Event Mania</h1>
 
         {/* Right Corner: Profile Image & Dropdown */}
         <div className="dropdown ms-auto">
