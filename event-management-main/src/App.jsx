@@ -1,18 +1,38 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router,Routes,Route,useLocation,Navigate,} from "react-router-dom";
 import "./App.css";
+
+//public pages imports
 import NavBar from "./components/NavBar";
 import Signin from "./components/Organizer/Signin";
 import Home from "./components/Home";
 
+//vendor pages imports
 import VendorSignin from "./components/Vendor/VendorSignin";
 import VendorSignUp from "./components/Vendor/VendorSignUp";
+import VendorDash from "./components/Vendor/VendorDash";
+import VendorProfile from "./components/Vendor/VendorProfile";
+import VendorSettings from "./components/Vendor/VendorSettings";
+import VendorOrders from "./components/Vendor/VendorOrders";
+import VLogout from "./components/Vendor/VLogout";
+import VendorEventReq from "./components/Vendor/VendorEventReq";
+
+//user pages imports
 import UserSignin from "./components/User/UserSignin";
+import UserSignUp from "./components/User/UserSignUp";
+import ULogout from "./components/User/ULogout";
+import Messages from "./components/User/Messages";
+import UserProfile from "./components/User/UserProfile";
+import UserBookings from "./components/User/UserBookings";
+import UserSettings from "./components/User/UserSettings";
+import CreateEvent from "./components/User/CreateEvent";
+import UserhomePage from "./components/User/UserhomePage";
+
+//organizer pages imports
+import EventDetails from "./components/Organizer/EventDetails";
+import ThemeDetails from "./components/ThemeDetails";
+import UpdateCatererModal from "./components/Organizer/UpdateCatererModal";
+import AddCateors from "./components/Organizer/AddCateors";
+import Organizers from "./components/Organizers";
 import OrgDash from "./components/Organizer/OrgDash";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./components/Organizer/Profile";
@@ -24,32 +44,13 @@ import Venues from "./components/Organizer/Venues";
 import EventRequests from "./components/Organizer/EventRequests";
 import Logout from "./components/Organizer/Logout";
 import RegisterEM from "./components/Organizer/RegisterEM";
-import VendorDash from "./components/Vendor/VendorDash";
-import VendorProfile from "./components/Vendor/VendorProfile";
-import VendorSettings from "./components/Vendor/VendorSettings";
-import VendorOrders from "./components/Vendor/VendorOrders";
-import VLogout from "./components/Vendor/VLogout";
-import VendorEventReq from "./components/Vendor/VendorEventReq";
-import UserSignUp from "./components/User/UserSignUp";
-import Organizers from "./components/Organizers";
-import ULogout from "./components/User/ULogout";
-import Messages from "./components/User/Messages";
-import UserProfile from "./components/User/UserProfile";
 
-
-import UserBookings from "./components/User/UserBookings";
-import UserSettings from "./components/User/UserSettings";
-import CreateEvent from "./components/User/CreateEvent";
-import EventDetails from "./components/Organizer/EventDetails";
-import ThemeDetails from "./components/ThemeDetails";
-import UpdateCatererModal from "./components/Organizer/UpdateCatererModal";
-import AddCateors from "./components/Organizer/AddCateors";
-import UserhomePage from "./components/User/UserhomePage";
 
 
 // ✅ Organizer Password Recovery Components
 import OrganizerForgotPassword from "./components/Organizer/OrganizerForgotPassword";
 import OrganizerResetPassword from "./components/Organizer/OrganizerResetPassword";
+
 
 function App() {
   const location = useLocation();
@@ -60,6 +61,7 @@ function App() {
       {!["/Dashboard", "/My-Dashboard", "/index","/home"].some((path) =>
         location.pathname.startsWith(path)
       ) && <NavBar />}
+
 
       <Routes>
         {/* Public Routes */}

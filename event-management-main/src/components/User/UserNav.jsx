@@ -25,10 +25,10 @@ const UserNav = () => {
       <div className="dropdown">
         <img src={profileImg} alt="Profile" width="32" className="rounded-circle dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" />
         <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-          <li><Link className="dropdown-item" to="/index/profile">Profile</Link></li>
-          <li><Link className="dropdown-item" to="/index/settings">Change Password</Link></li>
+          <li><Link className="dropdown-item" to="/home/profile">Profile</Link></li>
+          <li><Link className="dropdown-item" to="/home/settings">Change Password</Link></li>
           <li><hr className="dropdown-divider" /></li>
-          <li><Link className="dropdown-item text-danger" to="/index/logout">Logout</Link></li>
+          <li><Link className="dropdown-item text-danger" to="/home/logout">Logout</Link></li>
         </ul>
       </div>
     </nav>

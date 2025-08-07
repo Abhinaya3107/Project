@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react"; 
+import { Link, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import profileImage from "../../assets/profile.png";
 
+import profileImage from "../../assets/profile.png";
 import weddingImage from "../../assets/wedding.jpg";
 import corporateImage from "../../assets/corporate.jpg";
 import socialEventImage from "../../assets/socialevent.jpg";
@@ -31,15 +29,8 @@ const UserHome = () => {
   useEffect(() => {
     const fetchOrganizers = async () => {
       try {
-        setLoading(true);
-        const endpoint =
-          selectedCategory === "All"
-            ? "http://localhost:8080/api/organizers"
-            : `http://localhost:8080/api/organizers/category/${selectedCategory.toLowerCase()}`;
-
-        const response = await fetch(endpoint);
+        const response = await fetch("http://localhost:8080/api/organizers");
         if (!response.ok) throw new Error("Failed to fetch organizers");
-
         const data = await response.json();
         setOrganizers(data);
       } catch (error) {
@@ -50,7 +41,14 @@ const UserHome = () => {
     };
 
     fetchOrganizers();
-  }, [selectedCategory]);
+  }, []);
+
+  // Filter organizers by selected category
+  const filteredOrganizers = selectedCategory === "All"
+    ? organizers
+    : organizers.filter((org) =>
+        org.category?.toLowerCase() === selectedCategory.toLowerCase()
+      );
 
   return (
     <>
@@ -67,14 +65,14 @@ const UserHome = () => {
       {/* Category Filter */}
       <div className="container text-center mt-5">
         <h2 className="mb-4">Event Organizers</h2>
-        <div className="d-flex justify-content-center gap-3 mb-4 flex-wrap">
-          {categories.map((cat) => (
+        <div className="text-center mb-4">
+          {categories.map(category => (
             <button
-              key={cat}
-              className={`btn ${selectedCategory === cat ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => setSelectedCategory(cat)}
+              key={category}
+              className={`btn ${selectedCategory === category ? "btn-primary" : "btn-outline-primary"} mx-2`}
+              onClick={() => setSelectedCategory(category)}
             >
-              {cat}
+              {category}
             </button>
           ))}
         </div>
@@ -82,35 +80,33 @@ const UserHome = () => {
         {/* Organizer Cards */}
         {loading ? (
           <p>Loading organizers...</p>
-        ) : organizers.length === 0 ? (
+        ) : filteredOrganizers.length === 0 ? (
           <p className="text-muted">No organizers found for this category.</p>
         ) : (
           <div className="row">
-        {organizers.map((organizer) => (
-          <div key={organizer.id} className="col-md-4 col-sm-6 mb-4">
-            <div className="card shadow-lg text-center">
-              <div className="d-flex flex-column align-items-center p-3">
-                <img
-                  src={profileImage}
-                  className="rounded-circle mb-3"
-                  alt={`${organizer.firstName} ${organizer.lastName}`}
-                  style={{ width: "120px", height: "120px", objectFit: "cover" }}
-                />
-                <p><strong>Name:</strong> {organizer.firstName} {organizer.lastName}</p>
-                <p><strong>Organization:</strong> {organizer.organizationName}</p>
-                <p><strong>Email:</strong> {organizer.email}</p>
-                <p><strong>Contact:</strong> {organizer.mobileNumber}</p>
-               
-                 {/* Optional: Pass organizer ID to CreateEvent form */}
-                  <Link to={`/index/create-event?organizerId=${organizer.id}`} className="btn btn-primary mt-2">
-                    Book Now
-                  </Link>
-
+            {filteredOrganizers.map((organizer) => (
+              <div key={organizer.id} className="col-md-4 col-sm-6 mb-4">
+                <div className="card shadow-lg text-center">
+                  <div className="d-flex flex-column align-items-center p-3">
+                    <img
+                      src={profileImage}
+                      className="rounded-circle mb-3"
+                      alt={`${organizer.firstName} ${organizer.lastName}`}
+                      style={{ width: "120px", height: "120px", objectFit: "cover" }}
+                    />
+                    <p><strong>Name:</strong> {organizer.firstName} {organizer.lastName}</p>
+                    <p><strong>Organization:</strong> {organizer.organizationName}</p>
+                    <p><strong>Email:</strong> {organizer.email}</p>
+                    <p><strong>Contact:</strong> {organizer.mobileNumber}</p>
+                    <p><strong>Category:</strong> {organizer.category}</p>
+                    <Link to={`/index/create-event?organizerId=${organizer.id}`} className="btn btn-primary mt-2">
+                      Book Now
+                    </Link>
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
         )}
       </div>
 

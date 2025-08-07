@@ -65,11 +65,16 @@ public class Organizer{
     @Column(name = "organization_name", nullable = false)
     private String organizationName;
     
+    @NotBlank(message = "Category is required")
+    @Column(name = "category", nullable = false)
+    private String category;
     
     @NotBlank(message = "Password is required")
     @Size(min = 6, max = 12, message = "Password must be between 6 to 8 characters")
     @Column(nullable = false)
     private String password;
+    
+ 
     
     @Lob
     @Column(name="Image_data")

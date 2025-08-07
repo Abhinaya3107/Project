@@ -6,10 +6,12 @@ import com.example.dto.VendoDTO1;
 import com.example.dto.VendorUpdateDTO;
 import com.example.model.Event;
 import com.example.model.EventStatus;
+import com.example.model.Organizer;
 import com.example.model.User;
 import com.example.model.Vendor;
 import com.example.repository.UserRepository;
 import com.example.service.EventService;
+import com.example.service.OrganizerService;
 import com.example.service.VendorService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class EventController {
 
     @Autowired
     private UserRepository userRepo;
+    
+    @Autowired
+    private OrganizerService orgService;
 
  // ✅ CREATE EVENT
     @PostMapping
@@ -162,4 +167,31 @@ public class EventController {
     public ResponseEntity<List<UpcomingEventDTO>> getUpcomingEvents() {
         return ResponseEntity.ok(eventService.getUpcomingApprovedEvents());
     }
+    
+    //Map organizer id to event
+    @PutMapping("/{id}/updatestatus")
+    public ResponseEntity<?> updateStatus(
+            @PathVariable Long id,
+            @RequestParam String status,
+            @RequestParam Long organizerId) {
+
+        Optional<Event> optionalEvent = eventService.findById(id);
+        if (optionalEvent.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<Organizer> optionalOrganizer = orgService.findById(organizerId);
+        if (optionalOrganizer.isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid organizer ID");
+        }
+
+        Event event = optionalEvent.get();
+        event.setStatus(EventStatus.valueOf(status.toUpperCase()));
+        event.setOrganizer(optionalOrganizer.get());
+
+        eventService.save(event);
+
+        return ResponseEntity.ok("Status and organizer updated successfully");
+    }
+
 }

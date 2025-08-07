@@ -10,10 +10,13 @@ function EventRequests() {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+  // ✅ Load organizer from localStorage
+  const organizer = JSON.parse(localStorage.getItem("organizer"));
+
   const fetchRequests = async () => {
     try {
       const response = await axios.get("http://localhost:8080/api/events/summary");
-      console.log("Fetched requests:", response.data); // Debug log
+      console.log("Fetched requests:", response.data);
       setRequests(response.data);
     } catch (error) {
       console.error("Error fetching event requests:", error);
@@ -31,10 +34,17 @@ function EventRequests() {
         return;
       }
 
-      console.log("Updating:", request.id, "to", status);
+      if (!organizer || !organizer.id) {
+        console.error("Organizer not found in localStorage.");
+        alert("Organizer not logged in or data missing.");
+        return;
+      }
+
+      console.log("Updating:", request.id, "to", status, "by Organizer ID:", organizer.id);
 
       await axios.put(
-        `http://localhost:8080/api/events/${request.id}/status?status=${status}`
+        `http://localhost:8080/api/events/${request.id}/updatestatus?status=${status}&organizerId=${organizer.id}`
+
       );
 
       await fetchRequests();
@@ -119,7 +129,7 @@ function EventRequests() {
             </thead>
             <tbody>
               {requests
-                .filter((request) => request && request.id) // Skip invalid entries
+                .filter((request) => request && request.id)
                 .map((request, index) => (
                   <tr key={request.id}>
                     <td>{index + 1}</td>
