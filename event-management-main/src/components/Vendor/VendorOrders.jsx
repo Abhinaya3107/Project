@@ -18,19 +18,23 @@ function VendorOrders() {
 
   // 🔁 Fetch from backend API
   useEffect(() => {
-    fetch("http://localhost:8080/api/vendor-orders")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch vendor orders");
-        }
-        return res.json();
-      })
-      .then((data) => setVendorOrders(data))
-      .catch((err) => {
-        console.error(err);
-        alert("Could not load vendor orders.");
-      });
-  }, []);
+  const vendorId = localStorage.getItem("vendorId");
+  if (!vendorId) {
+    alert("Vendor ID not found — please log in.");
+    return;
+  }
+
+  fetch(`http://localhost:8080/api/vendors/${vendorId}/events`)
+    .then((res) => {
+      if (!res.ok) throw new Error("Failed to fetch vendor events");
+      return res.json();
+    })
+    .then((data) => setVendorOrders(data))
+    .catch((err) => {
+      console.error(err);
+      alert("Could not load vendor orders.");
+    });
+}, []);
 
   // 🌐 Extract query param from URL
   useEffect(() => {
@@ -64,11 +68,7 @@ function VendorOrders() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
 
-              {/* Filter Buttons */}
-              <button className="btn bg-c-pink text-white" onClick={() => setFilter("Cancelled")}>Cancelled</button>
-              <button className="btn bg-c-green text-white" onClick={() => setFilter("In Progress")}>Todays</button>
-              <button className="btn bg-c-yellow text-dark" onClick={() => setFilter("Upcoming")}>Upcoming</button>
-              <button className="btn btn-outline-secondary" onClick={() => setFilter("")}>Clear</button>
+          
             </div>
           </div>
 
@@ -76,23 +76,23 @@ function VendorOrders() {
             <thead className="table-secondary text-center">
               <tr>
                 <th>Sr. No</th>
-                <th>Organizer</th>
                 <th>Event Name</th>
+                <th>Venue</th>
                 <th>Date & Time</th>
                 <th>Proposed Rate</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>Capacity</th>
               </tr>
             </thead>
             <tbody className="text-center">
               {filteredOrders.map((order, index) => (
                 <tr key={order.id}>
                   <td>{index + 1}</td>
-                  <td>{order.organizer}</td>
                   <td>{order.eventName}</td>
+                  <td>{order.venue}</td>
                   <td>{order.dateTime}</td>
-                  <td>{order.proposedRate}</td>
-                  <td>
+                  <td>{order.budget}</td>
+                  <td>{order.capacity}</td>
+                  {/* <td>
                     <span className={`badge ${
                       order.sts === "Cancelled" ? "bg-c-pink" :
                       order.sts === "In Progress" ? "bg-c-green" :
@@ -100,16 +100,8 @@ function VendorOrders() {
                     } text-white`}>
                       {order.sts}
                     </span>
-                  </td>
-                  <td>
-                    {/* Accept/Reject or Action Buttons */}
-                    {/* <button className="btn btn-success me-2">
-                      <FontAwesomeIcon icon={faCheck} />
-                    </button> */}
-                    <button className="btn btn-danger">
-                      <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                  </td>
+                  </td> */}
+                  
                 </tr>
               ))}
             </tbody>

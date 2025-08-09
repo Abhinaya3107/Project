@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.example.enums.EventStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
@@ -52,11 +53,6 @@ public class Vendor {
     @Column(nullable = false, length = 50)
     private String category;
     
-//    @NotBlank(message = "CategoryName is required")
-    @Size(max = 50, message = "Category must not exceed 50 characters")
-    @Column(nullable = true, length = 50)
-    private String categoryName;
-    
     private String address;
     
     private String businessName;
@@ -79,7 +75,7 @@ public class Vendor {
     private String status;
     
     @ManyToMany(mappedBy = "vendors",fetch=FetchType.EAGER)
+    @JsonBackReference
     private List<Event> events = new ArrayList<>();
-
 
 }

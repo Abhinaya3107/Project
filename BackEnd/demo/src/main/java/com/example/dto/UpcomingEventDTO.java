@@ -1,36 +1,55 @@
-// Example path: com.example.dto.EventSummaryDTO
-
 package com.example.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import com.example.model.EventStatus;
+import com.example.enums.EventStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class UpcomingEventDTO {
-	private Long id;
+    private Long id;
     private String eventName;
     private String venue;
     private LocalDateTime dateTime;
     private String status;
     private int budget;
+    private int capacity;
+    private List<VendorIdDTO> vendors;
 
-    
-    public UpcomingEventDTO(Long id, String eventName, String venue, LocalDateTime dateTime, EventStatus status, int budget) {
+    public UpcomingEventDTO(Long id, String eventName, String venue,
+                            LocalDateTime dateTime, String status,
+                            int budget, int capacity,
+                            List<VendorIdDTO> vendors) {
         this.id = id;
         this.eventName = eventName;
         this.venue = venue;
         this.dateTime = dateTime;
-        this.status = status.name(); // Convert enum to string if needed
+        this.status = status;
+        this.budget = budget;
+        this.capacity = capacity;
+        this.vendors = vendors;
+    }
+
+    public UpcomingEventDTO(Long id, String eventName, String venue,
+                            LocalDateTime dateTime, EventStatus status, int budget) {
+        this.id = id;
+        this.eventName = eventName;
+        this.venue = venue;
+        this.dateTime = dateTime;
+        this.status = status.name();
         this.budget = budget;
     }
 
-    private int capacity;
-
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class VendorIdDTO {
+        private Long vid;
+    }
 }
+

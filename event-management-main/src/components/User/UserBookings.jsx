@@ -142,12 +142,18 @@ const UserBookings = () => {
                       >
                         Delete
                       </button>
-                        <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => handleDeleteBooking(booking.id)}
-                      >
-                        Status
-                      </button>
+                      <span
+                      className={`badge ${
+                        booking.status === "APPROVED"
+                          ? "bg-success"
+                          : booking.status === "REJECTED"
+                          ? "bg-danger"
+                          : "bg-secondary"
+                      }`}
+                    >
+                      {booking.status || "Pending"}
+                    </span>
+
                     </td>
                   </tr>
                 ))

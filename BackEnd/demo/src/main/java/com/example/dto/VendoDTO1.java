@@ -11,8 +11,5 @@ public class VendoDTO1 {
 
 	private Long id;
 	private String email;
-
 	private Long vendorId;
-
-
 }

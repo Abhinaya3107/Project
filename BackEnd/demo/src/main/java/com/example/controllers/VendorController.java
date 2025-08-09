@@ -4,6 +4,7 @@ import com.example.dto.*;
 
 
 import com.example.dto.VendorSigninRequest;
+import com.example.model.Event;
 import com.example.model.Vendor;
 import com.example.service.VendorService;
 
@@ -25,6 +26,12 @@ public class VendorController {
     @Autowired
     private VendorService vendorService;
 
+    // Get all vendors (for debugging)
+    @GetMapping
+    public ResponseEntity<List<Vendor>> getAllVendors() {
+        List<Vendor> vendors = vendorService.getAllVendors();
+        return ResponseEntity.ok(vendors);
+    }
 
     // Vendor Signup
     @PostMapping("/signup")
@@ -54,10 +61,36 @@ public class VendorController {
     // Get vendors by category
     @GetMapping("/category/{category}")
     public ResponseEntity<List<Vendor>> getVendorsByCategory(@PathVariable String category) {
+        System.out.println("Requesting vendors for category: " + category);
         List<Vendor> vendors = vendorService.findByCategory(category);
+        System.out.println("Found " + vendors.size() + " vendors for category: " + category);
         return ResponseEntity.ok(vendors);
     }
     
+    // Test endpoint - get vendors by category without relationships
+    @GetMapping("/category-simple/{category}")
+    public ResponseEntity<List<Map<String, Object>>> getVendorsByCategorySimple(@PathVariable String category) {
+        System.out.println("Requesting simple vendors for category: " + category);
+        List<Vendor> vendors = vendorService.findByCategory(category);
+        System.out.println("Found " + vendors.size() + " vendors for category: " + category);
+        
+        List<Map<String, Object>> simpleVendors = vendors.stream()
+            .map(vendor -> {
+                Map<String, Object> simple = new HashMap<>();
+                simple.put("vid", vendor.getVid());
+                simple.put("firstName", vendor.getFirstName());
+                simple.put("lastName", vendor.getLastName());
+                simple.put("category", vendor.getCategory());
+                simple.put("email", vendor.getEmail());
+                simple.put("mobile", vendor.getMobile());
+                simple.put("businessName", vendor.getBusinessName());
+                simple.put("status", vendor.getStatus());
+                return simple;
+            })
+            .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(simpleVendors);
+    }
 
     // Get vendors by event ID
     @GetMapping("/event/{eventId}")
@@ -139,6 +172,10 @@ public class VendorController {
     public List<String> getCatererBusinessNames() {
         return vendorService.getBusinessNamesByCategory("caterer");
     }
+    
+    @GetMapping("/{vendorId}/events")
+    public List<Event> getVendorEvents(@PathVariable Long vendorId) {
+        return vendorService.getVendorEvents(vendorId);
+    }
 
- 
 }

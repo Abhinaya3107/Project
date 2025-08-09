@@ -28,6 +28,7 @@ import com.example.dto.VendorSignupDto;
 import com.example.dto.VendorSignupDto;
 
 import com.example.dto.VendorSigninRequest;
+import com.example.model.Event;
 import com.example.model.User;
 
 import com.example.model.Vendor;
@@ -38,6 +39,10 @@ public class VendorService {
 
     @Autowired
     private VendorRepository vendorRepository;
+    
+    public List<Vendor> getAllVendors() {
+        return vendorRepository.findAll();
+    }
     
     public Optional<Vendor> authenticate(String email, String password) {
         return vendorRepository.findByEmailAndPassword(email, password);
@@ -69,7 +74,7 @@ public class VendorService {
     
 
     public List<Vendor> findByCategory(String category) {
-        return vendorRepository.findByCategory(category);
+        return vendorRepository.findByCategoryIgnoreCase(category);
     }
 
     public List<Vendor> findByEventId(Long eventId) {
@@ -172,10 +177,7 @@ public class VendorService {
     public Optional<Vendor> findByEmail(String email) {
 
         return vendorRepository.findByEmail(email); // ✅ Correct
-
-   
-
-    }
+}
 
 	public void save(Vendor existingVendor) {
 		// TODO Auto-generated method stub
@@ -184,6 +186,12 @@ public class VendorService {
 	public Optional<Vendor> findById(Long id) {
 	    return vendorRepository.findById(id);
 	}
+	
+	public List<Event> getVendorEvents(Long vendorId) {
+        Vendor vendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new RuntimeException("Vendor not found"));
 
+        return vendor.getEvents();
+    }
 	
 }

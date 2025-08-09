@@ -3,7 +3,7 @@ package com.example.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.example.model.EventStatus;
+import com.example.enums.EventStatus;
 
 import lombok.Data;
 @Data

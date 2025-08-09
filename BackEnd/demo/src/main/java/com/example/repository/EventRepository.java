@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.example.dto.UpcomingEventDTO;
+import com.example.enums.EventStatus;
 import com.example.model.Event;
-import com.example.model.EventStatus;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
@@ -23,4 +23,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
            "FROM Event e WHERE e.dateTime > :dateTime AND e.status = :status")
     List<UpcomingEventDTO> findUpcomingEvents(@Param("dateTime") LocalDateTime dateTime,
                                               @Param("status") EventStatus status);
+    
+    // ✅ New query to get upcoming events with full event details including vendors
+    @Query("SELECT e FROM Event e LEFT JOIN FETCH e.vendors WHERE e.dateTime > :dateTime AND e.status = :status")
+    List<Event> findUpcomingEventsWithVendors(@Param("dateTime") LocalDateTime dateTime,
+                                              @Param("status") EventStatus status);
+
+	List<Event> findByVendors_Vid(Long vendorId);
 }

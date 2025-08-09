@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -81,6 +82,7 @@ public class Organizer{
     private byte[] profileImage;
     
     @OneToMany(mappedBy = "organizer",fetch =FetchType.EAGER,cascade=CascadeType.ALL)
+    @JsonManagedReference
     private List<User> users=new ArrayList<>();
     
 }

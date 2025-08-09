@@ -25,6 +25,8 @@ const VendorSignin = () => {
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("vendorEmail", formData.email);
         localStorage.setItem("vendorId", result.vendorId); // store user ID for later use
+        localStorage.setItem("vendorId", result.vendorId);
+
         navigate("/My-Dashboard");
 
       } else {
