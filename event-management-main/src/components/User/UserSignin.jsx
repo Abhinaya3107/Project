@@ -25,8 +25,9 @@ const UserSignin = () => {
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem("userId", result.user.id); // ✅ Set userId directly
+        localStorage.setItem("userEmail", result.user.email);
 
-        navigate("/home");
+        navigate("/index");
       } else {
         alert(result.message || "Invalid credentials.");
       }
@@ -58,7 +59,7 @@ const UserSignin = () => {
           onChange={handleChange}
           required
         />
-        <Link to="/forgot-password" className="d-block mb-2">
+        <Link to="/Uforgot-password" className="d-block mb-2">
           Forgot Password?
         </Link>
         <button className="btn btn-primary w-100 mt-2 mb-4">Sign In</button>

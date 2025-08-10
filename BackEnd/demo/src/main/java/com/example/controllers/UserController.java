@@ -124,6 +124,33 @@ public class UserController {
 
     }
 
+////////////////////Forgot-password////////////////////
 
+//✅ FORGOT PASSWORD: Check if email exists
+@PostMapping("/forgot-password/check")
+public ResponseEntity<?> checkEmail(@RequestBody Map<String, String> payload) {
+String email = payload.get("email").trim().toLowerCase();
+Optional<User> userOpt = userRepo.findByEmail(email);
+
+return ResponseEntity.ok(Map.of("exists", userOpt.isPresent()));
+}
+
+//✅ FORGOT PASSWORD: Reset password
+@PostMapping("/forgot-password/reset")
+public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> payload) {
+String email = payload.get("email").trim().toLowerCase();
+String newPassword = payload.get("newPassword").trim();
+
+Optional<User> userOpt = userRepo.findByEmail(email);
+if (userOpt.isPresent()) {
+User user = userOpt.get();
+user.setPassword(newPassword); // 🔐 In production, hash the password!
+userRepo.save(user);
+return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+}
+
+return ResponseEntity.status(HttpStatus.NOT_FOUND)
+.body(Map.of("message", "Email not found"));
+}
 
 }
