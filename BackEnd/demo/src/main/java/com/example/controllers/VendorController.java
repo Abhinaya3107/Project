@@ -177,5 +177,30 @@ public class VendorController {
     public List<Event> getVendorEvents(@PathVariable Long vendorId) {
         return vendorService.getVendorEvents(vendorId);
     }
+////////////////////FORGET PASSWORD AND RESET/////////////
+@PostMapping("/vendor/forgot-password/check")
+public ResponseEntity<?> checkVendorEmail(@RequestBody Map<String, String> payload) {
+String email = payload.get("email").trim().toLowerCase();
+Optional<Vendor> vendorOpt = vendorService.findByEmail(email);
+
+return ResponseEntity.ok(Map.of("exists", vendorOpt.isPresent()));
+}
+
+@PostMapping("/forgot-password/reset")
+public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> payload) {
+    String email = payload.get("email").trim().toLowerCase();
+    String newPassword = payload.get("newPassword").trim();
+
+    Optional<Vendor> vendorOpt = vendorService.findByEmail(email);
+    if (vendorOpt.isPresent()) {
+        Vendor vendor = vendorOpt.get();
+        vendor.setPassword(newPassword); // 🔐 Consider hashing in production
+        vendorService.save(vendor);
+        return ResponseEntity.ok(Map.of("message", "Password updated successfully"));
+    }
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(Map.of("message", "Email not found"));
+}
 
 }

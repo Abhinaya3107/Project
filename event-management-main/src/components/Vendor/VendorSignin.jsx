@@ -60,7 +60,7 @@ const VendorSignin = () => {
           onChange={handleChange}
           required
         />
-        <Link to="/forgot-password" className="d-block mb-2">
+        <Link to="/Vforgot-password" className="d-block mb-2">
           Forgot Password?
         </Link>
         <button className="btn btn-primary w-100 mt-2 mb-4">Sign In</button>

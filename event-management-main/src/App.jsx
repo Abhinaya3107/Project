@@ -50,8 +50,8 @@ import RegisterEM from "./components/Organizer/RegisterEM";
 // ✅ Organizer Password Recovery Components
 import OrganizerForgotPassword from "./components/Organizer/OrganizerForgotPassword";
 import OrganizerResetPassword from "./components/Organizer/OrganizerResetPassword";
-// import VendorForgotPassword from "./components/Vendor/VendorForgotPassword";
-// import VendorResetPassword from "./components/Vendor/VendorResetPassword";
+import VendorForgotPassword from "./components/Vendor/VendorForgotPassword";
+import VendorResetPassword from "./components/Vendor/VendorResetPassword";
 
 import UserForgotPassword from "./components/User/UserForgotPassword";
 import UserResetPassword from "./components/User/UserResetPassword";
@@ -93,10 +93,10 @@ function App() {
 
        <Route path="/Uforgot-password" element={<Navigate to="/user/forgot-password" />} />
        
-       {/* <Route path="/Vforgot-password" element={<Navigate to="/vendor/forgot-password" />} />
+       <Route path="/Vforgot-password" element={<Navigate to="/vendor/forgot-password" />} />
 
        <Route path="/vendor/forgot-password" element={<VendorForgotPassword />} />
-        <Route path="/vendor/reset-password" element={<VendorResetPassword />} /> */}
+        <Route path="/vendor/reset-password" element={<VendorResetPassword />} />
 
          <Route path="/user/forgot-password" element={<UserForgotPassword />} />
         <Route path="/user/reset-password" element={<UserResetPassword />} />

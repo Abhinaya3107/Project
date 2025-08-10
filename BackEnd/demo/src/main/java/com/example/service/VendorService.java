@@ -180,7 +180,7 @@ public class VendorService {
 }
 
 	public void save(Vendor existingVendor) {
-		// TODO Auto-generated method stub
+		vendorRepository.save(existingVendor);
 		
 	}
 	public Optional<Vendor> findById(Long id) {
