@@ -99,7 +99,7 @@ const UserHome = () => {
                     <p><strong>Email:</strong> {organizer.email}</p>
                     <p><strong>Contact:</strong> {organizer.mobileNumber}</p>
                     <p><strong>Category:</strong> {organizer.category}</p>
-                    <Link to={`/index/create-event?organizerId=${organizer.id}`} className="btn btn-primary mt-2">
+                    <Link to={`/home/create-event?organizerId=${organizer.id}`} className="btn btn-primary mt-2">
                       Book Now
                     </Link>
                   </div>

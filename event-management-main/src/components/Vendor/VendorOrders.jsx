@@ -3,48 +3,50 @@ import { useLocation, useSearchParams } from "react-router-dom";
 import VendorNav from "./VendorNav";
 import VendorSidebar from "./VendorSidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 function VendorOrders() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [filter, setFilter] = useState("");
   const [vendorOrders, setVendorOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  // 🔁 Fetch from backend API
   useEffect(() => {
-    fetch("http://localhost:8080/api/vendor-orders")
+    const vendorId = localStorage.getItem("vendorId"); // stored at login
+    if (!vendorId) {
+      setError("No vendor ID found in localStorage");
+      setLoading(false);
+      return;
+    }
+
+    fetch(`http://localhost:8080/api/vendors/${vendorId}/vendor-events`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch vendor orders");
-        }
+        if (!res.ok) throw new Error(`Failed to fetch vendor events: ${res.status}`);
         return res.json();
       })
-      .then((data) => setVendorOrders(data))
+      .then((data) => {
+        setVendorOrders(data);
+        setLoading(false);
+      })
       .catch((err) => {
-        console.error(err);
-        alert("Could not load vendor orders.");
+        setError(err.message);
+        setLoading(false);
       });
   }, []);
 
-  // 🌐 Extract query param from URL
-  useEffect(() => {
-    const urlFilter = searchParams.get("sts");
-    if (urlFilter) setFilter(urlFilter);
-  }, [location.search]);
-
-  // 🔍 Filter + search
+  // Filter based on search term
   const filteredOrders = vendorOrders.filter(
     (order) =>
-      (filter ? order.sts?.toLowerCase() === filter.toLowerCase() : true) &&
-      (order.organizer?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.eventName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.dateTime?.includes(searchTerm))
+      order.eventName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.venue?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.dateTime?.includes(searchTerm)
   );
 
   return (
@@ -53,67 +55,51 @@ function VendorOrders() {
       <div className="d-flex">
         <VendorSidebar />
         <div className="content w-100 p-3">
-          <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h4 className="h5">Vendor Orders</h4>
-            <div className="d-flex mb-2 mb-md-0 gap-2">
-              {/* Search Bar */}
-              <input
-                type="text"
-                className="form-control w-50"
-                placeholder="Search orders..."
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-
-              {/* Filter Buttons */}
-              <button className="btn bg-c-pink text-white" onClick={() => setFilter("Cancelled")}>Cancelled</button>
-              <button className="btn bg-c-green text-white" onClick={() => setFilter("In Progress")}>Todays</button>
-              <button className="btn bg-c-yellow text-dark" onClick={() => setFilter("Upcoming")}>Upcoming</button>
-              <button className="btn btn-outline-secondary" onClick={() => setFilter("")}>Clear</button>
-            </div>
+          <div className="d-flex justify-content-between align-items-center pb-2 mb-3 border-bottom">
+            <h4 className="h5">Vendor Events</h4>
+            <input
+              type="text"
+              className="form-control w-50"
+              placeholder="Search events..."
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
-          <table className="table table-hover table-bordered">
-            <thead className="table-secondary text-center">
-              <tr>
-                <th>Sr. No</th>
-                <th>Organizer</th>
-                <th>Event Name</th>
-                <th>Date & Time</th>
-                <th>Proposed Rate</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody className="text-center">
-              {filteredOrders.map((order, index) => (
-                <tr key={order.id}>
-                  <td>{index + 1}</td>
-                  <td>{order.organizer}</td>
-                  <td>{order.eventName}</td>
-                  <td>{order.dateTime}</td>
-                  <td>{order.proposedRate}</td>
-                  <td>
-                    <span className={`badge ${
-                      order.sts === "Cancelled" ? "bg-c-pink" :
-                      order.sts === "In Progress" ? "bg-c-green" :
-                      "bg-c-yellow"
-                    } text-white`}>
-                      {order.sts}
-                    </span>
-                  </td>
-                  <td>
-                    {/* Accept/Reject or Action Buttons */}
-                    {/* <button className="btn btn-success me-2">
-                      <FontAwesomeIcon icon={faCheck} />
-                    </button> */}
-                    <button className="btn btn-danger">
-                      <FontAwesomeIcon icon={faTimes} />
-                    </button>
-                  </td>
+          {loading && <p>Loading vendor events...</p>}
+          {error && <div className="alert alert-danger">Error: {error}</div>}
+
+          {!loading && !error && (
+            <table className="table table-hover table-bordered">
+              <thead className="table-secondary text-center">
+                <tr>
+                  <th>Sr. No</th>
+                  <th>Event Name</th>
+                  <th>Date & Time</th>
+                  <th>Capacity</th>
+                  <th>Budget</th>
+                  <th>Venue</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="text-center">
+                {filteredOrders.length > 0 ? (
+                  filteredOrders.map((order, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{order.eventName}</td>
+                      <td>{new Date(order.dateTime).toLocaleString()}</td>
+                      <td>{order.capacity}</td>
+                      <td>{order.budget}</td>
+                      <td>{order.venue}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6">No events found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </>

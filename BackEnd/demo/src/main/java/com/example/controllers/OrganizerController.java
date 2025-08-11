@@ -1,163 +1,9 @@
-//package com.example.controllers;
-//import java.io.IOException;
-//import java.security.Principal;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.Optional;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.CrossOrigin;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.PutMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.bind.annotation.RestController;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//import com.example.dto.LoginRequest;
-//import com.example.model.Organizer;
-//import com.example.model.User;
-//import com.example.model.Vendor;
-//import com.example.service.OrganizerService;
-//
-//@RestController
-//@RequestMapping("/api/organizers")
-//@CrossOrigin(origins = "*") // Allow React frontend to access this
-//public class OrganizerController {
-//
-//    @Autowired
-//    private OrganizerService organizerService;
-//
-//    
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-//        System.out.println("Email: [" + request.getEmail() + "]");
-//        System.out.println("Password: [" + request.getPassword() + "]");
-//
-//        Optional<Organizer> organizerOpt = organizerService.findByEmail(request.getEmail().trim().toLowerCase());
-//
-//        if (organizerOpt.isPresent()) {
-//            Organizer organizer = organizerOpt.get();
-//            System.out.println("DB Password: [" + organizer.getPassword() + "]");
-//
-//            if (organizer.getPassword().trim().equals(request.getPassword().trim())) {
-//                return ResponseEntity.ok(Map.of(
-//                    "message", "Login successful!",
-//                    "organizer", organizer  // ✅ Return full organizer object
-//                ));
-//            }
-//        }
-//
-//        return ResponseEntity
-//            .status(HttpStatus.UNAUTHORIZED)
-//            .body(Map.of("message", "Invalid email or password"));
-//    }
-//
-//
-//    
-//    @PostMapping("/register")
-//    public ResponseEntity<?> register(@RequestBody Organizer organizer) {
-//        try {
-//            Organizer saved = organizerService.registerOrganizer(organizer);
-//            return ResponseEntity.ok(saved);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
-//    @GetMapping
-//    public List<Organizer> getAllOrganizers() {
-//        return organizerService.findAll();
-//    } 
-//   
-////Update password in settings
-//
-//    @PutMapping("/{id}/change-password")
-//    public ResponseEntity<String> changeOrganizerPassword(
-//            @PathVariable Long id,
-//            @RequestBody Map<String, String> request) {
-//
-//        Optional<Organizer> optionalOrganizer = organizerService.findById(id);
-//        if (optionalOrganizer.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organizer not found");
-//        }
-//
-//        Organizer organizer = optionalOrganizer.get();
-//
-//        // Get current and new passwords from the request
-//        String currentPassword = request.get("currentPassword");
-//        String newPassword = request.get("newPassword");
-//
-//        // Check if current password matches
-//        if (currentPassword == null || !organizer.getPassword().equals(currentPassword)) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect");
-//        }
-//
-//        // Validate new password
-//        if (newPassword == null || newPassword.trim().isEmpty()) {
-//            return ResponseEntity.badRequest().body("New password must not be null or empty");
-//        }
-//
-//        newPassword = newPassword.trim();
-//        if (newPassword.length() < 6 || newPassword.length() > 8) {
-//            return ResponseEntity.badRequest().body("Password must be between 6 to 8 characters");
-//        }
-//
-//        // Save updated password
-//        organizer.setPassword(newPassword);
-//        organizerService.save(organizer);
-//
-//        return ResponseEntity.ok("Password updated successfully");
-//    }
-//
-//
-//
-//    
-//
-//    
-//    @GetMapping("/profile/{id}")
-//    public ResponseEntity<?> getVendorProfile(@PathVariable Long id) {
-//        Optional<Organizer> organizerOpt = organizerService.getOrganizerById(id);
-//
-//        if (organizerOpt.isPresent()) {
-//            return ResponseEntity.ok(organizerOpt.get());
-//        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organizer not found");
-//        }
-//    }
-//    //Update Profile
-//    @PutMapping("/profile/{id}")
-//    public ResponseEntity<?> updateOrganizerProfile(
-//            @PathVariable Long id,
-//            @RequestParam("firstName") String firstName,
-//            @RequestParam("lastName") String lastName,
-//            @RequestParam("mobile") String mobile,
-//            @RequestParam("address") String address,
-//            @RequestParam("organizationName") String organizationName,
-//            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) {
-//        
-//        try {
-//            // You’ll need to modify your service to accept these parameters
-//            organizerService.updateOrganizer(id, firstName, lastName, mobile, address, organizationName, profileImage);
-//            return ResponseEntity.ok("Profile updated successfully");
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organizer not found");
-//        } catch (IOException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process image");
-//    }
-//}
-//}
-
-
 
 
 package com.example.controllers;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -169,8 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.dto.LoginRequest;
+import com.example.dto.OrganizerSignupDTO;
 import com.example.model.Organizer;
 import com.example.service.OrganizerService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/organizers")
@@ -198,13 +47,45 @@ public class OrganizerController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
             .body(Map.of("message", "Invalid email or password"));
     }
-
-    // ✅ REGISTER
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Organizer organizer) {
+    public ResponseEntity<?> register(@Valid @RequestBody OrganizerSignupDTO dto) {
         try {
+            // ✅ Restrict category to only Photography or Caterer
+            if (!dto.getCategory().equalsIgnoreCase("Wedding") &&
+                !dto.getCategory().equalsIgnoreCase("Party") &&
+                !dto.getCategory().equalsIgnoreCase("Corporate")) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Category must be either Photography or Caterer"));
+            }
+
+            // ✅ Check if email exists
+            if (organizerService.existsByEmail(dto.getEmail())) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Email already registered"));
+            }
+
+            // ✅ Check if mobile exists
+            if (organizerService.existsByMobileNumber(dto.getMobileNumber())) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Mobile number already registered"));
+            }
+
+            // ✅ Map DTO to Entity
+            Organizer organizer = Organizer.builder()
+            	    .firstName(dto.getFirstName())
+            	    .lastName(dto.getLastName())
+            	    .email(dto.getEmail())
+            	    .mobileNumber(dto.getMobileNumber())
+            	    .address(dto.getAddress())
+            	    .organizationName(dto.getOrganizationName())
+            	    .category(dto.getCategory())  // ✅ Added this
+            	    .password(dto.getPassword())
+            	    .build();
+
+
             Organizer saved = organizerService.registerOrganizer(organizer);
-            return ResponseEntity.ok(saved);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "Organizer registered successfully",
+                    "id", saved.getId()
+            ));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
@@ -224,7 +105,8 @@ public class OrganizerController {
 
         Optional<Organizer> optionalOrganizer = organizerService.findById(id);
         if (optionalOrganizer.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Organizer not found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Organizer not found"));
         }
 
         Organizer organizer = optionalOrganizer.get();
@@ -232,16 +114,28 @@ public class OrganizerController {
         String newPassword = request.get("newPassword");
 
         if (currentPassword == null || !organizer.getPassword().equals(currentPassword)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Current password is incorrect"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Current password is incorrect"));
         }
 
         if (newPassword == null || newPassword.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "New password must not be null or empty"));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "New password must not be null or empty"));
         }
 
         newPassword = newPassword.trim();
-        if (newPassword.length() < 6 || newPassword.length() > 8) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Password must be between 6 to 8 characters"));
+
+        // ✅ New password validation: length + complexity
+        if (newPassword.length() < 6 || newPassword.length() > 20) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Password must be between 6 to 20 characters"));
+        }
+
+        // Regex for at least 1 uppercase, 1 lowercase, 1 digit, 1 special char
+        String passwordPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$";
+        if (!newPassword.matches(passwordPattern)) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", "Password must contain uppercase, lowercase, digit, and special character"));
         }
 
         organizer.setPassword(newPassword);

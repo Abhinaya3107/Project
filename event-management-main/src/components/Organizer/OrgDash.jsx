@@ -94,20 +94,7 @@ const OrgDash = () => {
               </div>
             </div>
 
-            {/* Venues */}
-            <div className="col-md-4 col-xl-3">
-              <div className="card bg-c-green order-card">
-                <div className="card-block">
-                  <h6 className="m-b-20">Venues</h6>
-                  <h2 className="text-end">
-                    <i className="fa fa-map-marker-alt mt-2 f-left"></i>
-                    <span>{venueCount}</span>
-                  </h2>
-                  <p className="m-b-0">Available Venues<span className="f-right">---</span></p>
-                </div>
-              </div>
-            </div>
-
+          
             {/* Caterers */}
             <div className="col-md-4 col-xl-3">
               <div className="card bg-c-yellow order-card">

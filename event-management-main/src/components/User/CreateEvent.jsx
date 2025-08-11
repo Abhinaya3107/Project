@@ -1,9 +1,7 @@
-// export default CreateEvent;
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import UserNav from "./UserNav";
-import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
-
+import { useNavigate } from "react-router-dom";
 
 const CreateEvent = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +15,7 @@ const CreateEvent = () => {
 
   const [venues, setVenues] = useState([]);
   const userId = localStorage.getItem("userId");
-  const navigate = useNavigate(); // ✅ Initialize navigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchVenues();
@@ -42,50 +40,51 @@ const CreateEvent = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const payload = {
-    ...formData,
-    capacity: parseInt(formData.capacity),
-    budget: parseInt(formData.budget),
-  };
+    // ✅ Only send necessary fields (no vendors)
+    const payload = {
+      eventName: formData.eventName,
+      dateTime: formData.dateTime,
+      capacity: parseInt(formData.capacity, 10),
+      budget: parseInt(formData.budget, 10),
+      description: formData.description,
+      venue: formData.venue,
+      status: "PENDING", // Default status
+    };
 
-  try {
-    const response = await fetch(
-      `http://localhost:8080/api/events?userId=${userId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/events/create-event?userId=${userId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      if (response.ok) {
+        alert("✅ Event created successfully!");
+        setFormData({
+          eventName: "",
+          dateTime: "",
+          capacity: "",
+          budget: "",
+          description: "",
+          venue: "",
+        });
+        navigate("/home");
+      } else {
+        const errorMsg = await response.text();
+        alert(`❌ Failed to create event: ${errorMsg}`);
       }
-    );
-
-    if (response.ok) {
-      alert("✅ Event created successfully!");
-
-      setFormData({
-        eventName: "",
-        dateTime: "",
-        capacity: "",
-        budget: "",
-        description: "",
-        venue: "",
-      });
-
-      // ✅ Redirect to home page
-      navigate("/home"); // Make sure this matches your route
-    } else {
-      const errorMsg = await response.text();
-      alert(`❌ Failed to create event: ${errorMsg}`);
+    } catch (error) {
+      console.error("Error submitting event:", error);
+      alert("❌ Network error. Please try again.");
     }
-  } catch (error) {
-    console.error("Error submitting event:", error);
-    alert("❌ Network error. Please try again.");
-  }
-};
-
+  };
 
   return (
     <>
@@ -187,4 +186,3 @@ const CreateEvent = () => {
 };
 
 export default CreateEvent;
-

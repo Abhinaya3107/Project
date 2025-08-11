@@ -1,10 +1,8 @@
 package com.example.controllers;
-import com.example.dto.VendorDTO;
 import com.example.dto.*;
-
-
-import com.example.dto.VendorSigninRequest;
+import com.example.model.Event;
 import com.example.model.Vendor;
+import com.example.service.EventService;
 import com.example.service.VendorService;
 
 import org.modelmapper.ModelMapper;
@@ -24,7 +22,16 @@ public class VendorController {
 
     @Autowired
     private VendorService vendorService;
+    
+    @Autowired
+    private EventService eventService;
 
+    // Get all vendors (for debugging)
+    @GetMapping
+    public ResponseEntity<List<Vendor>> getAllVendors() {
+        List<Vendor> vendors = vendorService.getAllVendors();
+        return ResponseEntity.ok(vendors);
+    }
 
     // Vendor Signup
     @PostMapping("/signup")
@@ -54,10 +61,36 @@ public class VendorController {
     // Get vendors by category
     @GetMapping("/category/{category}")
     public ResponseEntity<List<Vendor>> getVendorsByCategory(@PathVariable String category) {
+        System.out.println("Requesting vendors for category: " + category);
         List<Vendor> vendors = vendorService.findByCategory(category);
+        System.out.println("Found " + vendors.size() + " vendors for category: " + category);
         return ResponseEntity.ok(vendors);
     }
     
+    // Test endpoint - get vendors by category without relationships
+    @GetMapping("/category-simple/{category}")
+    public ResponseEntity<List<Map<String, Object>>> getVendorsByCategorySimple(@PathVariable String category) {
+        System.out.println("Requesting simple vendors for category: " + category);
+        List<Vendor> vendors = vendorService.findByCategory(category);
+        System.out.println("Found " + vendors.size() + " vendors for category: " + category);
+        
+        List<Map<String, Object>> simpleVendors = vendors.stream()
+            .map(vendor -> {
+                Map<String, Object> simple = new HashMap<>();
+                simple.put("vid", vendor.getVid());
+                simple.put("firstName", vendor.getFirstName());
+                simple.put("lastName", vendor.getLastName());
+                simple.put("category", vendor.getCategory());
+                simple.put("email", vendor.getEmail());
+                simple.put("mobile", vendor.getMobile());
+                simple.put("businessName", vendor.getBusinessName());
+                simple.put("status", vendor.getStatus());
+                return simple;
+            })
+            .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(simpleVendors);
+    }
 
     // Get vendors by event ID
     @GetMapping("/event/{eventId}")
@@ -78,7 +111,7 @@ public class VendorController {
         }
     }
 
-
+ // Controller method to update vendor profile by ID
     @PutMapping("/profile/{id}")
     public ResponseEntity<?> updateVendorProfile(
             @PathVariable Long id,
@@ -88,23 +121,20 @@ public class VendorController {
             @RequestParam("address") String address,
             @RequestParam("businessName") String businessName,
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) {
-        
         try {
-            // You’ll need to modify your service to accept these parameters
-            vendorService.updateVendor(id, firstName, lastName, mobile, address, businessName, profileImage);
-            return ResponseEntity.ok("Profile updated successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vendor not found");
+            boolean updated = vendorService.updateVendor(id, firstName, lastName, mobile, address, businessName, profileImage);
+            if (updated) {
+                return ResponseEntity.ok("Profile updated successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vendor not found");
+            }
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process image");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating profile");
         }
     }
-    
 
-    @GetMapping("/summary")
-    public List<VendorDTO> getVendorSummary() {
-        return vendorService.getVendorSummary();
-    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteVendor(@PathVariable Long id) {
@@ -139,6 +169,11 @@ public class VendorController {
     public List<String> getCatererBusinessNames() {
         return vendorService.getBusinessNamesByCategory("caterer");
     }
+    
 
- 
+    @GetMapping("/{vendorId}/vendor-events")
+    public List<EventOrderDTO> getEventsByVendor(@PathVariable Long vendorId) {
+        return eventService.getEventsForVendor(vendorId);
+    }
+
 }

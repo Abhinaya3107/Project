@@ -15,7 +15,6 @@ function EventRequestModal({ show, onHide, request, handleStatusUpdate }) {
         <p><strong>Date & Time:</strong> {request.dateTime}</p>
         <p><strong>Venue:</strong> {request.venue}</p>
         <p><strong>Budget:</strong> ₹{request.budget}</p>
-        <p><strong>Status:</strong> {request.status}</p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>

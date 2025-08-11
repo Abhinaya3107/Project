@@ -23,34 +23,47 @@ const UserBookings = () => {
     }
 
     fetch(`http://localhost:8080/api/events/user/${userId}`)
-      .then((res) => res.json())
-      .then((data) => setBookings(Array.isArray(data) ? data : []))
-      .catch((err) => console.error("Error fetching bookings:", err));
+      .then(async (res) => {
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          setBookings(Array.isArray(data) ? data : data.bookings || []);
+        } catch {
+          setBookings([]);
+        }
+      })
+      .catch(() => {
+        setBookings([]);
+      });
   }, [userId, navigate]);
 
   const handleViewBooking = (booking) => {
     setSelectedBooking(booking);
-    setEditData({ ...booking }); // Clone to avoid direct state mutation
+    setEditData({
+      id: booking.id,
+      eventName: booking.eventName || "",
+      dateTime: booking.dateTime || "",
+      venue: booking.venue || "",
+      budget: booking.budget ?? 0,
+      capacity: booking.capacity ?? 0,
+      description: booking.description || "" // ✅ always include description
+    });
     setShowUpdateModal(true);
   };
 
   const handleDeleteBooking = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this event?")) return;
     try {
-      const confirmDelete = window.confirm("Are you sure you want to delete this event?");
-      if (!confirmDelete) return;
-
-      const response = await fetch(`http://localhost:8080/api/events/${id}`, {
-        method: "DELETE",
+      const res = await fetch(`http://localhost:8080/api/events/${id}`, {
+        method: "DELETE"
       });
-
-      if (response.ok) {
-        setBookings(bookings.filter((booking) => booking.id !== id));
+      if (res.ok) {
+        setBookings(bookings.filter((b) => b.id !== id));
         alert("Event deleted successfully.");
       } else {
         alert("Failed to delete event.");
       }
-    } catch (error) {
-      console.error("Error deleting booking:", error);
+    } catch {
       alert("An error occurred while deleting the event.");
     }
   };
@@ -62,26 +75,37 @@ const UserBookings = () => {
 
   const handleUpdateBooking = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/events/${editData.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editData),
-      });
+      const updatedDTO = {
+        eventName: editData.eventName,
+        dateTime: editData.dateTime,
+        venue: editData.venue,
+        budget: Number(editData.budget),
+        capacity: Number(editData.capacity),
+        description: editData.description // ✅ send description
+      };
 
-      if (response.ok) {
-        const updatedBooking = await response.json();
-        setBookings((prevBookings) =>
-          prevBookings.map((b) => (b.id === updatedBooking.id ? updatedBooking : b))
+      const res = await fetch(
+        `http://localhost:8080/api/events/update-event/${editData.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(updatedDTO)
+        }
+      );
+
+      if (res.ok) {
+        const updatedBooking = await res.json();
+        setBookings((prev) =>
+          prev.map((b) => (b.id === updatedBooking.id ? updatedBooking : b))
         );
         setShowUpdateModal(false);
         alert("Booking updated successfully");
       } else {
         alert("Failed to update booking");
       }
-    } catch (error) {
-      console.error("Update failed:", error);
+    } catch {
       alert("An error occurred while updating the booking");
     }
   };
@@ -108,7 +132,6 @@ const UserBookings = () => {
                 <th>Venue</th>
                 <th>Budget</th>
                 <th>Action</th>
-               
               </tr>
             </thead>
             <tbody>
@@ -120,7 +143,7 @@ const UserBookings = () => {
                     <td>{booking.organizer?.organizationName || "N/A"}</td>
                     <td>{new Date(booking.dateTime).toLocaleString()}</td>
                     <td>{booking.venue}</td>
-                    <td>Rs {booking.budget}</td>
+                    <td>{booking.budget}</td>
                     <td>
                       <button
                         className="btn btn-info btn-sm me-2"
@@ -142,12 +165,17 @@ const UserBookings = () => {
                       >
                         Delete
                       </button>
-                        <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => handleDeleteBooking(booking.id)}
+                      <span
+                        className={`badge ${
+                          booking.status === "APPROVED"
+                            ? "bg-success"
+                            : booking.status === "REJECTED"
+                            ? "bg-danger"
+                            : "bg-secondary"
+                        }`}
                       >
-                        Status
-                      </button>
+                        {booking.status || "Pending"}
+                      </span>
                     </td>
                   </tr>
                 ))
@@ -162,7 +190,6 @@ const UserBookings = () => {
           </table>
         </div>
 
-        {/* Modals */}
         <UpdateEventModal
           show={showUpdateModal}
           handleClose={() => setShowUpdateModal(false)}

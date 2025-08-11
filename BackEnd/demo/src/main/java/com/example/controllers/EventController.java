@@ -1,11 +1,13 @@
 package com.example.controllers;
 
+import com.example.dto.CreateEventDTO;
 import com.example.dto.EventSummaryDTO;
 import com.example.dto.UpcomingEventDTO;
+import com.example.dto.UpcomingEventDTO.VendorIdDTO;
 import com.example.dto.VendoDTO1;
 import com.example.dto.VendorUpdateDTO;
+import com.example.enums.EventStatus;
 import com.example.model.Event;
-import com.example.model.EventStatus;
 import com.example.model.Organizer;
 import com.example.model.User;
 import com.example.model.Vendor;
@@ -37,82 +39,86 @@ public class EventController {
     @Autowired
     private OrganizerService orgService;
 
- // ✅ CREATE EVENT
-    @PostMapping
-    public ResponseEntity<?> createEvent(@RequestBody Event event, @RequestParam Long userId) {
-        Optional<User> userOptional = userRepo.findById(userId);
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found with ID: " + userId);
+ // ✅ CREATE EVENT with userId association
+    @PostMapping("/create-event")
+    public ResponseEntity<Event> createEvent(@RequestBody CreateEventDTO dto, @RequestParam Long userId) {
+        User user = userRepo.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Event event = new Event();
+        event.setEventName(dto.getEventName());
+        event.setDateTime(dto.getDateTime());
+        event.setCapacity(dto.getCapacity());
+        event.setBudget(dto.getBudget());
+        event.setDescription(dto.getDescription());
+        event.setVenue(dto.getVenue());
+        event.setStatus(dto.getStatus());
+        event.setUser(user); // ✅ associate event with user
+
+        return ResponseEntity.ok(eventService.save(event));
+    }
+
+
+    //  2. UPDATE EVENT (using Vendor Emails)
+    @PutMapping("/assign-vendors/{id}")
+    public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody UpcomingEventDTO request) {
+        Optional<Event> existingEventOpt = eventService.findById(id);
+        if (!existingEventOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
         }
 
-        User user = userOptional.get();
-        event.setUser(user);
+        Event existingEvent = existingEventOpt.get();
 
-        // Associate vendors by email
-        if (event.getVendors() != null) {
-            List<Vendor> attachedVendors = new ArrayList<>();
-            for (Vendor vendor : event.getVendors()) {
-                Vendor existingVendor = vendorService.findByEmail(vendor.getEmail())
-                        .orElseThrow(() -> new RuntimeException("Vendor not found: " + vendor.getEmail()));
-                
-                existingVendor.setStatus("booked");
-                existingVendor.getEvents().add(event); // Bidirectional
-                attachedVendors.add(existingVendor);
+        // ✅ Set simple fields
+        existingEvent.setEventName(request.getEventName());
+        existingEvent.setVenue(request.getVenue());
+        existingEvent.setDateTime(request.getDateTime());
+        existingEvent.setCapacity(request.getCapacity());
+        existingEvent.setBudget(request.getBudget());
+
+        // ✅ Parse and set status (convert from String to Enum)
+        try {
+            existingEvent.setStatus(EventStatus.valueOf(request.getStatus().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null); // Invalid status string
+        }
+
+        // ✅ Optional: if your Event entity has a description field, and DTO includes it, set it here
+        // existingEvent.setDescription(request.getDescription());
+
+        // ✅ Set vendors using VendorIdDTO list
+        List<Vendor> vendorList = new ArrayList<>();
+        if (request.getVendors() != null) {
+            for (UpcomingEventDTO.VendorIdDTO vendorDTO : request.getVendors()) {
+                vendorService.findById(vendorDTO.getVid()).ifPresent(vendorList::add);
             }
-            event.setVendors(attachedVendors);
         }
+        existingEvent.setVendors(vendorList);
 
-        Event savedEvent = eventService.save(event);
-        return new ResponseEntity<>(savedEvent, HttpStatus.CREATED);
+        // ✅ Save and return updated event
+        Event savedEvent = eventService.save(existingEvent);
+        return ResponseEntity.ok(savedEvent);
     }
 
+    //Basic update event
+    @PutMapping("/update-event/{eventId}")
+    public ResponseEntity<Event> updateEventBasic(
+            @PathVariable Long eventId,
+            @RequestBody CreateEventDTO dto) {
 
-    // ✅ 2. UPDATE EVENT (using Vendor Emails)
-    @PutMapping("/update")
-    public Event updateEvent(@RequestParam Long eventId, @RequestBody VendorUpdateDTO updatedEvent) {
-        Event existingEvent = eventService.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
-
-        existingEvent.setEventName(updatedEvent.getEventName());
-        existingEvent.setDateTime(updatedEvent.getDateTime());
-        existingEvent.setVenue(updatedEvent.getVenue());
-        existingEvent.setStatus(updatedEvent.getStatus());
-        existingEvent.setCapacity(updatedEvent.getCapacity());
-
-        // Detach old vendors
-        for (Vendor oldVendor : existingEvent.getVendors()) {
-            oldVendor.getEvents().remove(existingEvent);
-        }
-        existingEvent.getVendors().clear();
-
-        // Attach new vendors
-        List<Vendor> updatedVendors = new ArrayList<>();
-        for (VendoDTO1 vendorDTO : updatedEvent.getVendors()) {
-            Vendor vendor = vendorService.findByEmail(vendorDTO.getEmail())
-                    .orElseThrow(() -> new RuntimeException("Vendor not found: " + vendorDTO.getEmail()));
-
-            vendor.setStatus("booked");
-            vendor.getEvents().add(existingEvent); // bidirectional
-            updatedVendors.add(vendor);
-        }
-
-        existingEvent.setVendors(updatedVendors);
-        return eventService.save(existingEvent);
-    }
-
-    // ✅ 3. BASIC EVENT UPDATE (without vendors)
-    @PutMapping("/{eventId}")
-    public ResponseEntity<Event> updateEventBasic(@PathVariable Long eventId, @RequestBody Event updatedEvent) {
         return eventService.findById(eventId).map(existingEvent -> {
-            existingEvent.setEventName(updatedEvent.getEventName());
-            existingEvent.setDateTime(updatedEvent.getDateTime());
-            existingEvent.setCapacity(updatedEvent.getCapacity());
-            existingEvent.setBudget(updatedEvent.getBudget());
-            existingEvent.setDescription(updatedEvent.getDescription());
-            existingEvent.setVenue(updatedEvent.getVenue());
-            return ResponseEntity.ok(eventService.save(existingEvent));
+            existingEvent.setEventName(dto.getEventName());
+            existingEvent.setDateTime(dto.getDateTime());
+            existingEvent.setVenue(dto.getVenue());
+            existingEvent.setBudget(dto.getBudget());
+            existingEvent.setCapacity(dto.getCapacity());
+            existingEvent.setDescription(dto.getDescription());
+
+            Event updatedEvent = eventService.save(existingEvent);
+            return ResponseEntity.ok(updatedEvent);
         }).orElse(ResponseEntity.notFound().build());
     }
+
 
     // ✅ 4. DELETE EVENT
     @DeleteMapping("/{id}")
@@ -148,7 +154,7 @@ public class EventController {
         return eventService.getEventSummaries();
     }
 
-    // ✅ 9. UPDATE STATUS
+    // ✅ 9. UPDATE STATUS of event
     @PutMapping("/{id}/status")
     public ResponseEntity<String> updateStatus(@PathVariable Long id, @RequestParam EventStatus status) {
         Optional<Event> optionalEvent = eventService.findById(id);
@@ -168,6 +174,12 @@ public class EventController {
         return ResponseEntity.ok(eventService.getUpcomingApprovedEvents());
     }
     
+    // ✅ 11. GET UPCOMING APPROVED EVENTS WITH VENDOR DETAILS (for organizer dashboard)
+    @GetMapping("/upcoming-with-vendors")
+    public ResponseEntity<List<Event>> getUpcomingEventsWithVendors() {
+        return ResponseEntity.ok(eventService.getUpcomingApprovedEventsWithVendors());
+    }
+
     //Map organizer id to event
     @PutMapping("/{id}/updatestatus")
     public ResponseEntity<?> updateStatus(
