@@ -166,6 +166,7 @@ const UserBookings = () => {
                         Delete
                       </button>
                       <span
+<<<<<<< HEAD
                         className={`badge ${
                           booking.status === "APPROVED"
                             ? "bg-success"
@@ -176,6 +177,19 @@ const UserBookings = () => {
                       >
                         {booking.status || "Pending"}
                       </span>
+=======
+                      className={`badge ${
+                        booking.status === "APPROVED"
+                          ? "bg-success"
+                          : booking.status === "REJECTED"
+                          ? "bg-danger"
+                          : "bg-secondary"
+                      }`}
+                    >
+                      {booking.status || "Pending"}
+                    </span>
+
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
                     </td>
                   </tr>
                 ))

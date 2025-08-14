@@ -2,12 +2,17 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import VendorNav from "./VendorNav";
 import VendorSidebar from "./VendorSidebar";
-import defaultProfileImg from "../../assets/profile.png"; // Fallback image
+import defaultProfileImg from "../../assets/profile.png";
 
 const VendorProfile = () => {
   const [formData, setFormData] = useState({
+<<<<<<< HEAD
     profileImage: null,
     previewImage: defaultProfileImg,
+=======
+    profileImage: null,          // raw file or backend filename
+    previewImage: defaultProfileImg, // image URL or default
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
     firstName: "",
     lastName: "",
     mobile: "",
@@ -17,7 +22,11 @@ const VendorProfile = () => {
     createdAt: ""
   });
 
+<<<<<<< HEAD
   const vendorId = localStorage.getItem("vendorId"); // Ensure this is set when logging in
+=======
+  const vendorId = localStorage.getItem("vendorId");
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
 
   useEffect(() => {
     const fetchVendorProfile = async () => {
@@ -25,6 +34,7 @@ const VendorProfile = () => {
         const response = await fetch(`http://localhost:8080/api/vendors/profile/${vendorId}`);
         if (response.ok) {
           const data = await response.json();
+<<<<<<< HEAD
           setFormData((prev) => ({
             ...prev,
             profileImage: data.profileImage || prev.profileImage,
@@ -37,6 +47,22 @@ const VendorProfile = () => {
             businessName: data.businessName ?? "",
             createdAt: data.createdAt ?? ""
           }));
+=======
+
+          setFormData({
+            profileImage: data.profileImage || null,
+            previewImage: data.profileImage
+              ? `http://localhost:8080/uploads/${data.profileImage}`
+              : defaultProfileImg,
+            firstName: data.firstName || "",
+            lastName: data.lastName || "",
+            mobile: data.mobile || "",
+            email: data.email || "",
+            address: data.address || "",
+            businessName: data.businessName || "",
+            createdAt: data.createdAt || ""
+          });
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
         } else {
           console.error("Failed to fetch vendor profile.");
         }
@@ -60,6 +86,7 @@ const VendorProfile = () => {
     if (file) {
       setFormData((prev) => ({
         ...prev,
+<<<<<<< HEAD
         profileImage: file, // actual file to send to backend
         previewImage: URL.createObjectURL(file) // used for preview
       }));
@@ -67,14 +94,25 @@ const VendorProfile = () => {
   };
 const handleSubmit = async (e) => {
   e.preventDefault();
+=======
+        profileImage: file, // actual file for backend
+        previewImage: URL.createObjectURL(file) // preview in UI
+      }));
+    }
+  };
 
-  const updatedForm = new FormData();
-  updatedForm.append("firstName", formData.firstName);
-  updatedForm.append("lastName", formData.lastName);
-  updatedForm.append("mobile", formData.mobile);
-  updatedForm.append("address", formData.address);
-  updatedForm.append("businessName", formData.businessName);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
 
+    const updatedForm = new FormData();
+    updatedForm.append("firstName", formData.firstName);
+    updatedForm.append("lastName", formData.lastName);
+    updatedForm.append("mobile", formData.mobile);
+    updatedForm.append("address", formData.address);
+    updatedForm.append("businessName", formData.businessName);
+
+<<<<<<< HEAD
   if (formData.profileImage instanceof File) {
     updatedForm.append("profileImage", formData.profileImage);
   }
@@ -96,6 +134,29 @@ const handleSubmit = async (e) => {
     alert("Error updating profile.");
   }
 };
+=======
+    if (formData.profileImage instanceof File) {
+      updatedForm.append("profileImage", formData.profileImage);
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/api/vendors/profile/${vendorId}`, {
+        method: "PUT",
+        body: updatedForm
+      });
+
+      const message = await response.text();
+      if (response.ok) {
+        alert("Profile updated successfully!");
+      } else {
+        alert(`Update failed: ${message}`);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Server error while updating profile.");
+    }
+  };
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
 
 
   return (
@@ -114,6 +175,10 @@ const handleSubmit = async (e) => {
                 src={formData.previewImage}
                 className="rounded-circle mb-3"
                 width="150"
+<<<<<<< HEAD
+=======
+                height="150"
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
                 alt="Profile"
               />
               <input
@@ -182,7 +247,11 @@ const handleSubmit = async (e) => {
                       value={formData.address}
                       onChange={handleChange}
                       required
+<<<<<<< HEAD
                     ></textarea>
+=======
+                    />
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
                   </div>
 
                   <div className="col-md-6 mb-3">

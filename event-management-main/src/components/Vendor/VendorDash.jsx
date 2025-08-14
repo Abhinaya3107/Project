@@ -80,7 +80,11 @@ const VendorDash = () => {
                         <div className="col-md-4 col-xl-3">
                             <div className="card bg-c-blue order-card">
                                 <div className="card-block">
+<<<<<<< HEAD
                                     <h6 className="m-b-20">Upcoming</h6>
+=======
+                                    <h6 className="m-b-20">Completed</h6>
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
                                     <h2 className="text-end">
                                         <i className="fa fa-clipboard-list f-left mt-2"></i>
                                         {/* dynamic number */}
@@ -101,7 +105,11 @@ const VendorDash = () => {
                         <div className="col-md-4 col-xl-3">
                             <div className="card bg-c-green order-card">
                                 <div className="card-block">
+<<<<<<< HEAD
                                     <h6 className="m-b-20">Completed</h6>
+=======
+                                    <h6 className="m-b-20">Up Coming</h6>
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
                                     <h2 className="text-end">
                                         <i className="fa fa-calendar-check mt-2 f-left"></i>
                                         <span >486</span>
@@ -116,7 +124,13 @@ const VendorDash = () => {
                                 </div>
                             </div>
                         </div>
+<<<<<<< HEAD
                 
+=======
+                       
+                       
+
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
 
                     </div>
                 </div>

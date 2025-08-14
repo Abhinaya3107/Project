@@ -12,10 +12,15 @@ import org.springframework.data.repository.query.Param;
 import com.example.dto.CreateEventDTO;
 import com.example.dto.EventOrderDTO;
 import com.example.dto.UpcomingEventDTO;
+<<<<<<< HEAD
 
 import com.example.enums.EventStatus;
 import com.example.model.Event;
 import com.example.model.Vendor;
+=======
+import com.example.enums.EventStatus;
+import com.example.model.Event;
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
@@ -34,6 +39,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findUpcomingEventsWithVendors(@Param("dateTime") LocalDateTime dateTime,
                                               @Param("status") EventStatus status);
 
+<<<<<<< HEAD
 	CreateEventDTO save(CreateEventDTO event);
 	@Query("SELECT e FROM Event e JOIN e.vendors v WHERE v.id = :vid")
 	List<Event> findByVendorId(@Param("vendorId") Long vendorId);
@@ -51,4 +57,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 			WHERE v.vid = :vendorId
 			""")
 	    List<EventOrderDTO> findEventsByVendorId(@Param("vendorId") Long vendorId);
+=======
+	List<Event> findByVendors_Vid(Long vendorId);
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
 }

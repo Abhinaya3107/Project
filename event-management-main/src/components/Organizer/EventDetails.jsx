@@ -186,7 +186,11 @@ function EventDetails() {
 
     console.log("Sending payload:", updatedEvent);
 
+<<<<<<< HEAD
     fetch(`http://localhost:8080/api/events/assign-vendors/${selectedEvent.id}`, {
+=======
+    fetch(`http://localhost:8080/api/events/events/${selectedEvent.id}`, {
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedEvent),

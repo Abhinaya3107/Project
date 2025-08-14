@@ -134,6 +134,54 @@ public class EventController {
             @PathVariable Long eventId,
             @RequestBody CreateEventDTO dto) {
 
+<<<<<<< HEAD
+=======
+    //  2. UPDATE EVENT (using Vendor Emails)
+    @PutMapping("/events/{id}")
+    public ResponseEntity<Event> updateEvent(@PathVariable Long id, @RequestBody UpcomingEventDTO request) {
+        Optional<Event> existingEventOpt = eventService.findById(id);
+        if (!existingEventOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Event existingEvent = existingEventOpt.get();
+
+        // ✅ Set simple fields
+        existingEvent.setEventName(request.getEventName());
+        existingEvent.setVenue(request.getVenue());
+        existingEvent.setDateTime(request.getDateTime());
+        existingEvent.setCapacity(request.getCapacity());
+        existingEvent.setBudget(request.getBudget());
+
+        // ✅ Parse and set status (convert from String to Enum)
+        try {
+            existingEvent.setStatus(EventStatus.valueOf(request.getStatus().toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null); // Invalid status string
+        }
+
+        // ✅ Optional: if your Event entity has a description field, and DTO includes it, set it here
+        // existingEvent.setDescription(request.getDescription());
+
+        // ✅ Set vendors using VendorIdDTO list
+        List<Vendor> vendorList = new ArrayList<>();
+        if (request.getVendors() != null) {
+            for (UpcomingEventDTO.VendorIdDTO vendorDTO : request.getVendors()) {
+                vendorService.findById(vendorDTO.getVid()).ifPresent(vendorList::add);
+            }
+        }
+        existingEvent.setVendors(vendorList);
+
+        // ✅ Save and return updated event
+        Event savedEvent = eventService.save(existingEvent);
+        return ResponseEntity.ok(savedEvent);
+    }
+
+
+    // ✅ 3. BASIC EVENT UPDATE (without vendors)
+    @PutMapping("/{eventId}")
+    public ResponseEntity<Event> updateEventBasic(@PathVariable Long eventId, @RequestBody Event updatedEvent) {
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
         return eventService.findById(eventId).map(existingEvent -> {
             existingEvent.setEventName(dto.getEventName());
             existingEvent.setDateTime(dto.getDateTime());
@@ -187,10 +235,14 @@ public class EventController {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // UPDATE STATUS of event
 =======
     // ✅ 9. UPDATE STATUS of event
 >>>>>>> Documents
+=======
+    // ✅ 9. UPDATE STATUS of event
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
     @PutMapping("/{id}/status")
     public ResponseEntity<String> updateStatus(@PathVariable Long id, @RequestParam EventStatus status) {
         Optional<Event> optionalEvent = eventService.findById(id);
@@ -211,10 +263,14 @@ public class EventController {
     }
     
 <<<<<<< HEAD
+<<<<<<< HEAD
     // GET UPCOMING APPROVED EVENTS WITH VENDOR DETAILS (for organizer dashboard)
 =======
     // ✅ 11. GET UPCOMING APPROVED EVENTS WITH VENDOR DETAILS (for organizer dashboard)
 >>>>>>> Documents
+=======
+    // ✅ 11. GET UPCOMING APPROVED EVENTS WITH VENDOR DETAILS (for organizer dashboard)
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
     @GetMapping("/upcoming-with-vendors")
     public ResponseEntity<List<Event>> getUpcomingEventsWithVendors() {
         return ResponseEntity.ok(eventService.getUpcomingApprovedEventsWithVendors());
@@ -245,5 +301,7 @@ public class EventController {
 
         return ResponseEntity.ok("Status and organizer updated successfully");
     }
-
+    public List<Event> getMyEvents(@RequestParam Long vendorId) {
+        return eventService.getEventsByVendorId(vendorId);
+    }
 }

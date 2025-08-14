@@ -40,9 +40,12 @@ public class VendorService {
     @Autowired
     private VendorRepository vendorRepository;
     
+<<<<<<< HEAD
     @Autowired
     private EventRepository eventRepo;
     
+=======
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
     public List<Vendor> getAllVendors() {
         return vendorRepository.findAll();
     }
@@ -194,8 +197,19 @@ public class VendorService {
 	public Optional<Vendor> findById(Long id) {
 	    return vendorRepository.findById(id);
 	}
+<<<<<<< HEAD
 //	public List<VendorOrderDTO> getOrdersByVendorId(Long vendorId) {
 //	    return vendorRepository.findOrdersByVendorId(vendorId);
 //	}
 
+=======
+	
+	public List<Event> getVendorEvents(Long vendorId) {
+        Vendor vendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new RuntimeException("Vendor not found"));
+
+        return vendor.getEvents();
+    }
+	
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
 }

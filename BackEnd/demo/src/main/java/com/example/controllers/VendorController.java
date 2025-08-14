@@ -1,5 +1,11 @@
 package com.example.controllers;
 import com.example.dto.*;
+<<<<<<< HEAD
+=======
+
+
+import com.example.dto.VendorSigninRequest;
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
 import com.example.model.Event;
 import com.example.model.Vendor;
 import com.example.service.EventService;
@@ -170,10 +176,16 @@ public class VendorController {
         return vendorService.getBusinessNamesByCategory("caterer");
     }
     
+<<<<<<< HEAD
 
     @GetMapping("/{vendorId}/vendor-events")
     public List<EventOrderDTO> getEventsByVendor(@PathVariable Long vendorId) {
         return eventService.getEventsForVendor(vendorId);
+=======
+    @GetMapping("/{vendorId}/events")
+    public List<Event> getVendorEvents(@PathVariable Long vendorId) {
+        return vendorService.getVendorEvents(vendorId);
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
     }
 
 }

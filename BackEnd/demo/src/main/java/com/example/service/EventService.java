@@ -89,6 +89,7 @@ public class EventService {
     // Get list of upcoming approved events with vendor details
     public List<Event> getUpcomingApprovedEventsWithVendors() {
         return eventRepository.findUpcomingEventsWithVendors(LocalDateTime.now(), EventStatus.APPROVED);
+<<<<<<< HEAD
     }
 
 	public Event save(Event existingEvent) {
@@ -99,5 +100,11 @@ public class EventService {
 	  public List<EventOrderDTO> getEventsForVendor(Long vendorId) {
 	        return eventRepository.findEventsByVendorId(vendorId);
 	    }
+=======
+    }
+    public List<Event> getEventsByVendorId(Long vendorId) {
+        return eventRepository.findByVendors_Vid(vendorId);
+    }
+>>>>>>> c13b842c1c19dca3794554868fd5715b4d581dea
 }
 
