@@ -40,5 +40,5 @@ public interface VendorRepository extends JpaRepository<Vendor, Long> {
 	@Query("SELECT v FROM Vendor v JOIN v.events e WHERE e.id = :eventId")
 	List<Vendor> findByEventId(@Param("eventId") Long eventId);
 
-	
+
 }

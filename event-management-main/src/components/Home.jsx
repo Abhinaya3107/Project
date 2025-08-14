@@ -26,7 +26,7 @@ const Home = () => {
       <div className="container mb-5">
         <div className="card shadow p-4 bg-white">
           <h4 className="mb-3">Contact Us</h4>
-          <p><strong>Address:</strong> 123 Event Avenue, Celebration City, India</p>
+          <p><strong>Address:</strong> 123 Event Mania, Celebration City, India</p>
           <p><strong>Contact Number:</strong> +91 98765 43210</p>
           <p><strong>Email:</strong> info@eventplatform.com</p>
         </div>

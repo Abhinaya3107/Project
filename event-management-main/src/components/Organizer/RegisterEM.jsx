@@ -12,6 +12,7 @@ const OrganizerSignUp = () => {
     mobileNumber: "",
     address: "",
     organizationName: "",
+    category: "Wedding", // default value
     password: "",
   });
 
@@ -21,18 +22,12 @@ const OrganizerSignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    // ✅ Validation
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.mobileNumber ||
-      !formData.address ||
-      !formData.organizationName ||
-      !formData.password
-    ) {
-      alert("Please fill in all fields.");
-      return;
+    // Simple validation
+    for (let key in formData) {
+      if (!formData[key]) {
+        alert("Please fill in all fields.");
+        return;
+      }
     }
 
     try {
@@ -46,12 +41,12 @@ const OrganizerSignUp = () => {
       );
 
       if (response.ok) {
-        const data = await response.json(); // ✅ Parse JSON response
-        alert(`Organizer ${data.firstName} registered successfully!`);
-        navigate("/organizer-signin"); // ✅ Redirect after success
+        const data = await response.json();
+        alert(`Organizer registered successfully! ID: ${data.id}`);
+        navigate("/organizer-signin");
       } else {
-        const errorMessage = await response.text();
-        alert(`Error: ${errorMessage}`);
+        const errorData = await response.json();
+        alert(`Error: ${errorData.error || "Something went wrong"}`);
       }
     } catch (error) {
       console.error("Signup error:", error);
@@ -62,7 +57,7 @@ const OrganizerSignUp = () => {
   return (
     <div className="container mt-5">
       <h2 className="text-center mb-4">Organizer Sign Up</h2>
-      <form className="w-25 mx-auto" onSubmit={handleSignUp}>
+      <form className="w-50 mx-auto" onSubmit={handleSignUp}>
         <input
           type="text"
           className="form-control mb-3"
@@ -122,6 +117,20 @@ const OrganizerSignUp = () => {
           onChange={handleChange}
           required
         />
+
+        {/* Category dropdown restricted to Photography or Caterer */}
+        <select
+          className="form-control mb-3"
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          required
+        >
+          <option value="Wedding">Wedding</option>
+          <option value="Party">Party</option>
+          <option value="Corporate">Corporate</option>
+        </select>
+
         <input
           type="password"
           className="form-control mb-3"

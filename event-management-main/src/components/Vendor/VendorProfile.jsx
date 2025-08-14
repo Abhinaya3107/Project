@@ -5,7 +5,7 @@ import VendorSidebar from "./VendorSidebar";
 import defaultProfileImg from "../../assets/profile.png"; // Fallback image
 
 const VendorProfile = () => {
- const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     profileImage: null,
     previewImage: defaultProfileImg,
     firstName: "",
@@ -15,9 +15,9 @@ const VendorProfile = () => {
     address: "",
     businessName: "",
     createdAt: ""
-  });;
+  });
 
-  const vendorId = localStorage.getItem("vendorId"); // Adjust this if you use a different auth method
+  const vendorId = localStorage.getItem("vendorId"); // Ensure this is set when logging in
 
   useEffect(() => {
     const fetchVendorProfile = async () => {
@@ -25,16 +25,18 @@ const VendorProfile = () => {
         const response = await fetch(`http://localhost:8080/api/vendors/profile/${vendorId}`);
         if (response.ok) {
           const data = await response.json();
-          setFormData({
-            profileImage: data.profileImage || defaultProfileImg,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            mobile: data.mobile,
-            email: data.email,
-            address: data.address,
-            businessName: data.businessName,
-            createdAt: data.createdAt
-          });
+          setFormData((prev) => ({
+            ...prev,
+            profileImage: data.profileImage || prev.profileImage,
+            previewImage: data.profileImage || prev.previewImage,
+            firstName: data.firstName ?? "",
+            lastName: data.lastName ?? "",
+            mobile: data.mobile ?? "",
+            email: data.email ?? "",
+            address: data.address ?? "",
+            businessName: data.businessName ?? "",
+            createdAt: data.createdAt ?? ""
+          }));
         } else {
           console.error("Failed to fetch vendor profile.");
         }
@@ -54,18 +56,16 @@ const VendorProfile = () => {
   };
 
   const handleImageChange = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    setFormData((prev) => ({
-      ...prev,
-      profileImage: file, // actual file to send to backend
-      previewImage: URL.createObjectURL(file) // used for preview
-    }));
-  }
-};
-
-
-  const handleSubmit = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        profileImage: file, // actual file to send to backend
+        previewImage: URL.createObjectURL(file) // used for preview
+      }));
+    }
+  };
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   const updatedForm = new FormData();
@@ -75,7 +75,6 @@ const VendorProfile = () => {
   updatedForm.append("address", formData.address);
   updatedForm.append("businessName", formData.businessName);
 
-  // Only append image if user selected a new file
   if (formData.profileImage instanceof File) {
     updatedForm.append("profileImage", formData.profileImage);
   }
@@ -83,20 +82,21 @@ const VendorProfile = () => {
   try {
     const response = await fetch(`http://localhost:8080/api/vendors/profile/${vendorId}`, {
       method: "PUT",
-      body: updatedForm, // no headers for FormData
+      body: updatedForm,
     });
 
-    const message = await response.text();
     if (response.ok) {
       alert("Profile updated successfully!");
     } else {
-      alert(`Update failed: ${message}`);
+      const msg = await response.text();
+      alert(`Update failed: ${msg}`);
     }
-  } catch (error) {
-    console.error("Error updating profile:", error);
-    alert("Server error while updating profile.");
+  } catch (err) {
+    console.error(err);
+    alert("Error updating profile.");
   }
 };
+
 
   return (
     <>
@@ -110,8 +110,18 @@ const VendorProfile = () => {
 
           <div className="row px-4">
             <div className="col-md-4 d-flex flex-column align-items-center">
-            <img src={formData.previewImage} className="rounded-circle mb-3" width="150" alt="Profile" />
-              <input type="file" accept="image/*" className="form-control" onChange={handleImageChange} />
+              <img
+                src={formData.previewImage}
+                className="rounded-circle mb-3"
+                width="150"
+                alt="Profile"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                className="form-control"
+                onChange={handleImageChange}
+              />
             </div>
 
             <div className="col-md-8">
@@ -119,40 +129,87 @@ const VendorProfile = () => {
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label className="form-label">First Name</label>
-                    <input type="text" name="firstName" className="form-control" value={formData.firstName} onChange={handleChange} required />
+                    <input
+                      type="text"
+                      name="firstName"
+                      className="form-control"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Last Name</label>
-                    <input type="text" name="lastName" className="form-control" value={formData.lastName} onChange={handleChange} required />
+                    <input
+                      type="text"
+                      name="lastName"
+                      className="form-control"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Email</label>
-                    <input type="email" className="form-control" value={formData.email} disabled />
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={formData.email}
+                      disabled
+                    />
                   </div>
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Mobile Number</label>
-                    <input type="tel" name="mobile" className="form-control" value={formData.mobile} onChange={handleChange} maxLength="10" required />
+                    <input
+                      type="tel"
+                      name="mobile"
+                      className="form-control"
+                      value={formData.mobile}
+                      onChange={handleChange}
+                      maxLength="10"
+                      required
+                    />
                   </div>
 
                   <div className="col-md-12 mb-3">
                     <label className="form-label">Address</label>
-                    <textarea name="address" className="form-control" value={formData.address} onChange={handleChange} required />
+                    <textarea
+                      name="address"
+                      className="form-control"
+                      value={formData.address}
+                      onChange={handleChange}
+                      required
+                    ></textarea>
                   </div>
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Business Name</label>
-                    <input type="text" name="businessName" className="form-control" value={formData.businessName} onChange={handleChange} required />
+                    <input
+                      type="text"
+                      name="businessName"
+                      className="form-control"
+                      value={formData.businessName}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label">Date of Registration</label>
-                    <input type="date" className="form-control" value={formData.createdAt} disabled />
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={formData.createdAt}
+                      disabled
+                    />
                   </div>
                 </div>
-                <button type="submit" className="btn btn-success w-100">Update Profile</button>
+                <button type="submit" className="btn btn-success w-100">
+                  Update Profile
+                </button>
               </form>
             </div>
           </div>
