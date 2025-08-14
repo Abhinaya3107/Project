@@ -39,7 +39,11 @@ public class EventController {
     @Autowired
     private OrganizerService orgService;
 
+<<<<<<< HEAD
  // CREATE EVENT with userId association
+=======
+ // ✅ CREATE EVENT with userId association
+>>>>>>> Documents
     @PostMapping("/create-event")
     public ResponseEntity<Event> createEvent(@RequestBody CreateEventDTO dto, @RequestParam Long userId) {
         User user = userRepo.findById(userId)
@@ -53,7 +57,11 @@ public class EventController {
         event.setDescription(dto.getDescription());
         event.setVenue(dto.getVenue());
         event.setStatus(dto.getStatus());
+<<<<<<< HEAD
         event.setUser(user); 
+=======
+        event.setUser(user); // ✅ associate event with user
+>>>>>>> Documents
 
         return ResponseEntity.ok(eventService.save(event));
     }
@@ -69,21 +77,36 @@ public class EventController {
 
         Event existingEvent = existingEventOpt.get();
 
+<<<<<<< HEAD
         
+=======
+        // ✅ Set simple fields
+>>>>>>> Documents
         existingEvent.setEventName(request.getEventName());
         existingEvent.setVenue(request.getVenue());
         existingEvent.setDateTime(request.getDateTime());
         existingEvent.setCapacity(request.getCapacity());
         existingEvent.setBudget(request.getBudget());
 
+<<<<<<< HEAD
        
+=======
+        // ✅ Parse and set status (convert from String to Enum)
+>>>>>>> Documents
         try {
             existingEvent.setStatus(EventStatus.valueOf(request.getStatus().toUpperCase()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null); // Invalid status string
         }
 
+<<<<<<< HEAD
        
+=======
+        // ✅ Optional: if your Event entity has a description field, and DTO includes it, set it here
+        // existingEvent.setDescription(request.getDescription());
+
+        // ✅ Set vendors using VendorIdDTO list
+>>>>>>> Documents
         List<Vendor> vendorList = new ArrayList<>();
         if (request.getVendors() != null) {
             for (UpcomingEventDTO.VendorIdDTO vendorDTO : request.getVendors()) {
@@ -92,12 +115,20 @@ public class EventController {
         }
         existingEvent.setVendors(vendorList);
 
+<<<<<<< HEAD
         
+=======
+        // ✅ Save and return updated event
+>>>>>>> Documents
         Event savedEvent = eventService.save(existingEvent);
         return ResponseEntity.ok(savedEvent);
     }
 
+<<<<<<< HEAD
     //Basic event update
+=======
+    //Basic update event
+>>>>>>> Documents
     @PutMapping("/update-event/{eventId}")
     public ResponseEntity<Event> updateEventBasic(
             @PathVariable Long eventId,
@@ -117,7 +148,11 @@ public class EventController {
     }
 
 
+<<<<<<< HEAD
     //DELETE EVENT by ID
+=======
+    // ✅ 4. DELETE EVENT
+>>>>>>> Documents
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEvent(@PathVariable Long id) {
         if (!eventService.existsById(id)) {
@@ -151,7 +186,11 @@ public class EventController {
         return eventService.getEventSummaries();
     }
 
+<<<<<<< HEAD
     // UPDATE STATUS of event
+=======
+    // ✅ 9. UPDATE STATUS of event
+>>>>>>> Documents
     @PutMapping("/{id}/status")
     public ResponseEntity<String> updateStatus(@PathVariable Long id, @RequestParam EventStatus status) {
         Optional<Event> optionalEvent = eventService.findById(id);
@@ -171,7 +210,11 @@ public class EventController {
         return ResponseEntity.ok(eventService.getUpcomingApprovedEvents());
     }
     
+<<<<<<< HEAD
     // GET UPCOMING APPROVED EVENTS WITH VENDOR DETAILS (for organizer dashboard)
+=======
+    // ✅ 11. GET UPCOMING APPROVED EVENTS WITH VENDOR DETAILS (for organizer dashboard)
+>>>>>>> Documents
     @GetMapping("/upcoming-with-vendors")
     public ResponseEntity<List<Event>> getUpcomingEventsWithVendors() {
         return ResponseEntity.ok(eventService.getUpcomingApprovedEventsWithVendors());
